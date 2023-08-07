@@ -1,8 +1,12 @@
-// const express = require("express");
-// const router = express.Router();
+const express = require("express");
+const {
+  updateUserAdintionInfoController,
+} = require("../../controllers/commonControllers");
+const { verifyJWT } = require("../../middleware/authMiddleware");
+const router = express.Router();
 
-// router.use(verifyJWT);
+router.use(verifyJWT);
 
-// router.get();
+router.put("/user_additional_info", updateUserAdintionInfoController);
 
-// module.exports = router;
+module.exports = router;

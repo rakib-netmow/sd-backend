@@ -23,17 +23,10 @@ const sendOtp = async (req, res) => {
       if (newOtp) {
         // have to send otp to the email
         // here
-        const sendMail = sendOtpMail(email, newOtp.code);
-
-        if (sendMail) {
-          res.status(200).json({
-            message: "Otp Created Successfully",
-          });
-        } else {
-          res.status(400).json({
-            message: "Can't send OTP. Please Try Again!",
-          });
-        }
+        sendOtpMail(email, newOtp.code);
+        res.status(200).json({
+          message: "Otp send Successfully",
+        });
       }
     }
   } catch (error) {

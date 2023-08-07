@@ -32,7 +32,7 @@ connectDB();
 // folder structred
 app.use("/public/api", publicRoutes);
 app.use("/api", commonRoutes);
-app.use("/private/api", privateRoutes);
+// app.use("/private/api", privateRoutes);
 app.use("/secure/api", secureRoutes);
 
 // base API

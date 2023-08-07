@@ -10,7 +10,7 @@ const register = async (req, res) => {
     subdomain,
     email,
     phone,
-    location,
+    country,
     password,
     confrim_password,
     otp,
@@ -31,7 +31,7 @@ const register = async (req, res) => {
         message: "Phone is required!",
       });
     }
-    if (!location) {
+    if (!country) {
       res.status(400).json({
         message: "Location is required!",
       });
@@ -49,7 +49,7 @@ const register = async (req, res) => {
 
     const getOtp = await Otp.findOne({ email });
 
-    if (otp !== getOtp.code) {
+    if (getOtp?.code && otp !== getOtp?.code) {
       res.status(400).json({
         message: "Invalid OTP!",
       });
@@ -68,7 +68,7 @@ const register = async (req, res) => {
           subdomain,
           email,
           phone,
-          location,
+          country,
           password,
           token: generateToken(email),
         });
@@ -76,9 +76,7 @@ const register = async (req, res) => {
         if (user) {
           await Otp.deleteOne({ email });
 
-          res.status(200).json({
-            message: "Registration Successfull.",
-          });
+          res.status(200).json(user);
         } else {
           res.status(400).json({
             message: "Something wrong. Please try again!",
@@ -91,6 +89,51 @@ const register = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Email is required!",
+      });
+    }
+    if (!password) {
+      res.status(400).json({
+        message: "Password is required!",
+      });
+    }
+
+    const userData = await User.findOne({ email: email });
+    if (!userData) {
+      res.status(400).json({
+        message: "Can not find any user!",
+      });
+    } else {
+      await User.findOneAndUpdate(
+        { email: userData?.email },
+        {
+          $set: {
+            token: generateToken(userData?.email),
+          },
+        }
+      );
+
+      const updatedUser = await User.findOne({ email: userData?.email });
+
+      if (updatedUser) {
+        res.status(200).json(updatedUser);
+      } else {
+        res.status(400).json({
+          message: "Login faild.",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   register,
+  login,
 };

@@ -6,7 +6,7 @@ const generateToken = (id) => {
   });
 };
 
-const verifyJwt = (token) => {
+const verify_Jwt = (token) => {
   try {
     // tokenTrim = token.split(" ")[1];
     let decoded = jwt.verify(token, process.env.SEC_KEY);
@@ -16,4 +16,4 @@ const verifyJwt = (token) => {
   }
 };
 
-module.exports = { generateToken, verifyJwt };
+module.exports = { generateToken, verify_Jwt };
