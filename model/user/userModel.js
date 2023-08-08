@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   sports_category: { type: String },
   theme: { type: String },
   organisation_name: { type: String },
-  subdomain: { type: String, unique: true, required: true },
+  subdomain: { type: String, unique: true },
   email: { type: String, unique: true, required: true },
   phone: { type: String, required: true },
   country: { type: String, required: true },
@@ -45,6 +45,18 @@ userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+// function isReqired(field) {
+//   return function () {
+//     if (field === "subdomain") {
+//       console.log(this.role);
+//       return this.role === "admin";
+//     } else {
+//       console.log(this.role);
+//       return false;
+//     }
+//   };
+// }
 
 const User = new mongoose.model("User", userSchema);
 
