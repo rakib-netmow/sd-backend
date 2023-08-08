@@ -28,7 +28,7 @@ const verifyJWT = async (req, res, next) => {
 const verifyAdmin = async (req, res, next) => {
   try {
     const requester = req.auth.id;
-    const requesterAccount = await User.findOne({ user_id: requester });
+    const requesterAccount = await User.findOne({ email: requester });
     if (requesterAccount?.role === "admin") {
       next();
     } else {
@@ -50,7 +50,7 @@ const verifyAdmin = async (req, res, next) => {
 const verifyUser = async (req, res, next) => {
   try {
     const requester = req.auth.id;
-    const requesterAccount = await User.findOne({ user_id: requester });
+    const requesterAccount = await User.findOne({ email: requester });
     if (requesterAccount?.role === "user") {
       next();
     } else {

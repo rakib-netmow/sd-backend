@@ -98,11 +98,7 @@ const login = async (req, res) => {
       });
     } else {
       const userData = await User.findOne({ email: email });
-      if (!userData) {
-        res.status(400).json({
-          message: "Can not find any user!",
-        });
-      } else {
+      if (userData && userData && (await userData.matchPassword(password))) {
         await User.findOneAndUpdate(
           { email: userData?.email },
           {
@@ -121,6 +117,10 @@ const login = async (req, res) => {
             message: "Login faild.",
           });
         }
+      } else {
+        res.status(400).json({
+          message: "Can not find any user!",
+        });
       }
     }
   } catch (error) {

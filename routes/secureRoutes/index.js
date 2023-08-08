@@ -1,6 +1,10 @@
 const express = require("express");
 const {
   userCountryController,
+  addGaurdianController,
+  allgaurdianController,
+  addPlayerController,
+  allPlayerController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -10,5 +14,9 @@ const middleware = [verifyJWT, verifyAdmin];
 router.use(middleware);
 
 router.get("/user_country", userCountryController);
+router.post("/add_gaurdian", addGaurdianController);
+router.get("/all_gaurdian", allgaurdianController);
+router.post("/add_player", addPlayerController);
+router.get("/all_player", allPlayerController);
 
 module.exports = router;

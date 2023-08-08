@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   sports_category: { type: String },
   theme: { type: String },
   organisation_name: { type: String },
-  subdomain: { type: String, unique: true },
+  subdomain: { type: String },
   email: { type: String, unique: true, required: true },
   phone: { type: String, required: true },
   country: { type: String, required: true },
@@ -31,6 +31,15 @@ const userSchema = new mongoose.Schema({
   currency: String,
   gst: String,
   player_registration_fee: String,
+  // others [gaurdians & players]
+  name: String,
+  added_by: String,
+  gender: String,
+  date_of_birth: String,
+  height: String,
+  weight: String,
+  team: String,
+  fees: String,
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

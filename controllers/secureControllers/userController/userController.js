@@ -1,3 +1,4 @@
+const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
 
 const getUserCountry = async (req, res) => {

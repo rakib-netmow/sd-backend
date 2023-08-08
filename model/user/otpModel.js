@@ -11,7 +11,8 @@ const otpSchema = new mongoose.Schema(
   }
 );
 
-otpSchema.index({ createAt: 1 }, { expireAfterSeconds: 180 });
+// prettier-ignore
+otpSchema.index({ "createdAt": 1 }, { expireAfterSeconds: 180 });
 const Otp = new mongoose.model("Otp", otpSchema);
 
 module.exports = Otp;
