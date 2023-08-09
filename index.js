@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const port = 1000;
+const port = process.env.PORT || 5000;
 
 // internal export
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
