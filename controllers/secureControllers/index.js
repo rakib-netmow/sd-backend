@@ -1,5 +1,7 @@
 const { addGaurdian, allGaurdian } = require("./secure.gaurdianController");
+const { addManager, allManager } = require("./secure.managerController");
 const { addPlayer, allPlayer } = require("./secure.playerController");
+const { addTrainer, allTrainer } = require("./secure.trainerController");
 const { getUserCountry } = require("./userController/userController");
 
 module.exports = {
@@ -8,4 +10,8 @@ module.exports = {
   allgaurdianController: allGaurdian,
   addPlayerController: addPlayer,
   allPlayerController: allPlayer,
+  addManagerController: addManager,
+  allManagerController: allManager,
+  addTrainerController: addTrainer,
+  allTrainerController: allTrainer,
 };

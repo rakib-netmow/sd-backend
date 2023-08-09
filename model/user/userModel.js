@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   token: String,
   role: {
     type: String,
-    enum: ["gaurdian", "admin", "player"],
+    enum: ["gaurdian", "admin", "player", "manager", "trainer"],
     default: "admin",
   },
   address_line_1: String,
@@ -40,6 +40,9 @@ const userSchema = new mongoose.Schema({
   weight: String,
   team: String,
   fees: String,
+  profile_img: String,
+  username: String,
+  status: { type: String, enum: ["active", "inactive"] },
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

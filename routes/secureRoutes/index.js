@@ -5,6 +5,10 @@ const {
   allgaurdianController,
   addPlayerController,
   allPlayerController,
+  addManagerController,
+  allManagerController,
+  addTrainerController,
+  allTrainerController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -18,5 +22,9 @@ router.post("/add_guardian", addGaurdianController);
 router.get("/all_guardian", allgaurdianController);
 router.post("/add_player", addPlayerController);
 router.get("/all_player", allPlayerController);
+router.post("/add_manager", addManagerController);
+router.get("/all_manager", allManagerController);
+router.post("/add_trainer", addTrainerController);
+router.get("/all_trainer", allTrainerController);
 
 module.exports = router;
