@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "https://xyz.in");
   res.header("Access-Control-Allow-Origin", "https://xyz.netlify.app");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.send("Hello xyz Development/Production !");
+  res.send("Hello Squaddeck Development/Production !");
 });
 
 // Error Handling middlewares
