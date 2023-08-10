@@ -1,5 +1,6 @@
 const Cloudinary = require("../../../config/cloudinary.js");
 const { generateToken } = require("../../../config/generateToken.js");
+const User = require("../../../model/user/userModel.js");
 
 const addTrainer = async (req, res) => {
   const {
@@ -59,7 +60,7 @@ const addTrainer = async (req, res) => {
         date_of_birth: date_of_birth ? date_of_birth : "",
         phone: phone ? phone : "",
         username: username ? username : "",
-        status: status ? status : "",
+        status: status ? status : "inactive",
         role: "trainer",
         added_by,
         token: generateToken(email),

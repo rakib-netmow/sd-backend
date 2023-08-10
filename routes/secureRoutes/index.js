@@ -9,6 +9,8 @@ const {
   allManagerController,
   addTrainerController,
   allTrainerController,
+  AddTeamController,
+  allTeamController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -26,5 +28,7 @@ router.post("/add_manager", addManagerController);
 router.get("/all_manager", allManagerController);
 router.post("/add_trainer", addTrainerController);
 router.get("/all_trainer", allTrainerController);
+router.post("/add_team", AddTeamController);
+router.get("/all_team", allTeamController);
 
 module.exports = router;

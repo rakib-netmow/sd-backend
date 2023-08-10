@@ -59,7 +59,8 @@ const addTeam = async (req, res) => {
 const allTeam = async (req, res) => {
   const created_by = req.auth.id;
   try {
-    const allteams = await Team.find({});
+    const allteams = await Team.find({ created_by });
+    res.status(200).json(allteams);
   } catch (error) {
     console.log(error);
   }
@@ -67,4 +68,5 @@ const allTeam = async (req, res) => {
 
 module.exports = {
   addTeam,
+  allTeam,
 };
