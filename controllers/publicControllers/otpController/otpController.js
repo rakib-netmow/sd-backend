@@ -34,4 +34,35 @@ const sendOtp = async (req, res) => {
   }
 };
 
-module.exports = sendOtp;
+const checkOtp = async (req, res) => {
+  const { otp, email } = req.body;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Email is missing!",
+      });
+    } else if (!otp) {
+      res.status(400).json({
+        message: "OTP is missing!",
+      });
+    } else {
+      const checkOTP = Otp.findOne({
+        $and: [{ email }, { code: otp }],
+      });
+
+      if (checkOTP?.code) {
+        res.status(200).json({
+          message: "OTP is matched.",
+        });
+      } else {
+        res.status(400).json({
+          message: "OTP does not matched!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { sendOtp, checkOtp };
