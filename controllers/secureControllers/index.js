@@ -1,3 +1,15 @@
+const {
+  addGameSchedule,
+  allGameSchedule,
+} = require("./eventsController/events.gameScheduleControler");
+const {
+  addSeasonalGame,
+  allSeasonalGame,
+} = require("./eventsController/events.seasonalGameController");
+const {
+  addWeeklyTrainingSchedule,
+  addCustomTrainingSchedule,
+} = require("./eventsController/events.trainingScheduleController");
 const { addGaurdian, allGaurdian } = require("./secure.gaurdianController");
 const { addManager, allManager } = require("./secure.managerController");
 const { addPlayer, allPlayer } = require("./secure.playerController");
@@ -17,4 +29,10 @@ module.exports = {
   allTrainerController: allTrainer,
   AddTeamController: addTeam,
   allTeamController: allTeam,
+  addGameSchduleController: addGameSchedule,
+  allGameScheduleController: allGameSchedule,
+  addSeasonalGameController: addSeasonalGame,
+  allSeasonalGameController: allSeasonalGame,
+  addWeeklyTrainingScheduleController: addWeeklyTrainingSchedule,
+  addCustomTrainingScheduleController: addCustomTrainingSchedule,
 };

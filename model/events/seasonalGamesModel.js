@@ -3,9 +3,16 @@ const mongoose = require("mongoose");
 const seasonalGameSchema = new mongoose.Schema(
   {
     name: String,
-    date: String,
-    location: String,
+    vanue: String,
+    image: String,
+    description: String,
+    starts: String,
+    ends: String,
+    notification: { type: String, enum: ["push notification and email"] },
+    // date: String,
+    // location: String,
     fees: String,
+    visible_to: Array,
     created_by: String,
   },
   {

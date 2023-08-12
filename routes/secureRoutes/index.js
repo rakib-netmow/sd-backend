@@ -11,6 +11,12 @@ const {
   allTrainerController,
   AddTeamController,
   allTeamController,
+  addGameSchduleController,
+  allGameScheduleController,
+  addSeasonalGameController,
+  allSeasonalGameController,
+  addWeeklyTrainingScheduleController,
+  addCustomTrainingScheduleController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -30,5 +36,17 @@ router.post("/add_trainer", addTrainerController);
 router.get("/all_trainer", allTrainerController);
 router.post("/add_team", AddTeamController);
 router.get("/all_team", allTeamController);
+router.post("/add_game_schedule", addGameSchduleController);
+router.get("/all_game_schedule", allGameScheduleController);
+router.post("/add_seasonal_game", addSeasonalGameController);
+router.get("/all_seasonal_game", allSeasonalGameController);
+router.post(
+  "/add_weekly_training_schedule",
+  addWeeklyTrainingScheduleController
+);
+router.post(
+  "/add_custom_training_schedule",
+  addCustomTrainingScheduleController
+);
 
 module.exports = router;
