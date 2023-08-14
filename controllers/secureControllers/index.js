@@ -9,6 +9,7 @@ const {
 const {
   addWeeklyTrainingSchedule,
   addCustomTrainingSchedule,
+  allTrainingSchedule,
 } = require("./eventsController/events.trainingScheduleController");
 const { addGaurdian, allGaurdian } = require("./secure.gaurdianController");
 const { addManager, allManager } = require("./secure.managerController");
@@ -35,4 +36,5 @@ module.exports = {
   allSeasonalGameController: allSeasonalGame,
   addWeeklyTrainingScheduleController: addWeeklyTrainingSchedule,
   addCustomTrainingScheduleController: addCustomTrainingSchedule,
+  allTrainingScheduleController: allTrainingSchedule,
 };

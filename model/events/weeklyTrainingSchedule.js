@@ -5,6 +5,7 @@ const weeklyTrainingScheduleSchema = new mongoose.Schema(
     name: String,
     team: String,
     day: String,
+    date_type: {type: String, default: "weekly"},
     vanue: String,
     from: String,
     to: String,

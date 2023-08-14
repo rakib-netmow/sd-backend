@@ -5,6 +5,7 @@ const customTrainingScheduleSchema = new mongoose.Schema(
     name: String,
     team: String,
     date: String,
+    date_type: { type: String, default: "custom" },
     vanue: String,
     from: String,
     to: String,

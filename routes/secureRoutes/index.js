@@ -17,6 +17,7 @@ const {
   allSeasonalGameController,
   addWeeklyTrainingScheduleController,
   addCustomTrainingScheduleController,
+  allTrainingScheduleController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -48,5 +49,6 @@ router.post(
   "/add_custom_training_schedule",
   addCustomTrainingScheduleController
 );
+router.get("/all_training_schedule", allTrainingScheduleController);
 
 module.exports = router;
