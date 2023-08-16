@@ -7,6 +7,10 @@ const {
   allSeasonalGame,
 } = require("./eventsController/events.seasonalGameController");
 const {
+  addSpecialEvent,
+  allSpecialEvent,
+} = require("./eventsController/events.specialEventController");
+const {
   addWeeklyTrainingSchedule,
   addCustomTrainingSchedule,
   allTrainingSchedule,
@@ -37,4 +41,6 @@ module.exports = {
   addWeeklyTrainingScheduleController: addWeeklyTrainingSchedule,
   addCustomTrainingScheduleController: addCustomTrainingSchedule,
   allTrainingScheduleController: allTrainingSchedule,
+  addSpecialEventController: addSpecialEvent,
+  allSpecialEventController: allSpecialEvent,
 };

@@ -18,6 +18,8 @@ const {
   addWeeklyTrainingScheduleController,
   addCustomTrainingScheduleController,
   allTrainingScheduleController,
+  addSpecialEventController,
+  allSpecialEventController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -50,5 +52,7 @@ router.post(
   addCustomTrainingScheduleController
 );
 router.get("/all_training_schedule", allTrainingScheduleController);
+router.post("/add_special_event", addSpecialEventController);
+router.get("/all_special_event", allSpecialEventController);
 
 module.exports = router;
