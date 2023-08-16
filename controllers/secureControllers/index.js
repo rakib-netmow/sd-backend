@@ -1,3 +1,4 @@
+const { addClass, allClass } = require("./classController/classController");
 const {
   addGameSchedule,
   allGameSchedule,
@@ -20,6 +21,10 @@ const { addManager, allManager } = require("./secure.managerController");
 const { addPlayer, allPlayer } = require("./secure.playerController");
 const { addTeam, allTeam } = require("./secure.teamController");
 const { addTrainer, allTrainer } = require("./secure.trainerController");
+const {
+  addSponsor,
+  allSponsor,
+} = require("./sponsorController/sponsorController");
 const { getUserCountry } = require("./userController/userController");
 
 module.exports = {
@@ -43,4 +48,8 @@ module.exports = {
   allTrainingScheduleController: allTrainingSchedule,
   addSpecialEventController: addSpecialEvent,
   allSpecialEventController: allSpecialEvent,
+  addClassController: addClass,
+  allClassController: allClass,
+  addSponsorController: addSponsor,
+  allSponsorController: allSponsor,
 };

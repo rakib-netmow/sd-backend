@@ -20,6 +20,10 @@ const {
   allTrainingScheduleController,
   addSpecialEventController,
   allSpecialEventController,
+  addClassController,
+  allClassController,
+  addSponsorController,
+  allSponsorController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -54,5 +58,9 @@ router.post(
 router.get("/all_training_schedule", allTrainingScheduleController);
 router.post("/add_special_event", addSpecialEventController);
 router.get("/all_special_event", allSpecialEventController);
+router.post("/add_class", addClassController);
+router.get("/all_class", allClassController);
+router.post("/add_sponsor", addSponsorController);
+router.get("/all_sponsor", allSponsorController);
 
 module.exports = router;
