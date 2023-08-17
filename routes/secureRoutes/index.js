@@ -1,8 +1,8 @@
 const express = require("express");
 const {
   userCountryController,
-  addGaurdianController,
-  allgaurdianController,
+  addGuardianController,
+  allGuardianController,
   addPlayerController,
   allPlayerController,
   addManagerController,
@@ -24,6 +24,12 @@ const {
   allClassController,
   addSponsorController,
   allSponsorController,
+  addPlayerSubscriptionController,
+  allPlayerSubscriptionController,
+  addSeasonalSubscriptionController,
+  allSeasonalSubscriptionController,
+  addGameSubscriptionController,
+  allGameSubscriptionController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -32,35 +38,41 @@ const middleware = [verifyJWT, verifyAdmin];
 
 router.use(middleware);
 
-router.get("/user_country", userCountryController);
-router.post("/add_guardian", addGaurdianController);
-router.get("/all_guardian", allgaurdianController);
-router.post("/add_player", addPlayerController);
-router.get("/all_player", allPlayerController);
-router.post("/add_manager", addManagerController);
-router.get("/all_manager", allManagerController);
-router.post("/add_trainer", addTrainerController);
-router.get("/all_trainer", allTrainerController);
-router.post("/add_team", AddTeamController);
-router.get("/all_team", allTeamController);
-router.post("/add_game_schedule", addGameSchduleController);
-router.get("/all_game_schedule", allGameScheduleController);
-router.post("/add_seasonal_game", addSeasonalGameController);
-router.get("/all_seasonal_game", allSeasonalGameController);
+router.get("/user-country", userCountryController);
+router.post("/add-guardian", addGuardianController);
+router.get("/all-guardian", allGuardianController);
+router.post("/add-player", addPlayerController);
+router.get("/all-player", allPlayerController);
+router.post("/add-manager", addManagerController);
+router.get("/all-manager", allManagerController);
+router.post("/add-trainer", addTrainerController);
+router.get("/all-trainer", allTrainerController);
+router.post("/add-team", AddTeamController);
+router.get("/all-team", allTeamController);
+router.post("/add-game-schedule", addGameSchduleController);
+router.get("/all-game-schedule", allGameScheduleController);
+router.post("/add-seasonal-game", addSeasonalGameController);
+router.get("/all-seasonal-game", allSeasonalGameController);
 router.post(
-  "/add_weekly_training_schedule",
+  "/add-weekly-training-schedule",
   addWeeklyTrainingScheduleController
 );
 router.post(
-  "/add_custom_training_schedule",
+  "/add-custom-training-schedule",
   addCustomTrainingScheduleController
 );
-router.get("/all_training_schedule", allTrainingScheduleController);
-router.post("/add_special_event", addSpecialEventController);
-router.get("/all_special_event", allSpecialEventController);
-router.post("/add_class", addClassController);
-router.get("/all_class", allClassController);
-router.post("/add_sponsor", addSponsorController);
-router.get("/all_sponsor", allSponsorController);
+router.get("/all-training-schedule", allTrainingScheduleController);
+router.post("/add-special-event", addSpecialEventController);
+router.get("/all-special-event", allSpecialEventController);
+router.post("/add-class", addClassController);
+router.get("/all-class", allClassController);
+router.post("/add-sponsor", addSponsorController);
+router.get("/all-sponsor", allSponsorController);
+router.post("/add-player-subscription", addPlayerSubscriptionController);
+router.get("/all-player-subscription", allPlayerSubscriptionController);
+router.post("/add-seasonal-subscription", addSeasonalSubscriptionController);
+router.get("/all-seasonal-subscription", allSeasonalSubscriptionController);
+router.post("/add-game-subscription", addGameSubscriptionController);
+router.get("/all-game-subscription", allGameSubscriptionController);
 
 module.exports = router;

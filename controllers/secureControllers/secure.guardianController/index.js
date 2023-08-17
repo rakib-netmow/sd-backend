@@ -1,7 +1,7 @@
 const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
 
-const addGaurdian = async (req, res) => {
+const addGuardian = async (req, res) => {
   const {
     first_name,
     last_name,
@@ -70,7 +70,7 @@ const addGaurdian = async (req, res) => {
   }
 };
 
-const allGaurdian = async (req, res) => {
+const allGuardian = async (req, res) => {
   const email = req.auth.id;
   try {
     if (!email) {
@@ -90,6 +90,6 @@ const allGaurdian = async (req, res) => {
 };
 
 module.exports = {
-  addGaurdian,
-  allGaurdian,
+  addGuardian,
+  allGuardian,
 };

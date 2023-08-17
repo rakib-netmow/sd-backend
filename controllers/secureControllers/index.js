@@ -2,7 +2,7 @@ const { addClass, allClass } = require("./classController/classController");
 const {
   addGameSchedule,
   allGameSchedule,
-} = require("./eventsController/events.gameScheduleControler");
+} = require("./eventsController/events.gameScheduleController");
 const {
   addSeasonalGame,
   allSeasonalGame,
@@ -16,7 +16,7 @@ const {
   addCustomTrainingSchedule,
   allTrainingSchedule,
 } = require("./eventsController/events.trainingScheduleController");
-const { addGaurdian, allGaurdian } = require("./secure.gaurdianController");
+const { addGuardian, allGuardian } = require("./secure.guardianController");
 const { addManager, allManager } = require("./secure.managerController");
 const { addPlayer, allPlayer } = require("./secure.playerController");
 const { addTeam, allTeam } = require("./secure.teamController");
@@ -25,12 +25,24 @@ const {
   addSponsor,
   allSponsor,
 } = require("./sponsorController/sponsorController");
+const {
+  addGameSubscription,
+  allGameSubscription,
+} = require("./subscriptionController/subscription.gameSubscriptionController");
+const {
+  addPlayerSubscription,
+  allPlayerSubscription,
+} = require("./subscriptionController/subscription.playerSubscriptionController");
+const {
+  addSeasonalSubscription,
+  allSeasonalSubscription,
+} = require("./subscriptionController/subscription.seasonalSubscriptionController");
 const { getUserCountry } = require("./userController/userController");
 
 module.exports = {
   userCountryController: getUserCountry,
-  addGaurdianController: addGaurdian,
-  allgaurdianController: allGaurdian,
+  addGuardianController: addGuardian,
+  allGuardianController: allGuardian,
   addPlayerController: addPlayer,
   allPlayerController: allPlayer,
   addManagerController: addManager,
@@ -52,4 +64,10 @@ module.exports = {
   allClassController: allClass,
   addSponsorController: addSponsor,
   allSponsorController: allSponsor,
+  addPlayerSubscriptionController: addPlayerSubscription,
+  allPlayerSubscriptionController: allPlayerSubscription,
+  addSeasonalSubscriptionController: addSeasonalSubscription,
+  allSeasonalSubscriptionController: allSeasonalSubscription,
+  addGameSubscriptionController: addGameSubscription,
+  allGameSubscriptionController: allGameSubscription,
 };

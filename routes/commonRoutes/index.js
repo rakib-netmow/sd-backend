@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.use(verifyJWT);
 
-router.put("/user_additional_info", updateUserAdintionInfoController);
+router.put("/user-additional-info", updateUserAdintionInfoController);
 
 module.exports = router;
