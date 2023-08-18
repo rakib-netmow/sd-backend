@@ -13,7 +13,6 @@ const register = async (req, res) => {
     country,
     password,
     confrim_password,
-    otp,
   } = req.body;
   try {
     if (!subdomain) {
@@ -36,46 +35,34 @@ const register = async (req, res) => {
       res.status(400).json({
         message: "Password is required!",
       });
-    } else if (!otp) {
-      res.status(400).json({
-        message: "OTP is required!",
-      });
     } else {
-      const getOtp = await Otp.findOne({ email });
+      const existingUser = await User.findOne({ email });
 
-      if (getOtp?.code && otp !== getOtp?.code) {
+      if (existingUser) {
         res.status(400).json({
-          message: "Invalid OTP!",
+          message: "This email is already taken!",
         });
       } else {
-        const existingUser = await User.findOne({ email });
+        const user = await User.create({
+          sports_category,
+          theme,
+          organisation_name,
+          subdomain,
+          email,
+          phone,
+          country,
+          password,
+          token: generateToken(email),
+        });
 
-        if (existingUser) {
-          res.status(400).json({
-            message: "This email is already taken!",
-          });
+        if (user) {
+          await Otp.deleteOne({ email });
+
+          res.status(200).json(user);
         } else {
-          const user = await User.create({
-            sports_category,
-            theme,
-            organisation_name,
-            subdomain,
-            email,
-            phone,
-            country,
-            password,
-            token: generateToken(email),
+          res.status(400).json({
+            message: "Something wrong. Please try again!",
           });
-
-          if (user) {
-            await Otp.deleteOne({ email });
-
-            res.status(200).json(user);
-          } else {
-            res.status(400).json({
-              message: "Something wrong. Please try again!",
-            });
-          }
         }
       }
     }

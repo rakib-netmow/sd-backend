@@ -1,3 +1,4 @@
+const emailVerifiaction = require("../../../config/emailVerification");
 const sendOtpMail = require("../../../config/sendOtpMail");
 const Otp = require("../../../model/user/otpModel");
 
@@ -24,6 +25,7 @@ const sendOtp = async (req, res) => {
         // have to send otp to the email
         // here
         sendOtpMail(email, newOtp.code);
+        // emailVerifiaction(email, newOtp.code);
         res.status(200).json({
           message: "Otp send Successfully",
         });

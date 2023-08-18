@@ -18,6 +18,7 @@ const corsOptions = {
     "https://xyz.in",
     "https://xyz.netlify.app",
     "http://localhost:3000",
+    "http://localhost:3001",
   ],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -40,6 +41,7 @@ app.get("/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "https://xyz.in");
   res.header("Access-Control-Allow-Origin", "https://xyz.netlify.app");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "http://localhost:3001");
   res.send("Hello Squaddeck Development/Production !");
 });
 

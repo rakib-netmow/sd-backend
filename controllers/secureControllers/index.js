@@ -28,15 +28,15 @@ const {
 const {
   addGameSubscription,
   allGameSubscription,
-} = require("./subscriptionController/subscription.gameSubscriptionController");
+} = require("./subscriptionController/gameSubscriptionController");
 const {
   addPlayerSubscription,
   allPlayerSubscription,
-} = require("./subscriptionController/subscription.playerSubscriptionController");
+} = require("./subscriptionController/playerSubscriptionController");
 const {
   addSeasonalSubscription,
   allSeasonalSubscription,
-} = require("./subscriptionController/subscription.seasonalSubscriptionController");
+} = require("./subscriptionController/seasonalSubscriptionController");
 const { getUserCountry } = require("./userController/userController");
 
 module.exports = {
