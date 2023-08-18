@@ -48,7 +48,7 @@ const checkOtp = async (req, res) => {
         message: "OTP is missing!",
       });
     } else {
-      const checkOTP = Otp.findOne({
+      const checkOTP = await Otp.findOne({
         $and: [{ email }, { code: otp }],
       });
 
