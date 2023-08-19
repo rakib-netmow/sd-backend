@@ -45,7 +45,7 @@ const register = async (req, res) => {
       } else {
         const user = await User.create({
           sports_category,
-          theme,
+          // theme,
           organisation_name,
           subdomain,
           email,

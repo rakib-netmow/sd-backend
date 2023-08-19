@@ -89,6 +89,13 @@ const allGuardian = async (req, res) => {
   }
 };
 
+const editGuardian = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addGuardian,
   allGuardian,
