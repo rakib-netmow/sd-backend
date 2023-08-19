@@ -50,7 +50,7 @@ const addGuardian = async (req, res) => {
         state: state ? state : "",
         zip: zip ? zip : 0,
         password: password,
-        role: "gaurdian",
+        role: "guardian",
         added_by,
         token: generateToken(email),
       });

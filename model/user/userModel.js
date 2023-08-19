@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   token: String,
   role: {
     type: String,
-    enum: ["gaurdian", "admin", "player", "manager", "trainer"],
+    enum: ["guardian", "admin", "player", "manager", "trainer"],
     default: "admin",
   },
   address_line_1: String,

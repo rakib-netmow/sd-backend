@@ -2,20 +2,20 @@ const { addClass, allClass } = require("./classController/classController");
 const {
   addGameSchedule,
   allGameSchedule,
-} = require("./eventsController/events.gameScheduleController");
+} = require("./eventsController/gameScheduleController");
 const {
   addSeasonalGame,
   allSeasonalGame,
-} = require("./eventsController/events.seasonalGameController");
+} = require("./eventsController/seasonalGameController");
 const {
   addSpecialEvent,
   allSpecialEvent,
-} = require("./eventsController/events.specialEventController");
+} = require("./eventsController/specialEventController");
 const {
   addWeeklyTrainingSchedule,
   addCustomTrainingSchedule,
   allTrainingSchedule,
-} = require("./eventsController/events.trainingScheduleController");
+} = require("./eventsController/trainingScheduleController");
 const { addGuardian, allGuardian } = require("./secure.guardianController");
 const { addManager, allManager } = require("./secure.managerController");
 const { addPlayer, allPlayer } = require("./secure.playerController");
