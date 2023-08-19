@@ -16,11 +16,31 @@ const {
   addCustomTrainingSchedule,
   allTrainingSchedule,
 } = require("./eventsController/trainingScheduleController");
-const { addGuardian, allGuardian } = require("./secure.guardianController");
-const { addManager, allManager } = require("./secure.managerController");
-const { addPlayer, allPlayer } = require("./secure.playerController");
+const {
+  addGuardian,
+  allGuardian,
+  updateGuardian,
+  deleteGuardian,
+} = require("./secure.guardianController");
+const {
+  addManager,
+  allManager,
+  updateManager,
+  deleteManager,
+} = require("./secure.managerController");
+const {
+  addPlayer,
+  allPlayer,
+  updatePlayer,
+  deletePlayer,
+} = require("./secure.playerController");
 const { addTeam, allTeam } = require("./secure.teamController");
-const { addTrainer, allTrainer } = require("./secure.trainerController");
+const {
+  addTrainer,
+  allTrainer,
+  updateTrainer,
+  deleteTrainer,
+} = require("./secure.trainerController");
 const {
   addSponsor,
   allSponsor,
@@ -43,12 +63,20 @@ module.exports = {
   userCountryController: getUserCountry,
   addGuardianController: addGuardian,
   allGuardianController: allGuardian,
+  updateGuardianController: updateGuardian,
+  deleteGuardianController: deleteGuardian,
   addPlayerController: addPlayer,
   allPlayerController: allPlayer,
+  updatePlayerController: updatePlayer,
+  deletePlayerController: deletePlayer,
   addManagerController: addManager,
   allManagerController: allManager,
+  updateManagerController: updateManager,
+  deleteManagerController: deleteManager,
   addTrainerController: addTrainer,
   allTrainerController: allTrainer,
+  updateTrainerController: updateTrainer,
+  deleteTrainerController: deleteTrainer,
   AddTeamController: addTeam,
   allTeamController: allTeam,
   addGameSchduleController: addGameSchedule,

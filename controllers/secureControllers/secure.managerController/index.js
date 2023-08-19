@@ -94,7 +94,65 @@ const allManager = async (req, res) => {
   }
 };
 
+const updateManager = async (req, res) => {
+  const data = req.body;
+  const added_by = req.auth.id;
+  const id = req.params.id;
+  try {
+    if (data?.email || data?.username) {
+      res.status(400).json({
+        message: "You can't change your email or username!",
+      });
+    } else if (data?.password && data?.password !== data?.confrim_password) {
+      res.status(400).json({
+        message: "Confrim password is not matched!",
+      });
+    } else {
+      const manager = await User.findOneAndUpdate(
+        {
+          $and: [{ _id: id }, { added_by }],
+        },
+        data
+      );
+
+      if (manager) {
+        res.status(200).json({
+          message: "Infromation updated successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't update information. Please try again!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteManager = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const added_by = req.auth.id;
+
+    const manager = await User.findOneAndDelete({ _id: id });
+    if (manager) {
+      res.status(200).json({
+        message: "Guardian deleted succefully.",
+      });
+    } else {
+      res.status(400).json({
+        message: "Cant not delete guardian. Please try again!",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addManager,
   allManager,
+  updateManager,
+  deleteManager,
 };
