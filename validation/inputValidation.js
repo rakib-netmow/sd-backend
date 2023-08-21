@@ -2,7 +2,7 @@ const { check, validationResult } = require("express-validator");
 
 // login
 const loginValidators = [
-  check("user_id").notEmpty().withMessage("Sponsor Id is required"),
+  check("email").notEmpty().isEmail().withMessage("Email is required"),
   check("password").notEmpty().withMessage("Password is required"),
 ];
 

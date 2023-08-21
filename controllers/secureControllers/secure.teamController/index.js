@@ -66,7 +66,55 @@ const allTeam = async (req, res) => {
   }
 };
 
+const assignPlayer = async (req, res) => {
+  try {
+    const { player_id } = req.body;
+    const id = req.params.id;
+    const assign = await Team.findOneAndUpdate(
+      { _id: id },
+      {
+        $push: {
+          player: player_id,
+        },
+      }
+    );
+    if (assign) {
+      res.status(200).json({
+        message: "Player assigned successfully.",
+      });
+    } else {
+      res.status(400).json({
+        message: "Can't assign player. Please try again!",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteTeam = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const deletedTeam = await Team.findOneAndDelete({ _id: id });
+
+    if (deletedTeam) {
+      res.status(200).json({
+        message: "Team deleted successfully.",
+      });
+    } else {
+      res.status(400).json({
+        message: "Can't delete team. Please try again!",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addTeam,
   allTeam,
+  assignPlayer,
+  deleteTeam,
 };

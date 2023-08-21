@@ -38,6 +38,8 @@ const {
   deleteManagerController,
   updateTrainerController,
   deleteTrainerController,
+  assignPlayerController,
+  deleteTeamController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -68,8 +70,10 @@ router.get("/trainer", allTrainerController);
 router.patch("/trainer/:id", updateTrainerController);
 router.delete("/trainer/:id", deleteTrainerController);
 // Team
-router.post("/add-team", AddTeamController);
-router.get("/all-team", allTeamController);
+router.post("/team", AddTeamController);
+router.get("/team", allTeamController);
+router.post("/assign-player/:id", assignPlayerController);
+router.delete("/team/:id", deleteTeamController);
 // Game Schedule
 router.post("/add-game-schedule", addGameSchduleController);
 router.get("/all-game-schedule", allGameScheduleController);

@@ -34,7 +34,12 @@ const {
   updatePlayer,
   deletePlayer,
 } = require("./secure.playerController");
-const { addTeam, allTeam } = require("./secure.teamController");
+const {
+  addTeam,
+  allTeam,
+  assignPlayer,
+  deleteTeam,
+} = require("./secure.teamController");
 const {
   addTrainer,
   allTrainer,
@@ -79,6 +84,8 @@ module.exports = {
   deleteTrainerController: deleteTrainer,
   AddTeamController: addTeam,
   allTeamController: allTeam,
+  assignPlayerController: assignPlayer,
+  deleteTeamController: deleteTeam,
   addGameSchduleController: addGameSchedule,
   allGameScheduleController: allGameSchedule,
   addSeasonalGameController: addSeasonalGame,
