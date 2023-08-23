@@ -1,5 +1,6 @@
 const { generateToken } = require("../../../config/generateToken");
 const Otp = require("../../../model/user/otpModel");
+const Subdomain = require("../../../model/user/subdomainModel");
 const User = require("../../../model/user/userModel");
 
 const register = async (req, res) => {
@@ -57,6 +58,11 @@ const register = async (req, res) => {
 
         if (user) {
           await Otp.deleteOne({ email });
+
+          Subdomain.create({
+            name: subdomain,
+            woner: email,
+          });
 
           res.status(200).json(user);
         } else {
