@@ -30,6 +30,22 @@ app.use(express.json());
 // connect with database
 connectDB();
 
+// subdomain cors
+app.use(function (req, res, next) {
+  if (req.hostname.endsWith("vercel.app")) {
+    res.setHeader("Access-Control-Allow-Origin", "http://" + req.hostname);
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "X-Requested-With,Content-Type"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, OPTIONS, PUT, DELETE"
+    );
+  }
+  next();
+});
+
 // folder structred
 app.use("/public/api", publicRoutes);
 app.use("/api", commonRoutes);
