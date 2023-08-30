@@ -15,6 +15,7 @@ const app = express();
 require("dotenv").config();
 const corsOptions = {
   origin: [
+    "*",
     "https://xyz.in",
     "https://xyz.netlify.app",
     "http://localhost:3000",
@@ -32,22 +33,49 @@ app.use(express.json());
 connectDB();
 
 // subdomain cors
-app.use(function (req, res, next) {
-  console.log("gg ", req.hostname);
-  if (req.hostname.endsWith("vercel.app")) {
-    res.setHeader("Access-Control-Allow-Origin", "http://" + req.hostname);
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "X-Requested-With,Content-Type"
-    );
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, OPTIONS, PUT, DELETE"
-    );
-  }
-  console.log("ghh ", req.headers);
-  next();
-});
+// app.use(function (req, res, next) {
+//   console.log("gg ", req.hostname);
+//   if (req.hostname.endsWith("vercel.app")) {
+//     res.setHeader("Access-Control-Allow-Origin", "http://" + req.hostname);
+//     res.setHeader(
+//       "Access-Control-Allow-Headers",
+//       "X-Requested-With,Content-Type"
+//     );
+//     res.setHeader(
+//       "Access-Control-Allow-Methods",
+//       "GET, POST, OPTIONS, PUT, DELETE"
+//     );
+//   }
+//   console.log("ghh ", req.headers);
+//   next();
+// });
+// const router = express.Router();
+// var whitelist = [
+//   "https://squaddeck.vercel.app/",
+//   "https://subdomain.example.com",
+// ];
+// router.all("*", (req, res, next) => {
+//   var origin = req.headers.origin;
+//   console.log(origin);
+//   if (whitelist.indexOf(origin) != -1) {
+//     res.header("Access-Control-Allow-Origin", origin);
+//   }
+//   res.header("Access-Control-Allow-Headers", [
+//     "Content-Type",
+//     "X-Requested-With",
+//     "X-HTTP-Method-Override",
+//     "Accept",
+//   ]);
+//   res.header("Access-Control-Allow-Credentials", true);
+//   res.header("Access-Control-Allow-Methods", "GET,POST");
+//   res.header("Cache-Control", "no-store,no-cache,must-revalidate");
+//   res.header("Vary", "Origin");
+//   if (req.method === "OPTIONS") {
+//     res.status(200).send("");
+//     return;
+//   }
+//   next();
+// });
 
 // folder structred
 app.use("/public/api", publicRoutes);
@@ -57,7 +85,7 @@ app.use("/secure/api", secureRoutes);
 
 // base API
 app.get("/", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "https://*.vercel.app");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Origin", "https://xyz.in");
   res.header("Access-Control-Allow-Origin", "https://xyz.netlify.app");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
