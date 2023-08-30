@@ -79,6 +79,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+  // console.log(req.hostname);
   try {
     if (!email) {
       res.status(400).json({
