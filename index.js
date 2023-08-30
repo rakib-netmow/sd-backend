@@ -33,7 +33,7 @@ connectDB();
 
 // subdomain cors
 app.use(function (req, res, next) {
-  console.log(req.hostname);
+  console.log("gg ", req.hostname);
   if (req.hostname.endsWith("vercel.app")) {
     res.setHeader("Access-Control-Allow-Origin", "http://" + req.hostname);
     res.setHeader(
@@ -45,6 +45,7 @@ app.use(function (req, res, next) {
       "GET, POST, OPTIONS, PUT, DELETE"
     );
   }
+  console.log("ghh ", req.headers);
   next();
 });
 
