@@ -19,6 +19,7 @@ const corsOptions = {
     "https://xyz.netlify.app",
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://*.vercel.app",
   ],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -54,6 +55,7 @@ app.use("/secure/api", secureRoutes);
 
 // base API
 app.get("/", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "https://*.vercel.app");
   res.header("Access-Control-Allow-Origin", "https://xyz.in");
   res.header("Access-Control-Allow-Origin", "https://xyz.netlify.app");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
