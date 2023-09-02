@@ -12,7 +12,7 @@ const loginHandler = function (req, res, next) {
   if (Object.keys(mappedErrors).length === 0) {
     next();
   } else {
-    res.send({
+    res.status(400).send({
       errors: mappedErrors,
     });
   }
@@ -64,7 +64,7 @@ const registerHandler = function (req, res, next) {
   if (Object.keys(mappedErrors).length === 0) {
     next();
   } else {
-    res.send({
+    res.status(400).send({
       errors: mappedErrors,
     });
   }
