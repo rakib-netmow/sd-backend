@@ -15,38 +15,38 @@ const app = express();
 require("dotenv").config();
 
 // --------> Local
-const corsOptions = {
-  origin: [
-    "*",
-    "https://xyz.in",
-    "https://xyz.netlify.app",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://*.vercel.app",
-  ],
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
+// const corsOptions = {
+//   origin: [
+//     "*",
+//     "https://xyz.in",
+//     "https://xyz.netlify.app",
+//     "http://localhost:3000",
+//     "http://localhost:3001",
+//     "https://*.vercel.app",
+//   ],
+//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+// };
 
 // ------> production
 
-// const whitelist = "https://arifsclick.com/";
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     const splitedOri = origin?.split("://");
-//     const splitedOri1 = splitedOri[1]?.split(".");
-//     // console.log(whitelist.includes(splitedOri1[1]));
-//     if (splitedOri1?.length === 2 && whitelist.includes(splitedOri1[0])) {
-//       callback(null, true);
-//     } else if (
-//       splitedOri1?.length === 3 &&
-//       whitelist.includes(splitedOri1[1])
-//     ) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error());
-//     }
-//   },
-// };
+const whitelist = "https://arifsclick.com/";
+const corsOptions = {
+  origin: (origin, callback) => {
+    const splitedOri = origin?.split("://");
+    const splitedOri1 = splitedOri[1]?.split(".");
+    // console.log(whitelist.includes(splitedOri1[1]));
+    if (splitedOri1?.length === 2 && whitelist.includes(splitedOri1[0])) {
+      callback(null, true);
+    } else if (
+      splitedOri1?.length === 3 &&
+      whitelist.includes(splitedOri1[1])
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error());
+    }
+  },
+};
 
 app.use(cors(corsOptions));
 // app.use(cors());
