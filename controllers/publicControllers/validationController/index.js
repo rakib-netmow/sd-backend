@@ -8,8 +8,8 @@ const checkSubdomain = async (req, res) => {
         message: "Subdomain is missing!",
       });
     } else {
-      const findSubdomain = await User.find({ subdomain });
-      if (findSubdomain?.length < 1) {
+      const findSubdomain = await User.findOne({ subdomain });
+      if (!findSubdomain) {
         res.status(200).json({
           message: "Domain is available!",
         });
