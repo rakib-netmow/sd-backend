@@ -39,29 +39,36 @@ const addGuardian = async (req, res) => {
         message: "Athentication error!",
       });
     } else {
-      const newGaurdian = await User.create({
-        email,
-        name: first_name && last_name ? `${first_name} ${last_name}` : "",
-        phone: phone ? phone : "",
-        address_line_1: address_line_1 ? address_line_1 : "",
-        address_line_2: address_line_2 ? address_line_2 : "",
-        country: country ? country : "",
-        city: city ? city : "",
-        state: state ? state : "",
-        zip: zip ? zip : 0,
-        password: password,
-        role: "guardian",
-        added_by,
-        token: generateToken(email),
-      });
-
-      if (newGaurdian) {
-        res.status(200).json({
-          message: "Gaurdian created successfully.",
+      const existingGuardian = await User.findOne({ email });
+      if (!existingGuardian) {
+        const newGaurdian = await User.create({
+          email,
+          name: first_name && last_name ? `${first_name} ${last_name}` : "",
+          phone: phone ? phone : "",
+          address_line_1: address_line_1 ? address_line_1 : "",
+          address_line_2: address_line_2 ? address_line_2 : "",
+          country: country ? country : "",
+          city: city ? city : "",
+          state: state ? state : "",
+          zip: zip ? zip : 0,
+          password: password,
+          role: "guardian",
+          added_by,
+          token: generateToken(email),
         });
+
+        if (newGaurdian) {
+          res.status(200).json({
+            message: "Gaurdian created successfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can not create gaurdian. Please try again!",
+          });
+        }
       } else {
         res.status(400).json({
-          message: "Can not create gaurdian. Please try again!",
+          message: "Already have an user with this email",
         });
       }
     }
