@@ -38,6 +38,7 @@ const corsOptions = {
     ) {
       callback(null, true);
     } else {
+      const whitelist = "https://arifsclick.com/";
       const splitedOri = origin?.split("://");
       const splitedOri1 = splitedOri[1]?.split(".");
       // console.log(whitelist.includes(splitedOri1[1]));
