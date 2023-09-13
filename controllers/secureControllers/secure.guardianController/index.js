@@ -19,7 +19,7 @@ const addGuardian = async (req, res) => {
   const added_by = req.auth.id;
   try {
     if (!email) {
-      res.status(400).josn({
+      res.status(400).json({
         message: "Email is required!",
       });
     } else if (!password) {
@@ -86,7 +86,7 @@ const allGuardian = async (req, res) => {
       });
     } else {
       const gaurdians = await User.find({
-        $and: [{ added_by: email }, { role: "gaurdian" }],
+        $and: [{ added_by: email }, { role: "guardian" }],
       }).select(["-password", "-token"]);
 
       res.status(200).json(gaurdians);

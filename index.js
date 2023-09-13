@@ -33,8 +33,8 @@ require("dotenv").config();
 const corsOptions = {
   origin: (origin, callback) => {
     if (
-      origin === "http://localhost:3000" ||
-      origin === "http://localhost:3001"
+      origin.includes("localhost:3000") ||
+      origin.includes("http://localhost:3001")
     ) {
       callback(null, true);
     } else {
