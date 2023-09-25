@@ -21,6 +21,7 @@ const {
   allGuardian,
   updateGuardian,
   deleteGuardian,
+  totalGuardian,
 } = require("./secure.guardianController");
 const {
   addManager,
@@ -33,12 +34,16 @@ const {
   allPlayer,
   updatePlayer,
   deletePlayer,
+  totalPlayer,
+  latestPlayer,
 } = require("./secure.playerController");
 const {
   addTeam,
   allTeam,
   assignPlayer,
   deleteTeam,
+  totalTeam,
+  latestTeam,
 } = require("./secure.teamController");
 const {
   addTrainer,
@@ -65,40 +70,57 @@ const {
 const { getUserCountry } = require("./userController/userController");
 
 module.exports = {
+  // user
   userCountryController: getUserCountry,
+  // guardian
   addGuardianController: addGuardian,
   allGuardianController: allGuardian,
+  totalGuardianController: totalGuardian,
   updateGuardianController: updateGuardian,
   deleteGuardianController: deleteGuardian,
+  // player
   addPlayerController: addPlayer,
   allPlayerController: allPlayer,
+  totalPlayerController: totalPlayer,
+  latestPlayerController: latestPlayer,
   updatePlayerController: updatePlayer,
   deletePlayerController: deletePlayer,
+  // manager
   addManagerController: addManager,
   allManagerController: allManager,
   updateManagerController: updateManager,
   deleteManagerController: deleteManager,
+  // trainer
   addTrainerController: addTrainer,
   allTrainerController: allTrainer,
   updateTrainerController: updateTrainer,
   deleteTrainerController: deleteTrainer,
+  // team
   AddTeamController: addTeam,
   allTeamController: allTeam,
+  totalTeamController: totalTeam,
+  latestTeamController: latestTeam,
   assignPlayerController: assignPlayer,
   deleteTeamController: deleteTeam,
+  // game schedule
   addGameSchduleController: addGameSchedule,
   allGameScheduleController: allGameSchedule,
   addSeasonalGameController: addSeasonalGame,
   allSeasonalGameController: allSeasonalGame,
+  // training schedule
   addWeeklyTrainingScheduleController: addWeeklyTrainingSchedule,
   addCustomTrainingScheduleController: addCustomTrainingSchedule,
   allTrainingScheduleController: allTrainingSchedule,
+  // events
   addSpecialEventController: addSpecialEvent,
   allSpecialEventController: allSpecialEvent,
+  // class attendence
   addClassController: addClass,
   allClassController: allClass,
+  // sponsor
   addSponsorController: addSponsor,
   allSponsorController: allSponsor,
+  // subscription
   addPlayerSubscriptionController: addPlayerSubscription,
   allPlayerSubscriptionController: allPlayerSubscription,
   addSeasonalSubscriptionController: addSeasonalSubscription,

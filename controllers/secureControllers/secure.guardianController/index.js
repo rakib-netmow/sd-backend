@@ -95,6 +95,24 @@ const allGuardian = async (req, res) => {
     console.log(error);
   }
 };
+const totalGuardian = async (req, res) => {
+  const email = req.auth.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else {
+      const gaurdians = await User.find({
+        $and: [{ added_by: email }, { role: "guardian" }],
+      }).select(["-password", "-token"]);
+
+      res.status(200).json({ totalGuardians: gaurdians.length });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const updateGuardian = async (req, res) => {
   const data = req.body;
@@ -155,6 +173,7 @@ const deleteGuardian = async (req, res) => {
 module.exports = {
   addGuardian,
   allGuardian,
+  totalGuardian,
   updateGuardian,
   deleteGuardian,
 };

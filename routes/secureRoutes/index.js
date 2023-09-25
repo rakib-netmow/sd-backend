@@ -40,6 +40,11 @@ const {
   deleteTrainerController,
   assignPlayerController,
   deleteTeamController,
+  totalTeamController,
+  totalPlayerController,
+  totalGuardianController,
+  latestPlayerController,
+  latestTeamController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -52,11 +57,14 @@ router.get("/user-country", userCountryController);
 // Guardian
 router.post("/guardian", addGuardianController);
 router.get("/guardian", allGuardianController);
+router.get("/total-guardian", totalGuardianController);
 router.patch("/guardian/:id", updateGuardianController);
 router.delete("/guardian/:id", deleteGuardianController);
 // Player
 router.post("/player", addPlayerController);
 router.get("/player", allPlayerController);
+router.get("/total-player", totalPlayerController);
+router.get("/latest-player", latestPlayerController);
 router.patch("/player/:id", updatePlayerController);
 router.delete("/player/:id", deletePlayerController);
 // Manager
@@ -72,6 +80,8 @@ router.delete("/trainer/:id", deleteTrainerController);
 // Team
 router.post("/team", AddTeamController);
 router.get("/team", allTeamController);
+router.get("/total-team", totalTeamController);
+router.get("/latest-team", latestTeamController);
 router.post("/assign-player/:id", assignPlayerController);
 router.delete("/team/:id", deleteTeamController);
 // Game Schedule

@@ -66,6 +66,26 @@ const allTeam = async (req, res) => {
   }
 };
 
+const totalTeam = async (req, res) => {
+  const created_by = req.auth.id;
+  try {
+    const totalteams = await Team.find({ created_by });
+    res.status(200).json({ totalteams: totalteams?.length });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const latestTeam = async (req, res) => {
+  const created_by = req.auth.id;
+  try {
+    const teams = await Team.find({ created_by }).sort({ createdAt: 1 });
+    res.status(200).json(teams);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const assignPlayer = async (req, res) => {
   try {
     const { player_id } = req.body;
@@ -115,6 +135,8 @@ const deleteTeam = async (req, res) => {
 module.exports = {
   addTeam,
   allTeam,
+  totalTeam,
+  latestTeam,
   assignPlayer,
   deleteTeam,
 };

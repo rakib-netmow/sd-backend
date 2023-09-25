@@ -113,6 +113,46 @@ const allPlayer = async (req, res) => {
   }
 };
 
+const totalPlayer = async (req, res) => {
+  const email = req.auth.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else {
+      const players = await User.find({
+        $and: [{ added_by: email }, { role: "player" }],
+      }).select(["-password", "-token"]);
+
+      res.status(200).json({ totalPlayers: players.length });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const latestPlayer = async (req, res) => {
+  const email = req.auth.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else {
+      const players = await User.find({
+        $and: [{ added_by: email }, { role: "player" }],
+      })
+        .select(["-password", "-token"])
+        .sort({ createdAt: 1 });
+
+      res.status(200).json(players);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const updatePlayer = async (req, res) => {
   const data = req.body;
   const added_by = req.auth.id;
@@ -172,6 +212,8 @@ const deletePlayer = async (req, res) => {
 module.exports = {
   addPlayer,
   allPlayer,
+  totalPlayer,
+  latestPlayer,
   updatePlayer,
   deletePlayer,
 };
