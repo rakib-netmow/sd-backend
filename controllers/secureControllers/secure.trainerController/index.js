@@ -35,7 +35,7 @@ const addTrainer = async (req, res) => {
         message: "Confrim password does not match!",
       });
     } else if (
-      status &&
+      !status &&
       (status.toLowerCase() !== "active" || status.toLowerCase() !== "inactive")
     ) {
       res.status(400).json({
@@ -60,7 +60,7 @@ const addTrainer = async (req, res) => {
         date_of_birth: date_of_birth ? date_of_birth : "",
         phone: phone ? phone : "",
         username: username ? username : "",
-        status: status ? status : "inactive",
+        status: status ? status.toLowerCase() : "inactive",
         role: "trainer",
         added_by,
         token: generateToken(email),
