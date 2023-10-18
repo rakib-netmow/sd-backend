@@ -13,7 +13,7 @@ const register = async (req, res) => {
     phone,
     country,
     password,
-    confrim_password,
+    confirm_password,
   } = req.body;
   try {
     if (!subdomain) {

@@ -11,7 +11,7 @@ const addTrainer = async (req, res) => {
     phone,
     email,
     password,
-    confrim_password,
+    confirm_password,
     username,
     status,
   } = req.body;
@@ -26,11 +26,11 @@ const addTrainer = async (req, res) => {
       res.status(400).json({
         message: "Password is required!",
       });
-    } else if (!confrim_password) {
+    } else if (!confirm_password) {
       res.status(400).json({
         message: "Confrim password is required!",
       });
-    } else if (password !== confrim_password) {
+    } else if (password !== confirm_password) {
       res.status(400).json({
         message: "Confrim password does not match!",
       });
@@ -94,7 +94,6 @@ const allTrainer = async (req, res) => {
   }
 };
 
-
 const updateTrainer = async (req, res) => {
   const data = req.body;
   const added_by = req.auth.id;
@@ -104,7 +103,7 @@ const updateTrainer = async (req, res) => {
       res.status(400).json({
         message: "You can't change your email or username!",
       });
-    } else if (data?.password && data?.password !== data?.confrim_password) {
+    } else if (data?.password && data?.password !== data?.confirm_password) {
       res.status(400).json({
         message: "Confrim password is not matched!",
       });
@@ -155,5 +154,5 @@ module.exports = {
   addTrainer,
   allTrainer,
   updateTrainer,
-  deleteTrainer
+  deleteTrainer,
 };

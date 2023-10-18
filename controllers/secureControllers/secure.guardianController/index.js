@@ -14,7 +14,7 @@ const addGuardian = async (req, res) => {
     state,
     zip,
     password,
-    confrim_password,
+    confirm_password,
   } = req.body;
   const added_by = req.auth.id;
   try {
@@ -26,11 +26,11 @@ const addGuardian = async (req, res) => {
       res.status(400).json({
         message: "Password is required!",
       });
-    } else if (!confrim_password) {
+    } else if (!confirm_password) {
       res.status(400).json({
         message: "Confrim password is required!",
       });
-    } else if (password !== confrim_password) {
+    } else if (password !== confirm_password) {
       res.status(400).json({
         message: "Confrim password does not matched!",
       });
@@ -123,7 +123,7 @@ const updateGuardian = async (req, res) => {
       res.status(400).json({
         message: "You can't change your email or username!",
       });
-    } else if (data?.password && data?.password !== data?.confrim_password) {
+    } else if (data?.password && data?.password !== data?.confirm_password) {
       res.status(400).json({
         message: "Confrim password is not matched!",
       });
