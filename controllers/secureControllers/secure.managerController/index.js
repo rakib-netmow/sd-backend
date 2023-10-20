@@ -35,7 +35,7 @@ const addManager = async (req, res) => {
         message: "Confrim password does not match!",
       });
     } else if (
-      status &&
+      !status &&
       (status.toLowerCase() !== "active" || status.toLowerCase() !== "inactive")
     ) {
       res.status(400).json({

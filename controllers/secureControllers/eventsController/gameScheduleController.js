@@ -3,8 +3,9 @@ const GameSchedule = require("../../../model/events/gameSchedule");
 
 const addGameSchedule = async (req, res) => {
   const {
-    host_team,
-    guest_team,
+    // host_team,
+    // guest_team,
+    team,
     vanue,
     game_name,
     date,
@@ -15,13 +16,9 @@ const addGameSchedule = async (req, res) => {
   } = req.body;
   const created_by = req.auth.id;
   try {
-    if (!host_team) {
+    if (!team) {
       res.status(400).json({
         message: "Host Team is missing!",
-      });
-    } else if (!guest_team) {
-      res.status(400).json({
-        message: "Guest Team is missing!",
       });
     } else if (!vanue) {
       res.status(400).json({
@@ -48,10 +45,8 @@ const addGameSchedule = async (req, res) => {
         message: "Status is missing!",
       });
     } else if (
-      status &&
-      (status.toLowerCase() !== "processing" ||
-        status.toLowerCase() !== "win" ||
-        status.toLowerCase() !== "lose")
+      !status &&
+      (status.toLowerCase() !== "active" || status.toLowerCase() !== "inactive")
     ) {
       res.status(400).json({
         message: "Invalid status!",
@@ -67,8 +62,9 @@ const addGameSchedule = async (req, res) => {
       //   };
       // }
       const newGameSchedule = await GameSchedule.create({
-        host_team,
-        guest_team,
+        // host_team,
+        // guest_team,
+        team,
         vanue,
         game_name,
         date,

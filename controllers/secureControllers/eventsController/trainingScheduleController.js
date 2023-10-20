@@ -34,7 +34,7 @@ const addWeeklyTrainingSchedule = async (req, res) => {
         message: "Status is missing!",
       });
     } else if (
-      status &&
+      !status &&
       (status.toLowerCase() !== "open" || status.toLowerCase() !== "closed")
     ) {
       res.status(400).json({
@@ -101,7 +101,7 @@ const addCustomTrainingSchedule = async (req, res) => {
         message: "Status is missing!",
       });
     } else if (
-      status &&
+      !status &&
       (status.toLowerCase() !== "open" || status.toLowerCase() !== "closed")
     ) {
       res.status(400).json({

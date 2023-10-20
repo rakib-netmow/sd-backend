@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 
 const gameScheduleSchema = new mongoose.Schema(
   {
-    host_team: String,
-    guest_team: String,
-    vanue: String,
+    // host_team: String,
+    // guest_team: String,
+    team: String,
+    // vanue: String,
     game_name: String,
     date: String,
     time: String,
