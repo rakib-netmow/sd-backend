@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const seasonalSubscriptionSchema = new mongoose.Schema(
   {
     name: String,
-    image: String,
+    fee: String,
+    create_date: String,
+    end_date: String,
     description: String,
     created_by: String,
   },

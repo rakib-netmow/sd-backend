@@ -4,8 +4,9 @@ const playerSubscriptionSchema = new mongoose.Schema(
   {
     name: String,
     fee: String,
-    for_: String,
+    create_date: String,
     end_date: String,
+    select_team: String,
     description: String,
     created_by: String,
   },

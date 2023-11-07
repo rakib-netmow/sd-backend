@@ -1,16 +1,24 @@
 const SeasonalSubscription = require("../../../model/subscription/seasonalSubscriptionModel");
 
 const addSeasonalSubscription = async (req, res) => {
-  const {
-    name,
-    // image,
-    description,
-  } = req.body;
+  const { name, fee, create_date, end_date, description } = req.body;
   const created_by = req.auth.id;
   try {
     if (!name) {
       res.status(400).json({
         message: "Name is required!",
+      });
+    } else if (!fee) {
+      res.status(400).json({
+        message: "Fee is required!",
+      });
+    } else if (!create_date) {
+      res.status(400).json({
+        message: "Created date is required!",
+      });
+    } else if (!end_date) {
+      res.status(400).json({
+        message: "End date is required!",
       });
     } else if (!description) {
       res.status(400).json({
@@ -19,7 +27,9 @@ const addSeasonalSubscription = async (req, res) => {
     } else {
       const newSeasonalSubscription = await SeasonalSubscription.create({
         name,
-        // image,
+        fee,
+        create_date,
+        end_date,
         description,
         created_by,
       });
