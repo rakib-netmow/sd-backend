@@ -28,7 +28,7 @@ const addGuardian = async (req, res) => {
       });
     } else if (!confirm_password) {
       res.status(400).json({
-        message: "Confrim password is required!",
+        message: "Confirm password is required!",
       });
     } else if (password !== confirm_password) {
       res.status(400).json({

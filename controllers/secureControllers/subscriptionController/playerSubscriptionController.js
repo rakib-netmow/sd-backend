@@ -22,6 +22,7 @@ const addPlayerSubscription = async (req, res) => {
       });
     } else {
       const newPlayersubscription = await PlayerSubscription.create({
+        name,
         fee,
         for_,
         end_date,
