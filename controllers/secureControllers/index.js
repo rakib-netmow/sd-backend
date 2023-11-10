@@ -1,3 +1,7 @@
+const {
+  allPendingCharges,
+  allPaidCharges,
+} = require("./chargesController/chargesController");
 const { addClass, allClass } = require("./classController/classController");
 const {
   addGameSchedule,
@@ -51,6 +55,16 @@ const {
   updateTrainer,
   deleteTrainer,
 } = require("./secure.trainerController");
+const {
+  changeBusinessSetting,
+  allBusinessSetting,
+  addBusinessSetting,
+} = require("./settingController/businessSettingController");
+const {
+  addCurrency,
+  changeCurrency,
+  getCurrency,
+} = require("./settingController/currencySettingController");
 const {
   addSponsor,
   allSponsor,
@@ -127,4 +141,16 @@ module.exports = {
   allSeasonalSubscriptionController: allSeasonalSubscription,
   addGameSubscriptionController: addGameSubscription,
   allGameSubscriptionController: allGameSubscription,
+  // charges
+  allPendingChargesController: allPendingCharges,
+  allPaidChargesController: allPaidCharges,
+  // settings
+  // business settings
+  addBusinessSettingController: addBusinessSetting,
+  changeBusinessSettingController: changeBusinessSetting,
+  allBusinessSettingController: allBusinessSetting,
+  // currency settings
+  addCurrencyController: addCurrency,
+  chnageCurrencyController: changeCurrency,
+  getCurrencyController: getCurrency,
 };

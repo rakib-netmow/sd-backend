@@ -1,4 +1,5 @@
 const { generateToken } = require("../../../config/generateToken");
+const BusinessSetting = require("../../../model/settings/businessSettingModel");
 const Otp = require("../../../model/user/otpModel");
 const Subdomain = require("../../../model/user/subdomainModel");
 const User = require("../../../model/user/userModel");
@@ -59,10 +60,15 @@ const register = async (req, res) => {
         if (user) {
           await Otp.deleteOne({ email });
 
-          Subdomain.create({
+          await Subdomain.create({
             name: subdomain,
             woner: email,
           });
+
+          // await BusinessSetting.create({
+          //   company_name: organisation_name,
+          //   created_by: email,
+          // });
 
           res.status(200).json(user);
         } else {

@@ -45,6 +45,14 @@ const {
   totalGuardianController,
   latestPlayerController,
   latestTeamController,
+  allPendingChargesController,
+  allPaidChargesController,
+  changeBusinessSettingController,
+  allBusinessSettingController,
+  addBusinessSettingController,
+  addCurrencyController,
+  chnageCurrencyController,
+  getCurrencyController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -118,5 +126,17 @@ router.get("/all-seasonal-subscription", allSeasonalSubscriptionController);
 // Game Subscription
 router.post("/add-game-subscription", addGameSubscriptionController);
 router.get("/all-game-subscription", allGameSubscriptionController);
+// charges
+router.get("/pending-charges-list", allPendingChargesController);
+router.get("/paid-charges-list", allPaidChargesController);
+// settings
+// business setting
+router.post("/company-information", addBusinessSettingController);
+router.patch("/company-information", changeBusinessSettingController);
+router.get("/company-information", allBusinessSettingController);
+// currency setting
+router.post("/currency", addCurrencyController);
+router.patch("/currency", chnageCurrencyController);
+router.get("/currency", getCurrencyController);
 
 module.exports = router;
