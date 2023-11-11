@@ -53,6 +53,19 @@ const {
   addCurrencyController,
   chnageCurrencyController,
   getCurrencyController,
+  addDomainController,
+  addDnsController,
+  allDnsController,
+  updateDnsController,
+  deleteDnsController,
+  addNsController,
+  allNsController,
+  updateNsController,
+  deleteNsController,
+  addCnameController,
+  allCnameController,
+  updateCnameController,
+  deleteCnameController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -138,5 +151,19 @@ router.get("/company-information", allBusinessSettingController);
 router.post("/currency", addCurrencyController);
 router.patch("/currency", chnageCurrencyController);
 router.get("/currency", getCurrencyController);
+// Domain management
+router.post("/domain-name", addDomainController);
+router.post("/dns-record", addDnsController);
+router.get("/dns-record", allDnsController);
+router.patch("/dns-record/:id", updateDnsController);
+router.delete("/dns-record/:id", deleteDnsController);
+router.post("/ns-record", addNsController);
+router.get("/ns-record", allNsController);
+router.patch("/ns-record/:id", updateNsController);
+router.delete("/ns-record/:id", deleteNsController);
+router.post("/cname-record", addCnameController);
+router.get("/cname-record", allCnameController);
+router.patch("/cname-record/:id", updateCnameController);
+router.delete("/cname-record/:id", deleteCnameController);
 
 module.exports = router;

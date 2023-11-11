@@ -138,11 +138,11 @@ const deleteTrainer = async (req, res) => {
     const trainer = await User.findOneAndDelete({ _id: id });
     if (trainer) {
       res.status(200).json({
-        message: "Guardian deleted succefully.",
+        message: "Trainer deleted succefully.",
       });
     } else {
       res.status(400).json({
-        message: "Cant not delete guardian. Please try again!",
+        message: "Cant not delete trainer. Please try again!",
       });
     }
   } catch (error) {

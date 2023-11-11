@@ -66,6 +66,21 @@ const {
   getCurrency,
 } = require("./settingController/currencySettingController");
 const {
+  addDomain,
+  addDns,
+  AllDns,
+  updateDns,
+  deleteDns,
+  addNs,
+  AllNs,
+  updateNs,
+  deleteNs,
+  addCname,
+  AllCname,
+  updateCname,
+  deleteCname,
+} = require("./settingController/domainManagementController");
+const {
   addSponsor,
   allSponsor,
 } = require("./sponsorController/sponsorController");
@@ -153,4 +168,18 @@ module.exports = {
   addCurrencyController: addCurrency,
   chnageCurrencyController: changeCurrency,
   getCurrencyController: getCurrency,
+  // domain management
+  addDomainController: addDomain,
+  addDnsController: addDns,
+  allDnsController: AllDns,
+  updateDnsController: updateDns,
+  deleteDnsController: deleteDns,
+  addNsController: addNs,
+  allNsController: AllNs,
+  updateNsController: updateNs,
+  deleteNsController: deleteNs,
+  addCnameController: addCname,
+  allCnameController: AllCname,
+  updateCnameController: updateCname,
+  deleteCnameController: deleteCname,
 };

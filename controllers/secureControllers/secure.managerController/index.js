@@ -138,11 +138,11 @@ const deleteManager = async (req, res) => {
     const manager = await User.findOneAndDelete({ _id: id });
     if (manager) {
       res.status(200).json({
-        message: "Guardian deleted succefully.",
+        message: "Manager deleted succefully.",
       });
     } else {
       res.status(400).json({
-        message: "Cant not delete guardian. Please try again!",
+        message: "Cant not delete manager. Please try again!",
       });
     }
   } catch (error) {
