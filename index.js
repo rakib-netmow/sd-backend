@@ -38,7 +38,8 @@ const corsOptions = {
     ) {
       callback(null, true);
     } else {
-      const whitelist = "https://arifsclick.com/";
+      // const whitelist = "https://arifsclick.com/";
+      const whitelist = "https://wazzasgarage.com/";
       const splitedOri = origin?.split("://");
       const splitedOri1 = splitedOri[1]?.split(".");
       // console.log(whitelist.includes(splitedOri1[1]));
@@ -117,6 +118,7 @@ app.use("/secure/api", secureRoutes);
 // base API
 app.get("/", (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "https://wazzasgarage.com/");
   res.header("Access-Control-Allow-Origin", "https://xyz.in");
   res.header("Access-Control-Allow-Origin", "https://xyz.netlify.app");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");

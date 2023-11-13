@@ -66,6 +66,10 @@ const {
   allCnameController,
   updateCnameController,
   deleteCnameController,
+  addStripeController,
+  addPaypalController,
+  addSslcommerzController,
+  addSmtpController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -165,5 +169,11 @@ router.post("/cname-record", addCnameController);
 router.get("/cname-record", allCnameController);
 router.patch("/cname-record/:id", updateCnameController);
 router.delete("/cname-record/:id", deleteCnameController);
+// payment setting
+router.post("/add-stripe", addStripeController);
+router.post("/add-paypal", addPaypalController);
+router.post("/add-sslcommerz", addSslcommerzController);
+// email config setting
+router.post("/add-smtp", addSmtpController);
 
 module.exports = router;

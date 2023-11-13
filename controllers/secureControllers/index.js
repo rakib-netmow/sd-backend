@@ -80,6 +80,12 @@ const {
   updateCname,
   deleteCname,
 } = require("./settingController/domainManagementController");
+const { addSmtp } = require("./settingController/emailConfigSettingController");
+const {
+  addStripe,
+  addPaypal,
+  addSslcommerz,
+} = require("./settingController/paymentSettingController");
 const {
   addSponsor,
   allSponsor,
@@ -182,4 +188,10 @@ module.exports = {
   allCnameController: AllCname,
   updateCnameController: updateCname,
   deleteCnameController: deleteCname,
+  // payment setting
+  addStripeController: addStripe,
+  addPaypalController: addPaypal,
+  addSslcommerzController: addSslcommerz,
+  // email config setting
+  addSmtpController: addSmtp,
 };
