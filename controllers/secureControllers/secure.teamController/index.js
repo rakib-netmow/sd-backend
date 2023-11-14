@@ -3,7 +3,7 @@
 const Team = require("../../../model/team/teamModel");
 
 const addTeam = async (req, res) => {
-  const { name, manager, trainer, description } = req.body;
+  const { name, manager, trainer, description, fee } = req.body;
   const created_by = req.auth.id;
   try {
     if (!name) {
@@ -24,6 +24,10 @@ const addTeam = async (req, res) => {
       res.status(400).json({
         message: "Description is required!",
       });
+    } else if (!fee) {
+      res.status(400).json({
+        message: "Team fee is required!",
+      });
     } else {
       //** upload the image
       // let avatar = {};
@@ -40,6 +44,7 @@ const addTeam = async (req, res) => {
         manager: manager ? manager : "",
         trainer: trainer ? trainer : "",
         description,
+        fee,
         created_by,
       });
 

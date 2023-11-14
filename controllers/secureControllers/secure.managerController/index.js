@@ -60,7 +60,7 @@ const addManager = async (req, res) => {
         date_of_birth: date_of_birth ? date_of_birth : "",
         phone: phone ? phone : "",
         username: username ? username : "",
-        status: status ? status : "inactive",
+        status: status ? status.toLowerCase() : "inactive",
         role: "manager",
         added_by,
         token: generateToken(email),

@@ -58,7 +58,7 @@ const allClass = async (req, res) => {
   try {
     const created_by = req.auth.id;
     const allClasses = await Class.find({ created_by });
-    res.stauts(200).json(allClasses);
+    res.status(200).json(allClasses);
   } catch (error) {
     console.log(error);
   }

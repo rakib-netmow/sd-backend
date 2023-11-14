@@ -8,6 +8,7 @@ const teamSchema = new mongoose.Schema(
     player: Array,
     description: String,
     image: String,
+    fee: String,
     created_by: String,
   },
   {
