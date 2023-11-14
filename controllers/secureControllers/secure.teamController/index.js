@@ -10,15 +10,17 @@ const addTeam = async (req, res) => {
       res.status(400).json({
         message: "Name is required!",
       });
-    } else if (!manager) {
-      res.status(400).json({
-        message: "Manager is required!",
-      });
-    } else if (!trainer) {
-      res.status(400).json({
-        message: "Trainer is required!",
-      });
-    } else if (!description) {
+    }
+    // else if (!manager) {
+    //   res.status(400).json({
+    //     message: "Manager is required!",
+    //   });
+    // } else if (!trainer) {
+    //   res.status(400).json({
+    //     message: "Trainer is required!",
+    //   });
+    // }
+    else if (!description) {
       res.status(400).json({
         message: "Description is required!",
       });
@@ -35,8 +37,8 @@ const addTeam = async (req, res) => {
 
       const newTeam = await Team.create({
         name,
-        manager,
-        trainer,
+        manager: manager ? manager : "",
+        trainer: trainer ? trainer : "",
         description,
         created_by,
       });
