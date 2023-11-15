@@ -13,10 +13,14 @@ const seasonalGameSchema = new mongoose.Schema(
     starts: String,
     ends: String,
     notification: { type: String, enum: ["push notification and email"] },
-    // date: String,
     // location: String,
     fees: String,
     visible_to: Array,
+    status: {
+      type: String,
+      enum: ["pendin", "running", "end"],
+      default: "pending",
+    },
     created_by: String,
   },
   {

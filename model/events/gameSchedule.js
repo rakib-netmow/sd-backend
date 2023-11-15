@@ -13,7 +13,7 @@ const gameScheduleSchema = new mongoose.Schema(
     time: String,
     image: String,
     description: String,
-    staus: { type: String, enum: ["processing", "win", "lose"] },
+    status: { type: String, enum: ["processing", "win", "lose"] },
     created_by: String,
   },
   {
