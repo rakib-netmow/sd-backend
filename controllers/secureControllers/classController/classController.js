@@ -1,7 +1,15 @@
 const Class = require("../../../model/class/classModel");
 
 const addClass = async (req, res) => {
-  const { name, trainers, class_starts, class_ends, teams, players } = req.body;
+  const {
+    name,
+    trainers,
+    class_starts,
+    class_ends,
+    team_id,
+    team_name,
+    players,
+  } = req.body;
   const created_by = req.auth.id;
   try {
     if (!name) {
@@ -10,7 +18,7 @@ const addClass = async (req, res) => {
       });
     } else if (!trainers) {
       res.status(400).json({
-        message: "Class trainers are required!",
+        message: "Class trainer is required!",
       });
     } else if (!class_starts) {
       res.status(400).json({
@@ -20,13 +28,17 @@ const addClass = async (req, res) => {
       res.status(400).json({
         message: "Class end time is required!",
       });
-    } else if (!teams) {
+    } else if (!team_id) {
       res.status(400).json({
-        message: "Teams are required!",
+        message: "Team ID is required!",
+      });
+    } else if (!team_name) {
+      res.status(400).json({
+        message: "Team name is required!",
       });
     } else if (!players) {
       res.status(400).json({
-        messgae: "Players are required!",
+        messgae: "Player is required!",
       });
     } else {
       const newClass = await Class.create({
@@ -34,7 +46,8 @@ const addClass = async (req, res) => {
         trainers,
         class_starts,
         class_ends,
-        teams,
+        team_id,
+        team_name,
         players,
         created_by,
       });
