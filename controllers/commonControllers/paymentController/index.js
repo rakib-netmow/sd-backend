@@ -89,8 +89,18 @@ const createTransaction = async (req, res) => {
     });
   }
 };
+const myTransaction = async (req, res) => {
+  try {
+    const payment_by = req.auth.id;
+    const transactions = await Transaction.find({ payment_by });
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   stripePaymentIntent,
   createTransaction,
+  myTransaction,
 };
