@@ -40,7 +40,7 @@ const addClass = async (req, res) => {
       });
 
       if (newClass) {
-        res.stauts(200).json({
+        res.status(200).json({
           message: "New class is created successfully.",
         });
       } else {
