@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const seasonalGameSchema = new mongoose.Schema(
   {
     name: String,
+    host_team_name: String,
+    host_team_id: String,
+    guest_team_name: String,
+    guest_team_id: String,
     vanue: String,
     image: String,
     description: String,

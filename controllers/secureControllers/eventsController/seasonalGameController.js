@@ -3,6 +3,10 @@ const SeasonalGame = require("../../../model/events/seasonalGamesModel");
 const addSeasonalGame = async (req, res) => {
   const {
     name,
+    host_team_name,
+    host_team_id,
+    guest_team_name,
+    guest_team_id,
     vanue,
     // image,
     description,
@@ -17,6 +21,22 @@ const addSeasonalGame = async (req, res) => {
     if (!name) {
       res.status(400).json({
         message: "Name is required!",
+      });
+    } else if (!host_team_name) {
+      res.status(400).json({
+        message: "Host team name is missing!",
+      });
+    } else if (!host_team_id) {
+      res.status(400).json({
+        message: "Host team ID is missing!",
+      });
+    } else if (!guest_team_name) {
+      res.status(400).json({
+        message: "Guest team name is missing!",
+      });
+    } else if (!guest_team_id) {
+      res.status(400).json({
+        message: "Guest team ID is missing!",
       });
     } else if (!starts) {
       res.status(400).json({
@@ -42,13 +62,30 @@ const addSeasonalGame = async (req, res) => {
       res.status(400).json({
         message: "Notification is required!",
       });
-    } else if (!visible_to) {
+    } else if (visible_to?.length < 1) {
       res.status(400).json({
         message: "Visible option is required!",
+      });
+    } else if (typeof visible_to !== "object") {
+      res.status(400).json({
+        message: "Invalid visible option data type!",
+      });
+    } else if (
+      !notification &&
+      (notification.toLowerCase() !== "push notification and email" ||
+        notification.toLowerCase() !== "none")
+    ) {
+      //
+      res.status(400).json({
+        message: "Invalid notification!",
       });
     } else {
       const newSeasonalGame = await SeasonalGame.create({
         name,
+        host_team_name,
+        host_team_id,
+        guest_team_name,
+        guest_team_id,
         vanue,
         description,
         starts,
