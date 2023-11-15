@@ -1,4 +1,8 @@
 const {
+  stripePaymentIntent,
+  createTransaction,
+} = require("../commonControllers/paymentController");
+const {
   allPendingCharges,
   allPaidCharges,
 } = require("./chargesController/chargesController");
@@ -120,6 +124,10 @@ module.exports = {
   latestPlayerController: latestPlayer,
   updatePlayerController: updatePlayer,
   deletePlayerController: deletePlayer,
+  // payment
+  // stripe
+  stripePaymentIntentController: stripePaymentIntent,
+  createTransactionController: createTransaction,
   // manager
   addManagerController: addManager,
   allManagerController: allManager,

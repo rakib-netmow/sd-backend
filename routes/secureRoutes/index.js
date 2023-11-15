@@ -70,6 +70,8 @@ const {
   addPaypalController,
   addSslcommerzController,
   addSmtpController,
+  stripePaymentIntentController,
+  createTransactionController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 
@@ -92,6 +94,10 @@ router.get("/total-player", totalPlayerController);
 router.get("/latest-player", latestPlayerController);
 router.patch("/player/:id", updatePlayerController);
 router.delete("/player/:id", deletePlayerController);
+// payment
+// stripe
+router.post("/stripe-payment-intent", stripePaymentIntentController);
+router.post("/transaction", createTransactionController);
 // Manager
 router.post("/manager", addManagerController);
 router.get("/manager", allManagerController);
