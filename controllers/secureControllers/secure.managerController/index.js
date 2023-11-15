@@ -42,37 +42,44 @@ const addManager = async (req, res) => {
         message: "Invalid status!",
       });
     } else {
-      //** upload the image
-      // let avatar = {};
-      // if (req.file?.path) {
-      //   const image = await Cloudinary.uploader.upload(req.file?.path);
-      //   avatar = {
-      //     avatar: image.secure_url,
-      //     avatar_public_url: image.public_id,
-      //   };
-      // }
+      const existingManger = await User.findOne({ email });
+      if (!existingManger?.email) {
+        //** upload the image
+        // let avatar = {};
+        // if (req.file?.path) {
+        //   const image = await Cloudinary.uploader.upload(req.file?.path);
+        //   avatar = {
+        //     avatar: image.secure_url,
+        //     avatar_public_url: image.public_id,
+        //   };
+        // }
 
-      const newManager = await User.create({
-        email,
-        password,
-        name: first_name && last_name ? `${first_name} ${last_name}` : "",
-        gender: gender ? gender : "",
-        date_of_birth: date_of_birth ? date_of_birth : "",
-        phone: phone ? phone : "",
-        username: username ? username : "",
-        status: status ? status.toLowerCase() : "inactive",
-        role: "manager",
-        added_by,
-        token: generateToken(email),
-      });
-
-      if (newManager) {
-        res.status(200).json({
-          message: "New manager added successfully.",
+        const newManager = await User.create({
+          email,
+          password,
+          name: first_name && last_name ? `${first_name} ${last_name}` : "",
+          gender: gender ? gender : "",
+          date_of_birth: date_of_birth ? date_of_birth : "",
+          phone: phone ? phone : "",
+          username: username ? username : "",
+          status: status ? status.toLowerCase() : "inactive",
+          role: "manager",
+          added_by,
+          token: generateToken(email),
         });
+
+        if (newManager) {
+          res.status(200).json({
+            message: "New manager added successfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can not add new manager. Please try again!",
+          });
+        }
       } else {
         res.status(400).json({
-          message: "Can not add new manager. Please try again!",
+          message: "Email already exist!",
         });
       }
     }
