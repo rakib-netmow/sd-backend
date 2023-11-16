@@ -1,5 +1,6 @@
 const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
+const Cloudinary = require("../../../config/cloudinary.js");
 
 const addPlayer = async (req, res) => {
   const {
@@ -49,7 +50,29 @@ const addPlayer = async (req, res) => {
       res.status(400).json({
         message: "Fees is required!",
       });
-    } else {
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
+      //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
+      // }
+
       const existingPlayer = await User.findOne({ email });
       if (!existingPlayer) {
         const newPlayer = await User.create({
@@ -73,6 +96,7 @@ const addPlayer = async (req, res) => {
           description: description ? description : "",
           added_by,
           role: "player",
+          // profile_image: uploadedImage
         });
         if (newPlayer) {
           res.status(200).json({

@@ -10,7 +10,7 @@ const specialEventSchema = new mongoose.Schema(
     ends: String,
     options: String,
     notification: String,
-    visible_to: String,
+    visible_to: Array,
     created_by: String,
   },
   {

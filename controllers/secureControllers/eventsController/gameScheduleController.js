@@ -58,10 +58,7 @@ const addGameSchedule = async (req, res) => {
       res.status(400).json({
         message: "Status is missing!",
       });
-    } else if (
-      !status &&
-      (status.toLowerCase() !== "active" || status.toLowerCase() !== "inactive")
-    ) {
+    } else if (!status && (status !== "active" || status !== "inactive")) {
       res.status(400).json({
         message: "Invalid status!",
       });

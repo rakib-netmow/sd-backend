@@ -73,6 +73,7 @@ const {
   allTransactionsController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
+const multer = require("../../middleware/multer");
 
 const router = express.Router();
 const middleware = [verifyJWT, verifyAdmin];
@@ -81,13 +82,13 @@ router.use(middleware);
 
 router.get("/user-country", userCountryController);
 // Guardian
-router.post("/guardian", addGuardianController);
+router.post("/guardian", multer.single("image"), addGuardianController);
 router.get("/guardian", allGuardianController);
 router.get("/total-guardian", totalGuardianController);
 router.patch("/guardian/:id", updateGuardianController);
 router.delete("/guardian/:id", deleteGuardianController);
 // Player
-router.post("/player", addPlayerController);
+router.post("/player", multer.single("image"), addPlayerController);
 router.get("/player", allPlayerController);
 router.get("/total-player", totalPlayerController);
 router.get("/latest-player", latestPlayerController);
@@ -97,7 +98,7 @@ router.delete("/player/:id", deletePlayerController);
 router.get("/transaction", allTransactionsController);
 
 // Manager
-router.post("/manager", addManagerController);
+router.post("/manager", multer.single("image"), addManagerController);
 router.get("/manager", allManagerController);
 router.patch("/manager/:id", updateManagerController);
 router.delete("/manager/:id", deleteManagerController);

@@ -3,6 +3,7 @@ const { generateToken } = require("../../../config/generateToken.js");
 const User = require("../../../model/user/userModel.js");
 
 const addManager = async (req, res) => {
+  console.log("file ", req.file?.path);
   const {
     first_name,
     last_name,
@@ -26,7 +27,13 @@ const addManager = async (req, res) => {
       res.status(400).json({
         message: "Password is required!",
       });
-    } else if (!confirm_password) {
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else if (!confirm_password) {
       res.status(400).json({
         message: "Confrim password is required!",
       });
@@ -44,14 +51,20 @@ const addManager = async (req, res) => {
     } else {
       const existingManger = await User.findOne({ email });
       if (!existingManger?.email) {
-        //** upload the image
-        // let avatar = {};
-        // if (req.file?.path) {
-        //   const image = await Cloudinary.uploader.upload(req.file?.path);
-        //   avatar = {
-        //     avatar: image.secure_url,
-        //     avatar_public_url: image.public_id,
+        // ** upload the image
+        // const upload = await Cloudinary.uploader.upload(req.file?.path);
+        // if (upload?.secure_url) {
+        //   let uploadedImage = {};
+        //   uploadedImage = {
+        //     uploadedImage: upload.secure_url,
+        //     uploadedImage_public_url: upload.public_id,
         //   };
+
+        //   // Enter next code there
+        // } else {
+        //   req.status(400).json({
+        //     message: "Image upload faild! Please try again.",
+        //   });
         // }
 
         const newManager = await User.create({
@@ -66,6 +79,7 @@ const addManager = async (req, res) => {
           role: "manager",
           added_by,
           token: generateToken(email),
+          // profile_image: uploadedImage
         });
 
         if (newManager) {

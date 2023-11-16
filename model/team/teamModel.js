@@ -7,7 +7,7 @@ const teamSchema = new mongoose.Schema(
     trainer: String,
     player: Array,
     description: String,
-    image: String,
+    image: Object,
     fee: String,
     created_by: String,
   },

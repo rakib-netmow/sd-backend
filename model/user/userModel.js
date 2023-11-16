@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
       enum: ["guardian", "admin", "player", "manager", "trainer"],
       default: "admin",
     },
+    profile_image: Object,
     address_line_1: String,
     address_line_2: String,
     state: String,

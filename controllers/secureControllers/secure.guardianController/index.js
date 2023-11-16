@@ -1,5 +1,6 @@
 const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
+const Cloudinary = require("../../../config/cloudinary.js");
 
 const addGuardian = async (req, res) => {
   const {
@@ -38,7 +39,29 @@ const addGuardian = async (req, res) => {
       res.status(400).json({
         message: "Athentication error!",
       });
-    } else {
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
+      //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
+      // }
+
       const existingGuardian = await User.findOne({ email });
       if (!existingGuardian) {
         const newGaurdian = await User.create({
@@ -55,6 +78,7 @@ const addGuardian = async (req, res) => {
           role: "guardian",
           added_by,
           token: generateToken(email),
+          // profile_image: uploadedImage
         });
 
         if (newGaurdian) {

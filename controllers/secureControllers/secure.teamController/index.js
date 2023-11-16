@@ -1,4 +1,4 @@
-// const Cloudinary = require("../../../config/cloudinary.js");
+const Cloudinary = require("../../../config/cloudinary.js");
 
 const Team = require("../../../model/team/teamModel");
 
@@ -28,15 +28,27 @@ const addTeam = async (req, res) => {
       res.status(400).json({
         message: "Team fee is required!",
       });
-    } else {
-      //** upload the image
-      // let avatar = {};
-      // if (req.file?.path) {
-      //   const image = await Cloudinary.uploader.upload(req.file?.path);
-      //   avatar = {
-      //     avatar: image.secure_url,
-      //     avatar_public_url: image.public_id,
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
       //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
       // }
 
       const newTeam = await Team.create({
@@ -46,6 +58,7 @@ const addTeam = async (req, res) => {
         description,
         fee,
         created_by,
+        // image: uploadedImage
       });
 
       if (newTeam) {
