@@ -21,8 +21,8 @@ const seasonalGameSchema = new mongoose.Schema(
     visible_to: Array,
     status: {
       type: String,
-      enum: ["pendin", "running", "end"],
-      default: "pending",
+      enum: ["active", "inactive"],
+      default: "active",
     },
     created_by: String,
   },
