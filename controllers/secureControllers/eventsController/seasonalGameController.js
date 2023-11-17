@@ -22,23 +22,25 @@ const addSeasonalGame = async (req, res) => {
       res.status(400).json({
         message: "Name is required!",
       });
-    } else if (!host_team_name) {
-      res.status(400).json({
-        message: "Host team name is missing!",
-      });
-    } else if (!host_team_id) {
-      res.status(400).json({
-        message: "Host team ID is missing!",
-      });
-    } else if (!guest_team_name) {
-      res.status(400).json({
-        message: "Guest team name is missing!",
-      });
-    } else if (!guest_team_id) {
-      res.status(400).json({
-        message: "Guest team ID is missing!",
-      });
-    } else if (!starts) {
+    }
+    // else if (!host_team_name) {
+    //   res.status(400).json({
+    //     message: "Host team name is missing!",
+    //   });
+    // } else if (!host_team_id) {
+    //   res.status(400).json({
+    //     message: "Host team ID is missing!",
+    //   });
+    // } else if (!guest_team_name) {
+    //   res.status(400).json({
+    //     message: "Guest team name is missing!",
+    //   });
+    // } else if (!guest_team_id) {
+    //   res.status(400).json({
+    //     message: "Guest team ID is missing!",
+    //   });
+    // }
+    else if (!starts) {
       res.status(400).json({
         message: "Starts Time is required!",
       });
@@ -82,10 +84,10 @@ const addSeasonalGame = async (req, res) => {
     } else {
       const newSeasonalGame = await SeasonalGame.create({
         name,
-        host_team_name,
-        host_team_id,
-        guest_team_name,
-        guest_team_id,
+        // host_team_name,
+        // host_team_id,
+        // guest_team_name,
+        // guest_team_id,
         vanue,
         description,
         starts,
