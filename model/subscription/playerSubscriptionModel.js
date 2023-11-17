@@ -7,6 +7,7 @@ const playerSubscriptionSchema = new mongoose.Schema(
     create_date: String,
     end_date: String,
     select_team: String,
+    select_team_id: String,
     description: String,
     created_by: String,
   },

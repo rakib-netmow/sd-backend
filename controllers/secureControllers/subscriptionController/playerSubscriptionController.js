@@ -1,8 +1,15 @@
 const PlayerSubscription = require("../../../model/subscription/playerSubscriptionModel");
 
 const addPlayerSubscription = async (req, res) => {
-  const { name, fee, create_date, end_date, select_team, description } =
-    req.body;
+  const {
+    name,
+    fee,
+    create_date,
+    end_date,
+    select_team,
+    select_team_id,
+    description,
+  } = req.body;
   const created_by = req.auth.id;
   try {
     if (!fee) {
@@ -16,6 +23,10 @@ const addPlayerSubscription = async (req, res) => {
     } else if (!select_team) {
       res.status(400).json({
         message: "Select team field is required!",
+      });
+    } else if (!select_team_id) {
+      res.status(400).json({
+        message: "Select team field ID is required!",
       });
     } else if (!end_date) {
       res.status(400).json({
@@ -36,6 +47,7 @@ const addPlayerSubscription = async (req, res) => {
         create_date,
         end_date,
         select_team,
+        select_team_id,
         description,
         created_by,
       });
