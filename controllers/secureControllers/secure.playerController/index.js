@@ -1,6 +1,7 @@
 const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
 const Cloudinary = require("../../../config/cloudinary.js");
+const sendLoginCredentials = require("../../../config/credentialEmail.js");
 
 const addPlayer = async (req, res) => {
   const {
@@ -99,6 +100,7 @@ const addPlayer = async (req, res) => {
           // profile_image: uploadedImage
         });
         if (newPlayer) {
+          sendLoginCredentials(email, password);
           res.status(200).json({
             message: "Player added successfully.",
           });

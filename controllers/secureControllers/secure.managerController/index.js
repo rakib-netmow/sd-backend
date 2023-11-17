@@ -1,4 +1,5 @@
 const Cloudinary = require("../../../config/cloudinary.js");
+const sendLoginCredentials = require("../../../config/credentialEmail.js");
 const { generateToken } = require("../../../config/generateToken.js");
 const User = require("../../../model/user/userModel.js");
 
@@ -83,6 +84,7 @@ const addManager = async (req, res) => {
         });
 
         if (newManager) {
+          sendLoginCredentials(email, password)
           res.status(200).json({
             message: "New manager added successfully.",
           });

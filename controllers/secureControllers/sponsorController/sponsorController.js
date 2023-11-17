@@ -36,7 +36,29 @@ const addSponsor = async (req, res) => {
       res.status(400).json({
         message: "Description is required!",
       });
-    } else {
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
+      //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
+      // }
+
       const newSponsor = await Sponsor.create({
         name,
         website,
@@ -44,6 +66,7 @@ const addSponsor = async (req, res) => {
         start_date,
         end_date,
         description,
+        // logo: uploadedImage,
         created_by,
       });
 

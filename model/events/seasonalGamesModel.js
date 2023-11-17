@@ -8,7 +8,7 @@ const seasonalGameSchema = new mongoose.Schema(
     // guest_team_name: String,
     // guest_team_id: String,
     vanue: String,
-    image: String,
+    image: Object,
     description: String,
     starts: String,
     ends: String,

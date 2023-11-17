@@ -115,10 +115,18 @@ router.get("/latest-team", latestTeamController);
 router.post("/assign-player/:id", assignPlayerController);
 router.delete("/team/:id", deleteTeamController);
 // Game Schedule
-router.post("/add-game-schedule", addGameSchduleController);
+router.post(
+  "/add-game-schedule",
+  multer.single("image"),
+  addGameSchduleController
+);
 router.get("/all-game-schedule", allGameScheduleController);
 // Seasonal Game
-router.post("/add-seasonal-game", addSeasonalGameController);
+router.post(
+  "/add-seasonal-game",
+  multer.single("image"),
+  addSeasonalGameController
+);
 router.get("/all-seasonal-game", allSeasonalGameController);
 // Training Schedule
 router.post(
@@ -131,13 +139,17 @@ router.post(
 );
 router.get("/all-training-schedule", allTrainingScheduleController);
 // Special Event
-router.post("/add-special-event", addSpecialEventController);
+router.post(
+  "/add-special-event",
+  multer.single("image"),
+  addSpecialEventController
+);
 router.get("/all-special-event", allSpecialEventController);
 // Class
 router.post("/add-class", addClassController);
 router.get("/all-class", allClassController);
 // Sponsor
-router.post("/add-sponsor", addSponsorController);
+router.post("/add-sponsor", multer.single("image"), addSponsorController);
 router.get("/all-sponsor", allSponsorController);
 // Player Subscription
 router.post("/add-player-subscription", addPlayerSubscriptionController);

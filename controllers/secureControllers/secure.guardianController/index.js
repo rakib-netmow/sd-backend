@@ -1,6 +1,7 @@
 const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
 const Cloudinary = require("../../../config/cloudinary.js");
+const sendLoginCredentials = require("../../../config/credentialEmail.js");
 
 const addGuardian = async (req, res) => {
   const {
@@ -82,6 +83,7 @@ const addGuardian = async (req, res) => {
         });
 
         if (newGaurdian) {
+          sendLoginCredentials(email, password)
           res.status(200).json({
             message: "Gaurdian created successfully.",
           });

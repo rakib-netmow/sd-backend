@@ -62,16 +62,29 @@ const addGameSchedule = async (req, res) => {
       res.status(400).json({
         message: "Invalid status!",
       });
-    } else {
-      //** upload the image
-      // let avatar = {};
-      // if (req.file?.path) {
-      //   const image = await Cloudinary.uploader.upload(req.file?.path);
-      //   avatar = {
-      //     avatar: image.secure_url,
-      //     avatar_public_url: image.public_id,
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
       //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
       // }
+
       const newGameSchedule = await GameSchedule.create({
         host_team_name,
         host_team_id,
@@ -84,7 +97,7 @@ const addGameSchedule = async (req, res) => {
         time,
         description,
         status,
-        // image: avatar.avatar,
+        // image: uploadedImage,
         created_by,
       });
 

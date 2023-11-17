@@ -4,7 +4,7 @@ const sponsorSchema = new mongoose.Schema(
   {
     name: String,
     website: String,
-    logo: String,
+    logo: Object,
     sponsoring: String,
     start_date: String,
     end_date: String,

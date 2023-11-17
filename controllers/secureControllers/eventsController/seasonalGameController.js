@@ -81,7 +81,29 @@ const addSeasonalGame = async (req, res) => {
       res.status(400).json({
         message: "Invalid notification!",
       });
-    } else {
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
+      //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
+      // }
+
       const newSeasonalGame = await SeasonalGame.create({
         name,
         // host_team_name,
@@ -96,6 +118,7 @@ const addSeasonalGame = async (req, res) => {
         fees,
         visible_to,
         created_by,
+        // image: uploadedImage,
       });
       if (newSeasonalGame) {
         res.status(200).json({
