@@ -3,10 +3,10 @@ const SeasonalGame = require("../../../model/events/seasonalGamesModel");
 const addSeasonalGame = async (req, res) => {
   const {
     name,
-    host_team_name,
-    host_team_id,
-    guest_team_name,
-    guest_team_id,
+    // host_team_name,
+    // host_team_id,
+    // guest_team_name,
+    // guest_team_id,
     vanue,
     // image,
     description,
@@ -92,7 +92,7 @@ const addSeasonalGame = async (req, res) => {
         description,
         starts,
         ends,
-        notification,
+        notification: notification.toLowerCase(),
         fees,
         visible_to,
         created_by,
