@@ -9,6 +9,10 @@ const addPlayerSubscription = async (req, res) => {
       res.status(400).json({
         message: "Fee is required!",
       });
+    } else if (!name) {
+      res.status(400).json({
+        message: "Name field is required!",
+      });
     } else if (!select_team) {
       res.status(400).json({
         message: "Select team field is required!",
@@ -27,6 +31,7 @@ const addPlayerSubscription = async (req, res) => {
       });
     } else {
       const newPlayersubscription = await PlayerSubscription.create({
+        name,
         fee,
         create_date,
         end_date,
