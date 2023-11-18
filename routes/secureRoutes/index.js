@@ -17,7 +17,6 @@ const {
   allSeasonalGameController,
   addWeeklyTrainingScheduleController,
   addCustomTrainingScheduleController,
-  allTrainingScheduleController,
   addSpecialEventController,
   allSpecialEventController,
   addClassController,
@@ -71,6 +70,8 @@ const {
   addSslcommerzController,
   addSmtpController,
   allTransactionsController,
+  allWeeklyTrainingScheduleController,
+  allCustomTrainingScheduleController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -137,7 +138,14 @@ router.post(
   "/add-custom-training-schedule",
   addCustomTrainingScheduleController
 );
-router.get("/all-training-schedule", allTrainingScheduleController);
+router.get(
+  "/all-weekly-training-schedule",
+  allWeeklyTrainingScheduleController
+);
+router.get(
+  "/all-custom-training-schedule",
+  allCustomTrainingScheduleController
+);
 // Special Event
 router.post(
   "/add-special-event",

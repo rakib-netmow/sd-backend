@@ -18,7 +18,8 @@ const {
 const {
   addWeeklyTrainingSchedule,
   addCustomTrainingSchedule,
-  allTrainingSchedule,
+  allWeeklyTrainingSchedule,
+  allCustomTrainingSchedule,
 } = require("./eventsController/trainingScheduleController");
 const { allTransactions } = require("./paymentController");
 const {
@@ -148,7 +149,8 @@ module.exports = {
   // training schedule
   addWeeklyTrainingScheduleController: addWeeklyTrainingSchedule,
   addCustomTrainingScheduleController: addCustomTrainingSchedule,
-  allTrainingScheduleController: allTrainingSchedule,
+  allWeeklyTrainingScheduleController: allWeeklyTrainingSchedule,
+  allCustomTrainingScheduleController: allCustomTrainingSchedule,
   // events
   addSpecialEventController: addSpecialEvent,
   allSpecialEventController: allSpecialEvent,

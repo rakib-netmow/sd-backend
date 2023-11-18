@@ -135,17 +135,23 @@ const addCustomTrainingSchedule = async (req, res) => {
   }
 };
 
-const allTrainingSchedule = async (req, res) => {
+const allWeeklyTrainingSchedule = async (req, res) => {
   try {
     const created_by = req.auth.id;
-    let allTrainingSchedules = [];
 
     const weeklyTraning = await WeeklyTrainingSchedule.find({ created_by });
-    allTrainingSchedules = [...allTrainingSchedules, ...weeklyTraning];
+    res.status(200).json(weeklyTraning);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const allCustomTrainingSchedule = async (req, res) => {
+  try {
+    const created_by = req.auth.id;
+    
     const customTraining = await CustomTrainingSchedule.find({ created_by });
-    allTrainingSchedules = [...allTrainingSchedules, ...customTraining];
 
-    res.status(200).json(allTrainingSchedules);
+    res.status(200).json(customTraining);
   } catch (error) {
     console.log(error);
   }
@@ -154,5 +160,6 @@ const allTrainingSchedule = async (req, res) => {
 module.exports = {
   addWeeklyTrainingSchedule,
   addCustomTrainingSchedule,
-  allTrainingSchedule,
+  allWeeklyTrainingSchedule,
+  allCustomTrainingSchedule,
 };
