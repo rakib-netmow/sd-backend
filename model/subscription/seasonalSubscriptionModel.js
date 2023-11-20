@@ -7,6 +7,7 @@ const seasonalSubscriptionSchema = new mongoose.Schema(
     create_date: String,
     end_date: String,
     description: String,
+    image: Object,
     created_by: String,
   },
   {

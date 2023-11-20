@@ -48,7 +48,11 @@ const userSchema = new mongoose.Schema(
     inactive_player: Number,
     total_player: Number,
     description: String, // aditional for player
-    payment_status: String, // aditional for player
+    payment_status: {
+      type: String,
+      enum: ["paid", "unpaid"],
+      default: "unpaid",
+    }, // aditional for player
     guardian: String, // aditional for player
     joining_date: { type: String, default: new Date() },
     status: { type: String, enum: ["active", "inactive"], default: "active" },

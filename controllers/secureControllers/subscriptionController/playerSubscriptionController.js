@@ -40,7 +40,29 @@ const addPlayerSubscription = async (req, res) => {
       res.status(400).json({
         message: "Description is required!",
       });
-    } else {
+    }
+    // else if (!req.file?.path) {
+    //   res.status(400).json({
+    //     message: "Image is missing",
+    //   });
+    // }
+    else {
+      // ** upload the image
+      // const upload = await Cloudinary.uploader.upload(req.file?.path);
+      // if (upload?.secure_url) {
+      //   let uploadedImage = {};
+      //   uploadedImage = {
+      //     uploadedImage: upload.secure_url,
+      //     uploadedImage_public_url: upload.public_id,
+      //   };
+
+      //   // Enter next code there
+      // } else {
+      //   req.status(400).json({
+      //     message: "Image upload faild! Please try again.",
+      //   });
+      // }
+
       const newPlayersubscription = await PlayerSubscription.create({
         name,
         fee,
@@ -49,6 +71,7 @@ const addPlayerSubscription = async (req, res) => {
         select_team,
         select_team_id,
         description,
+        // image: uploadedImage,
         created_by,
       });
 

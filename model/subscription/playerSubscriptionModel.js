@@ -9,6 +9,7 @@ const playerSubscriptionSchema = new mongoose.Schema(
     select_team: String,
     select_team_id: String,
     description: String,
+    image: Object,
     created_by: String,
   },
   {
