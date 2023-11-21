@@ -93,7 +93,7 @@ const addPlayer = async (req, res) => {
             country: country ? country : "",
             city: city ? city : "",
             state: state ? state : "",
-            zip: zip ? zip : 0,
+            zip: zip ? parseInt(zip) : 0,
             phone: phone ? phone : "",
             height: height ? height : "",
             weight: weight ? weight : "",
