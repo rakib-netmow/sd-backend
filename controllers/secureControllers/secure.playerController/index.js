@@ -350,11 +350,11 @@ const addPlayerForGuardian = async (req, res) => {
       });
     } else if (!confirm_password) {
       res.status(400).json({
-        message: "Confrim password is required!",
+        message: "Confirm password is required!",
       });
     } else if (password !== confirm_password) {
       res.status(400).json({
-        message: "Confrim password does not match!",
+        message: "Confirm password does not match!",
       });
     } else if (!team) {
       res.status(400).json({
@@ -421,6 +421,15 @@ const addPlayerForGuardian = async (req, res) => {
           });
           if (newPlayer) {
             sendLoginCredentials(email, password);
+            // update the Guardian's active/inactive players in database model
+            await User.findOneAndUpdate(
+              { _id: guardian_id },
+              {
+                $inc: {
+                  inactive_player: 1,
+                },
+              }
+            );
             // update the team database model
             await Team.findOneAndUpdate(
               { _id: team },

@@ -44,9 +44,9 @@ const userSchema = new mongoose.Schema(
     fees: String,
     profile_img: String,
     username: String,
-    active_player: Number,
-    inactive_player: Number,
-    total_player: Number,
+    active_player: { type: Number, default: 0 },
+    inactive_player: { type: Number, default: 0 },
+    total_player: { type: Number, default: 0 },
     description: String, // aditional for player
     payment_status: {
       type: String,

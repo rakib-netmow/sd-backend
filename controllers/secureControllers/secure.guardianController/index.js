@@ -40,61 +40,58 @@ const addGuardian = async (req, res) => {
       res.status(400).json({
         message: "Athentication error!",
       });
-    }
-    // else if (!req.file?.path) {
-    //   res.status(400).json({
-    //     message: "Image is missing",
-    //   });
-    // }
-    else {
+    } else if (!req.file?.path) {
+      res.status(400).json({
+        message: "Image is missing",
+      });
+    } else {
       // ** upload the image
-      // const upload = await Cloudinary.uploader.upload(req.file?.path);
-      // if (upload?.secure_url) {
-      //   let uploadedImage = {};
-      //   uploadedImage = {
-      //     uploadedImage: upload.secure_url,
-      //     uploadedImage_public_url: upload.public_id,
-      //   };
+      const upload = await Cloudinary.uploader.upload(req.file?.path);
+      if (upload?.secure_url) {
+        let uploadedImage = {};
+        uploadedImage = {
+          uploadedImage: upload.secure_url,
+          uploadedImage_public_url: upload.public_id,
+        };
 
-      //   // Enter next code there
-      // } else {
-      //   req.status(400).json({
-      //     message: "Image upload faild! Please try again.",
-      //   });
-      // }
-
-      const existingGuardian = await User.findOne({ email });
-      if (!existingGuardian) {
-        const newGaurdian = await User.create({
-          email,
-          name: first_name && last_name ? `${first_name} ${last_name}` : "",
-          phone: phone ? phone : "",
-          address_line_1: address_line_1 ? address_line_1 : "",
-          address_line_2: address_line_2 ? address_line_2 : "",
-          country: country ? country : "",
-          city: city ? city : "",
-          state: state ? state : "",
-          zip: zip ? zip : 0,
-          password: password,
-          role: "guardian",
-          added_by,
-          token: generateToken(email),
-          // profile_image: uploadedImage
-        });
-
-        if (newGaurdian) {
-          sendLoginCredentials(email, password);
-          res.status(200).json({
-            message: "Gaurdian created successfully.",
+        // Enter next code there
+        const existingGuardian = await User.findOne({ email });
+        if (!existingGuardian) {
+          const newGaurdian = await User.create({
+            email,
+            name: first_name && last_name ? `${first_name} ${last_name}` : "",
+            phone: phone ? phone : "",
+            address_line_1: address_line_1 ? address_line_1 : "",
+            address_line_2: address_line_2 ? address_line_2 : "",
+            country: country ? country : "",
+            city: city ? city : "",
+            state: state ? state : "",
+            zip: zip ? zip : 0,
+            password: password,
+            role: "guardian",
+            added_by,
+            token: generateToken(email),
+            profile_image: uploadedImage,
           });
+
+          if (newGaurdian) {
+            sendLoginCredentials(email, password);
+            res.status(200).json({
+              message: "Gaurdian created successfully.",
+            });
+          } else {
+            res.status(400).json({
+              message: "Can not create gaurdian. Please try again!",
+            });
+          }
         } else {
           res.status(400).json({
-            message: "Can not create gaurdian. Please try again!",
+            message: "Already have an user with this email",
           });
         }
       } else {
-        res.status(400).json({
-          message: "Already have an user with this email",
+        req.status(400).json({
+          message: "Image upload faild! Please try again.",
         });
       }
     }
@@ -132,7 +129,7 @@ const singleGuardian = async (req, res) => {
       });
     } else {
       const gaurdians = await User.findOne({
-        $and: [{_id: id}, { added_by: email }, { role: "guardian" }],
+        $and: [{ _id: id }, { added_by: email }, { role: "guardian" }],
       }).select(["-password", "-token"]);
 
       res.status(200).json(gaurdians);
@@ -223,5 +220,5 @@ module.exports = {
   totalGuardian,
   updateGuardian,
   deleteGuardian,
-  singleGuardian
+  singleGuardian,
 };
