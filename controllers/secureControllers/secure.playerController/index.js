@@ -163,7 +163,7 @@ const allPlayer = async (req, res) => {
 
 const singlePlayer = async (req, res) => {
   const email = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     if (!email) {
       res.status(400).json({
@@ -224,7 +224,7 @@ const latestPlayer = async (req, res) => {
 const updatePlayer = async (req, res) => {
   const data = req.body;
   const added_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     if (data?.email || data?.username) {
       res.status(400).json({
@@ -259,7 +259,7 @@ const updatePlayer = async (req, res) => {
 
 const deletePlayer = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
     const added_by = req.auth.id;
 
     const player = await User.findOneAndDelete({ _id: id });
@@ -280,7 +280,7 @@ const deletePlayer = async (req, res) => {
 const assignTeam = async (req, res) => {
   try {
     const { team_id } = req.body;
-    const id = req.params.id;
+    const id = req?.params?.id;
     const assign = await User.findOneAndUpdate(
       { _id: id },
       {
@@ -334,7 +334,7 @@ const addPlayerForGuardian = async (req, res) => {
     description,
   } = req.body;
   const added_by = req.auth.id;
-  const guardian_id = req.params.id;
+  const guardian_id = req?.params?.id;
   try {
     if (!email) {
       res.status(400).json({
@@ -469,7 +469,7 @@ const addPlayerForGuardian = async (req, res) => {
 
 const allPlayersForGuardian = async (req, res) => {
   try {
-    const guardian_id = req.params.id;
+    const guardian_id = req?.params?.id;
     const added_by = req.auth.id;
     const players = await User.find({
       $and: [{ added_by }, { guardian: guardian_id }],

@@ -79,7 +79,7 @@ const AllDns = async (req, res) => {
 const updateDns = async (req, res) => {
   const data = req.body;
   const created_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     const newDns = await DnsSetting.findOneAndUpdate(
       {
@@ -103,7 +103,7 @@ const updateDns = async (req, res) => {
 
 const deleteDns = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
     const created_by = req.auth.id;
 
     const dns = await DnsSetting.findOneAndDelete({
@@ -170,7 +170,7 @@ const AllNs = async (req, res) => {
 const updateNs = async (req, res) => {
   const data = req.body;
   const created_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     const newNs = await NsSetting.findOneAndUpdate(
       {
@@ -194,7 +194,7 @@ const updateNs = async (req, res) => {
 
 const deleteNs = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
     const created_by = req.auth.id;
 
     const ns = await NsSetting.findOneAndDelete({
@@ -261,7 +261,7 @@ const AllCname = async (req, res) => {
 const updateCname = async (req, res) => {
   const data = req.body;
   const created_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     const newCname = await CnameSetting.findOneAndUpdate(
       {
@@ -285,7 +285,7 @@ const updateCname = async (req, res) => {
 
 const deleteCname = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
     const created_by = req.auth.id;
 
     const cname = await CnameSetting.findOneAndDelete({

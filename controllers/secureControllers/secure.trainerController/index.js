@@ -128,7 +128,7 @@ const allTrainer = async (req, res) => {
 const updateTrainer = async (req, res) => {
   const data = req.body;
   const added_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     if (data?.email || data?.username) {
       res.status(400).json({
@@ -163,7 +163,7 @@ const updateTrainer = async (req, res) => {
 
 const deleteTrainer = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
     const added_by = req.auth.id;
 
     const trainer = await User.findOneAndDelete({ _id: id });

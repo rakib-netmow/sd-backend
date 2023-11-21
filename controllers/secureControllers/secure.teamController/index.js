@@ -111,7 +111,7 @@ const allTeam = async (req, res) => {
 
 const singleTeam = async (req, res) => {
   const created_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     const allteams = await Team.findOne({
       $and: [{ created_by }, { _id: id }],
@@ -145,7 +145,7 @@ const latestTeam = async (req, res) => {
 const assignPlayer = async (req, res) => {
   try {
     const { player_id } = req.body;
-    const id = req.params.id;
+    const id = req?.params?.id;
     const player = await User.findOne({ _id: player_id });
     if (player?._id) {
       const assign = await Team.findOneAndUpdate(
@@ -185,7 +185,7 @@ const assignPlayer = async (req, res) => {
 
 const deleteTeam = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
 
     const deletedTeam = await Team.findOneAndDelete({ _id: id });
 
@@ -205,7 +205,7 @@ const deleteTeam = async (req, res) => {
 
 const allTeamForPlayer = async (req, res) => {
   try {
-    const player_id = req.params.id;
+    const player_id = req?.params?.id;
     const created_by = req.auth.id;
     const player = await User.findOne({
       $and: [{ created_by }, { _id: player_id }],

@@ -84,7 +84,7 @@ const addManager = async (req, res) => {
         });
 
         if (newManager) {
-          sendLoginCredentials(email, password)
+          sendLoginCredentials(email, password);
           res.status(200).json({
             message: "New manager added successfully.",
           });
@@ -120,7 +120,7 @@ const allManager = async (req, res) => {
 const updateManager = async (req, res) => {
   const data = req.body;
   const added_by = req.auth.id;
-  const id = req.params.id;
+  const id = req?.params?.id;
   try {
     if (data?.email || data?.username) {
       res.status(400).json({
@@ -155,7 +155,7 @@ const updateManager = async (req, res) => {
 
 const deleteManager = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req?.params?.id;
     const added_by = req.auth.id;
 
     const manager = await User.findOneAndDelete({ _id: id });
