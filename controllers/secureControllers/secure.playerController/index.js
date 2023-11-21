@@ -3,6 +3,7 @@ const User = require("../../../model/user/userModel");
 const Cloudinary = require("../../../config/cloudinary.js");
 const sendLoginCredentials = require("../../../config/credentialEmail.js");
 const Team = require("../../../model/team/teamModel.js");
+const isValidObjectId = require("../../../config/checkValidObjectId.js");
 
 const addPlayer = async (req, res) => {
   const {
@@ -47,6 +48,10 @@ const addPlayer = async (req, res) => {
     } else if (!team) {
       res.status(400).json({
         message: "Team is required!",
+      });
+    } else if (!isValidObjectId(team)) {
+      res.status(400).json({
+        message: "Invalid team ID!",
       });
     } else if (!fees) {
       res.status(400).json({
@@ -354,6 +359,10 @@ const addPlayerForGuardian = async (req, res) => {
     } else if (!team) {
       res.status(400).json({
         message: "Team is required!",
+      });
+    } else if (!isValidObjectId(team)) {
+      res.status(400).json({
+        message: "Invalid team ID!",
       });
     } else if (!fees) {
       res.status(400).json({
