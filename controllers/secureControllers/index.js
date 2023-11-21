@@ -28,6 +28,7 @@ const {
   updateGuardian,
   deleteGuardian,
   totalGuardian,
+  singleGuardian,
 } = require("./secure.guardianController");
 const {
   addManager,
@@ -42,6 +43,10 @@ const {
   deletePlayer,
   totalPlayer,
   latestPlayer,
+  addPlayerForGuardian,
+  assignTeam,
+  singlePlayer,
+  allPlayersForGuardian,
 } = require("./secure.playerController");
 const {
   addTeam,
@@ -50,6 +55,8 @@ const {
   deleteTeam,
   totalTeam,
   latestTeam,
+  singleTeam,
+  allTeamForPlayer,
 } = require("./secure.teamController");
 const {
   addTrainer,
@@ -115,6 +122,7 @@ module.exports = {
   totalGuardianController: totalGuardian,
   updateGuardianController: updateGuardian,
   deleteGuardianController: deleteGuardian,
+  singleGuardianController: singleGuardian,
   // player
   addPlayerController: addPlayer,
   allPlayerController: allPlayer,
@@ -122,6 +130,10 @@ module.exports = {
   latestPlayerController: latestPlayer,
   updatePlayerController: updatePlayer,
   deletePlayerController: deletePlayer,
+  addPlayerForGuardianController: addPlayerForGuardian,
+  assignTeamController: assignTeam,
+  singlePlayerController: singlePlayer,
+  allPlayersForGuardianController: allPlayersForGuardian,
   // payment
   allTransactionsController: allTransactions,
   // manager
@@ -141,6 +153,8 @@ module.exports = {
   latestTeamController: latestTeam,
   assignPlayerController: assignPlayer,
   deleteTeamController: deleteTeam,
+  singleTeamController: singleTeam,
+  allTeamsForPlayerController: allTeamForPlayer,
   // game schedule
   addGameSchduleController: addGameSchedule,
   allGameScheduleController: allGameSchedule,

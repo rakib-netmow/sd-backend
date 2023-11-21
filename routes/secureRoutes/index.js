@@ -72,6 +72,13 @@ const {
   allTransactionsController,
   allWeeklyTrainingScheduleController,
   allCustomTrainingScheduleController,
+  addPlayerForGuardianController,
+  assignTeamController,
+  singleGuardianController,
+  singlePlayerController,
+  singleTeamController,
+  allPlayersForGuardianController,
+  allTeamsForPlayerController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -88,6 +95,7 @@ router.get("/guardian", allGuardianController);
 router.get("/total-guardian", totalGuardianController);
 router.patch("/guardian/:id", updateGuardianController);
 router.delete("/guardian/:id", deleteGuardianController);
+router.get("/guardian/:id", singleGuardianController);
 // Player
 router.post("/player", multer.single("image"), addPlayerController);
 router.get("/player", allPlayerController);
@@ -95,6 +103,10 @@ router.get("/total-player", totalPlayerController);
 router.get("/latest-player", latestPlayerController);
 router.patch("/player/:id", updatePlayerController);
 router.delete("/player/:id", deletePlayerController);
+router.post("/add-player-for-guardian/:id", addPlayerForGuardianController);
+router.post("/assign_team/:id", assignTeamController);
+router.get("/player/:id", singlePlayerController);
+router.get("/all-players-for-guardian/:id", allPlayersForGuardianController);
 // payment
 router.get("/transaction", allTransactionsController);
 
@@ -115,6 +127,8 @@ router.get("/total-team", totalTeamController);
 router.get("/latest-team", latestTeamController);
 router.post("/assign-player/:id", assignPlayerController);
 router.delete("/team/:id", deleteTeamController);
+router.get("/team/:id", singleTeamController);
+router.get("/all-teams-for-player/:id", allTeamsForPlayerController);
 // Game Schedule
 router.post(
   "/add-game-schedule",

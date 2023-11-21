@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     date_of_birth: String,
     height: String,
     weight: String,
-    team: String,
+    team: Array,
     fees: String,
     profile_img: String,
     username: String,

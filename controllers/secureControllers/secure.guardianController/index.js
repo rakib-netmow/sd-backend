@@ -83,7 +83,7 @@ const addGuardian = async (req, res) => {
         });
 
         if (newGaurdian) {
-          sendLoginCredentials(email, password)
+          sendLoginCredentials(email, password);
           res.status(200).json({
             message: "Gaurdian created successfully.",
           });
@@ -121,6 +121,27 @@ const allGuardian = async (req, res) => {
     console.log(error);
   }
 };
+
+const singleGuardian = async (req, res) => {
+  const email = req.auth.id;
+  const id = req.params.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else {
+      const gaurdians = await User.findOne({
+        $and: [{_id: id}, { added_by: email }, { role: "guardian" }],
+      }).select(["-password", "-token"]);
+
+      res.status(200).json(gaurdians);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const totalGuardian = async (req, res) => {
   const email = req.auth.id;
   try {
@@ -202,4 +223,5 @@ module.exports = {
   totalGuardian,
   updateGuardian,
   deleteGuardian,
+  singleGuardian
 };

@@ -1,6 +1,7 @@
 const Cloudinary = require("../../../config/cloudinary.js");
 
 const Team = require("../../../model/team/teamModel");
+const User = require("../../../model/user/userModel.js");
 
 const addTeam = async (req, res) => {
   const { name, manager, trainer, description, fee } = req.body;
@@ -62,6 +63,28 @@ const addTeam = async (req, res) => {
       });
 
       if (newTeam) {
+        // update manager profile
+        await User.findOneAndUpdate(
+          {
+            $and: [{ _id: manager, role: "manager" }],
+          },
+          {
+            $push: {
+              team: newTeam?._id,
+            },
+          }
+        );
+        // update trainer profile
+        await User.findOneAndUpdate(
+          {
+            $and: [{ _id: trainer, role: "trainer" }],
+          },
+          {
+            $push: {
+              team: newTeam?._id,
+            },
+          }
+        );
         res.status(200).json({
           message: "New team created successfully.",
         });
@@ -80,6 +103,19 @@ const allTeam = async (req, res) => {
   const created_by = req.auth.id;
   try {
     const allteams = await Team.find({ created_by });
+    res.status(200).json(allteams);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const singleTeam = async (req, res) => {
+  const created_by = req.auth.id;
+  const id = req.params.id;
+  try {
+    const allteams = await Team.findOne({
+      $and: [{ created_by }, { _id: id }],
+    });
     res.status(200).json(allteams);
   } catch (error) {
     console.log(error);
@@ -110,21 +146,36 @@ const assignPlayer = async (req, res) => {
   try {
     const { player_id } = req.body;
     const id = req.params.id;
-    const assign = await Team.findOneAndUpdate(
-      { _id: id },
-      {
-        $push: {
-          player: player_id,
-        },
+    const player = await User.findOne({ _id: player_id });
+    if (player?._id) {
+      const assign = await Team.findOneAndUpdate(
+        { _id: id },
+        {
+          $push: {
+            player: player_id,
+          },
+        }
+      );
+      if (assign) {
+        await User.findOneAndUpdate(
+          { _id: player_id },
+          {
+            $push: {
+              team: id,
+            },
+          }
+        );
+        res.status(200).json({
+          message: "Player assigned successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't assign player. Please try again!",
+        });
       }
-    );
-    if (assign) {
-      res.status(200).json({
-        message: "Player assigned successfully.",
-      });
     } else {
       res.status(400).json({
-        message: "Can't assign player. Please try again!",
+        message: "Invalid player ID. Please try again!",
       });
     }
   } catch (error) {
@@ -152,6 +203,30 @@ const deleteTeam = async (req, res) => {
   }
 };
 
+const allTeamForPlayer = async (req, res) => {
+  try {
+    const player_id = req.params.id;
+    const created_by = req.auth.id;
+    const player = await User.findOne({
+      $and: [{ created_by }, { _id: player_id }],
+    }).select(["-password", "-token"]);
+    if (player.email) {
+      let allTeams = [];
+      if (player?.team?.length > 0) {
+        player.team?.map(async (t) => {
+          const team = await Team.findOne({ _id: t });
+          if (team?._id) {
+            allTeams.push(team);
+          }
+        });
+      }
+      res.status(200).json(allTeams);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addTeam,
   allTeam,
@@ -159,4 +234,6 @@ module.exports = {
   latestTeam,
   assignPlayer,
   deleteTeam,
+  singleTeam,
+  allTeamForPlayer,
 };
