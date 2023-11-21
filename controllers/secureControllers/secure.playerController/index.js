@@ -348,6 +348,10 @@ const addPlayerForGuardian = async (req, res) => {
       res.status(400).json({
         message: "Guardian ID is required!",
       });
+    } else if (!isValidObjectId(guardian_id)) {
+      res.status(400).json({
+        message: "Invalid Guardian ID",
+      });
     } else if (!confirm_password) {
       res.status(400).json({
         message: "Confirm password is required!",
