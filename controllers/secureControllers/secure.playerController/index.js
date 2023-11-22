@@ -169,6 +169,10 @@ const singlePlayer = async (req, res) => {
       res.status(400).json({
         message: "Authentication error",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
     } else {
       const players = await User.findOne({
         $and: [{ _id: id }, { added_by: email }, { role: "player" }],
@@ -234,6 +238,10 @@ const updatePlayer = async (req, res) => {
       res.status(400).json({
         message: "Confrim password is not matched!",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
     } else {
       const player = await User.findOneAndUpdate(
         {
@@ -267,6 +275,10 @@ const deletePlayer = async (req, res) => {
       res.status(200).json({
         message: "Guardian deleted succefully.",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
     } else {
       res.status(400).json({
         message: "Cant not delete guardian. Please try again!",
@@ -281,30 +293,40 @@ const assignTeam = async (req, res) => {
   try {
     const { team_id } = req.body;
     const id = req?.params?.id;
-    const assign = await User.findOneAndUpdate(
-      { _id: id },
-      {
-        $push: {
-          team: team_id,
-        },
-      }
-    );
-    if (assign) {
-      await Team.findOneAndUpdate(
-        { _id: team_id },
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
+    } else if (!isValidObjectId(team_id)) {
+      res.status(400).json({
+        message: "Invalid Team ID",
+      });
+    } else {
+      const assign = await User.findOneAndUpdate(
+        { _id: id },
         {
           $push: {
-            team: id,
+            team: team_id,
           },
         }
       );
-      res.status(200).json({
-        message: "Team assigned successfully.",
-      });
-    } else {
-      res.status(400).json({
-        message: "Can't assign Team. Please try again!",
-      });
+      if (assign) {
+        await Team.findOneAndUpdate(
+          { _id: team_id },
+          {
+            $push: {
+              team: id,
+            },
+          }
+        );
+        res.status(200).json({
+          message: "Team assigned successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't assign Team. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -471,10 +493,16 @@ const allPlayersForGuardian = async (req, res) => {
   try {
     const guardian_id = req?.params?.id;
     const added_by = req.auth.id;
-    const players = await User.find({
-      $and: [{ added_by }, { guardian: guardian_id }],
-    }).select(["-password", "-token"]);
-    res.status(200).json(players);
+    if (!isValidObjectId(guardian_id)) {
+      res.status(400).json({
+        message: "Invalid Guardian ID",
+      });
+    } else {
+      const players = await User.find({
+        $and: [{ added_by }, { guardian: guardian_id }],
+      }).select(["-password", "-token"]);
+      res.status(200).json(players);
+    }
   } catch (error) {
     console.log(error);
   }

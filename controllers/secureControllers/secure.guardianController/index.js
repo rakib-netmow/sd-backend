@@ -2,6 +2,7 @@ const { generateToken } = require("../../../config/generateToken");
 const User = require("../../../model/user/userModel");
 const Cloudinary = require("../../../config/cloudinary.js");
 const sendLoginCredentials = require("../../../config/credentialEmail.js");
+const isValidObjectId = require("../../../config/checkValidObjectId.js");
 
 const addGuardian = async (req, res) => {
   const {
@@ -127,6 +128,10 @@ const singleGuardian = async (req, res) => {
       res.status(400).json({
         message: "Authentication error",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Guardian ID",
+      });
     } else {
       const gaurdians = await User.findOne({
         $and: [{ _id: id }, { added_by: email }, { role: "guardian" }],
@@ -171,6 +176,10 @@ const updateGuardian = async (req, res) => {
       res.status(400).json({
         message: "Confrim password is not matched!",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Guardian ID",
+      });
     } else {
       const guardian = await User.findOneAndUpdate(
         {
@@ -203,6 +212,10 @@ const deleteGuardian = async (req, res) => {
     if (guardian) {
       res.status(200).json({
         message: "Guardian deleted succefully.",
+      });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Guardian ID",
       });
     } else {
       res.status(400).json({

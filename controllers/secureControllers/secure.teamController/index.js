@@ -1,3 +1,4 @@
+const isValidObjectId = require("../../../config/checkValidObjectId.js");
 const Cloudinary = require("../../../config/cloudinary.js");
 
 const Team = require("../../../model/team/teamModel");
@@ -113,10 +114,16 @@ const singleTeam = async (req, res) => {
   const created_by = req.auth.id;
   const id = req?.params?.id;
   try {
-    const allteams = await Team.findOne({
-      $and: [{ created_by }, { _id: id }],
-    });
-    res.status(200).json(allteams);
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Team ID",
+      });
+    } else {
+      const allteams = await Team.findOne({
+        $and: [{ created_by }, { _id: id }],
+      });
+      res.status(200).json(allteams);
+    }
   } catch (error) {
     console.log(error);
   }
@@ -146,37 +153,47 @@ const assignPlayer = async (req, res) => {
   try {
     const { player_id } = req.body;
     const id = req?.params?.id;
-    const player = await User.findOne({ _id: player_id });
-    if (player?._id) {
-      const assign = await Team.findOneAndUpdate(
-        { _id: id },
-        {
-          $push: {
-            player: player_id,
-          },
-        }
-      );
-      if (assign) {
-        await User.findOneAndUpdate(
-          { _id: player_id },
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Team ID",
+      });
+    } else if (!isValidObjectId(player_id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
+    } else {
+      const player = await User.findOne({ _id: player_id });
+      if (player?._id) {
+        const assign = await Team.findOneAndUpdate(
+          { _id: id },
           {
             $push: {
-              team: id,
+              player: player_id,
             },
           }
         );
-        res.status(200).json({
-          message: "Player assigned successfully.",
-        });
+        if (assign) {
+          await User.findOneAndUpdate(
+            { _id: player_id },
+            {
+              $push: {
+                team: id,
+              },
+            }
+          );
+          res.status(200).json({
+            message: "Player assigned successfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't assign player. Please try again!",
+          });
+        }
       } else {
         res.status(400).json({
-          message: "Can't assign player. Please try again!",
+          message: "Invalid player ID. Please try again!",
         });
       }
-    } else {
-      res.status(400).json({
-        message: "Invalid player ID. Please try again!",
-      });
     }
   } catch (error) {
     console.log(error);
@@ -186,17 +203,22 @@ const assignPlayer = async (req, res) => {
 const deleteTeam = async (req, res) => {
   try {
     const id = req?.params?.id;
-
-    const deletedTeam = await Team.findOneAndDelete({ _id: id });
-
-    if (deletedTeam) {
-      res.status(200).json({
-        message: "Team deleted successfully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Team ID",
       });
     } else {
-      res.status(400).json({
-        message: "Can't delete team. Please try again!",
-      });
+      const deletedTeam = await Team.findOneAndDelete({ _id: id });
+
+      if (deletedTeam) {
+        res.status(200).json({
+          message: "Team deleted successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't delete team. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -207,20 +229,26 @@ const allTeamForPlayer = async (req, res) => {
   try {
     const player_id = req?.params?.id;
     const created_by = req.auth.id;
-    const player = await User.findOne({
-      $and: [{ created_by }, { _id: player_id }],
-    }).select(["-password", "-token"]);
-    if (player.email) {
-      let allTeams = [];
-      if (player?.team?.length > 0) {
-        player.team?.map(async (t) => {
-          const team = await Team.findOne({ _id: t });
-          if (team?._id) {
-            allTeams.push(team);
-          }
-        });
+    if (!isValidObjectId(player_id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
+    } else {
+      const player = await User.findOne({
+        $and: [{ created_by }, { _id: player_id }],
+      }).select(["-password", "-token"]);
+      if (player.email) {
+        let allTeams = [];
+        if (player?.team?.length > 0) {
+          player.team?.map(async (t) => {
+            const team = await Team.findOne({ _id: t });
+            if (team?._id) {
+              allTeams.push(team);
+            }
+          });
+        }
+        res.status(200).json(allTeams);
       }
-      res.status(200).json(allTeams);
     }
   } catch (error) {
     console.log(error);

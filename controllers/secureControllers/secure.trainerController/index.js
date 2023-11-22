@@ -1,3 +1,4 @@
+const isValidObjectId = require("../../../config/checkValidObjectId.js");
 const Cloudinary = require("../../../config/cloudinary.js");
 const { generateToken } = require("../../../config/generateToken.js");
 const User = require("../../../model/user/userModel.js");
@@ -138,6 +139,10 @@ const updateTrainer = async (req, res) => {
       res.status(400).json({
         message: "Confrim password is not matched!",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Trainer ID",
+      });
     } else {
       const trainer = await User.findOneAndUpdate(
         {
@@ -165,16 +170,21 @@ const deleteTrainer = async (req, res) => {
   try {
     const id = req?.params?.id;
     const added_by = req.auth.id;
-
-    const trainer = await User.findOneAndDelete({ _id: id });
-    if (trainer) {
-      res.status(200).json({
-        message: "Trainer deleted succefully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Trainer ID",
       });
     } else {
-      res.status(400).json({
-        message: "Cant not delete trainer. Please try again!",
-      });
+      const trainer = await User.findOneAndDelete({ _id: id });
+      if (trainer) {
+        res.status(200).json({
+          message: "Trainer deleted succefully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Cant not delete trainer. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);

@@ -1,3 +1,4 @@
+const isValidObjectId = require("../../../config/checkValidObjectId");
 const CnameSetting = require("../../../model/settings/cnameSettingModel");
 const DnsSetting = require("../../../model/settings/dnsSettingModel");
 const DomainSetting = require("../../../model/settings/domainSettingModel");
@@ -81,20 +82,26 @@ const updateDns = async (req, res) => {
   const created_by = req.auth.id;
   const id = req?.params?.id;
   try {
-    const newDns = await DnsSetting.findOneAndUpdate(
-      {
-        $and: [{ _id: id }, { created_by }],
-      },
-      data
-    );
-    if (newDns) {
-      res.status(200).json({
-        message: "DNS record updated successfully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid DNS ID",
       });
     } else {
-      res.status(400).json({
-        message: "Can't update DNS record. Please try again!",
-      });
+      const newDns = await DnsSetting.findOneAndUpdate(
+        {
+          $and: [{ _id: id }, { created_by }],
+        },
+        data
+      );
+      if (newDns) {
+        res.status(200).json({
+          message: "DNS record updated successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't update DNS record. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -105,18 +112,23 @@ const deleteDns = async (req, res) => {
   try {
     const id = req?.params?.id;
     const created_by = req.auth.id;
-
-    const dns = await DnsSetting.findOneAndDelete({
-      $and: [{ _id: id }, { created_by }],
-    });
-    if (dns) {
-      res.status(200).json({
-        message: "DNS record deleted succefully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid DNS ID",
       });
     } else {
-      res.status(400).json({
-        message: "Cant not delete DNS record. Please try again!",
+      const dns = await DnsSetting.findOneAndDelete({
+        $and: [{ _id: id }, { created_by }],
       });
+      if (dns) {
+        res.status(200).json({
+          message: "DNS record deleted succefully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Cant not delete DNS record. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -172,20 +184,26 @@ const updateNs = async (req, res) => {
   const created_by = req.auth.id;
   const id = req?.params?.id;
   try {
-    const newNs = await NsSetting.findOneAndUpdate(
-      {
-        $and: [{ _id: id }, { created_by }],
-      },
-      data
-    );
-    if (newNs) {
-      res.status(200).json({
-        message: "NS record updated successfully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid NS ID",
       });
     } else {
-      res.status(400).json({
-        message: "Can't update NS record. Please try again!",
-      });
+      const newNs = await NsSetting.findOneAndUpdate(
+        {
+          $and: [{ _id: id }, { created_by }],
+        },
+        data
+      );
+      if (newNs) {
+        res.status(200).json({
+          message: "NS record updated successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't update NS record. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -196,18 +214,23 @@ const deleteNs = async (req, res) => {
   try {
     const id = req?.params?.id;
     const created_by = req.auth.id;
-
-    const ns = await NsSetting.findOneAndDelete({
-      $and: [{ _id: id }, { created_by }],
-    });
-    if (ns) {
-      res.status(200).json({
-        message: "NS record deleted succefully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid NS ID",
       });
     } else {
-      res.status(400).json({
-        message: "Cant not delete NS record. Please try again!",
+      const ns = await NsSetting.findOneAndDelete({
+        $and: [{ _id: id }, { created_by }],
       });
+      if (ns) {
+        res.status(200).json({
+          message: "NS record deleted succefully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Cant not delete NS record. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -263,20 +286,26 @@ const updateCname = async (req, res) => {
   const created_by = req.auth.id;
   const id = req?.params?.id;
   try {
-    const newCname = await CnameSetting.findOneAndUpdate(
-      {
-        $and: [{ _id: id }, { created_by }],
-      },
-      data
-    );
-    if (newCname) {
-      res.status(200).json({
-        message: "CNAME record updated successfully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Cname ID",
       });
     } else {
-      res.status(400).json({
-        message: "Can't update CNAME record. Please try again!",
-      });
+      const newCname = await CnameSetting.findOneAndUpdate(
+        {
+          $and: [{ _id: id }, { created_by }],
+        },
+        data
+      );
+      if (newCname) {
+        res.status(200).json({
+          message: "CNAME record updated successfully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't update CNAME record. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -287,18 +316,23 @@ const deleteCname = async (req, res) => {
   try {
     const id = req?.params?.id;
     const created_by = req.auth.id;
-
-    const cname = await CnameSetting.findOneAndDelete({
-      $and: [{ _id: id }, { created_by }],
-    });
-    if (cname) {
-      res.status(200).json({
-        message: "CNAME record deleted succefully.",
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Cname ID",
       });
     } else {
-      res.status(400).json({
-        message: "Cant not delete CNAME record. Please try again!",
+      const cname = await CnameSetting.findOneAndDelete({
+        $and: [{ _id: id }, { created_by }],
       });
+      if (cname) {
+        res.status(200).json({
+          message: "CNAME record deleted succefully.",
+        });
+      } else {
+        res.status(400).json({
+          message: "Cant not delete CNAME record. Please try again!",
+        });
+      }
     }
   } catch (error) {
     console.log(error);

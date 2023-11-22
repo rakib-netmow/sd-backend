@@ -1,3 +1,4 @@
+const isValidObjectId = require("../../../config/checkValidObjectId.js");
 const Cloudinary = require("../../../config/cloudinary.js");
 const sendLoginCredentials = require("../../../config/credentialEmail.js");
 const { generateToken } = require("../../../config/generateToken.js");
@@ -130,6 +131,10 @@ const updateManager = async (req, res) => {
       res.status(400).json({
         message: "Confrim password is not matched!",
       });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Manager ID",
+      });
     } else {
       const manager = await User.findOneAndUpdate(
         {
@@ -162,6 +167,10 @@ const deleteManager = async (req, res) => {
     if (manager) {
       res.status(200).json({
         message: "Manager deleted succefully.",
+      });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Manager ID",
       });
     } else {
       res.status(400).json({
