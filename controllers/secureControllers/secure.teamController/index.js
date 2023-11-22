@@ -5,24 +5,38 @@ const Team = require("../../../model/team/teamModel");
 const User = require("../../../model/user/userModel.js");
 
 const addTeam = async (req, res) => {
-  const { name, manager, trainer, description, fee } = req.body;
+  const {
+    name,
+    manager,
+    manager_name,
+    trainer,
+    trainer_name,
+    description,
+    fee,
+  } = req.body;
   const created_by = req.auth.id;
   try {
     if (!name) {
       res.status(400).json({
         message: "Name is required!",
       });
-    }
-    // else if (!manager) {
-    //   res.status(400).json({
-    //     message: "Manager is required!",
-    //   });
-    // } else if (!trainer) {
-    //   res.status(400).json({
-    //     message: "Trainer is required!",
-    //   });
-    // }
-    else if (!description) {
+    } else if (!manager) {
+      res.status(400).json({
+        message: "Manager ID is required!",
+      });
+    } else if (!trainer) {
+      res.status(400).json({
+        message: "Trainer ID is required!",
+      });
+    } else if (!manager_name) {
+      res.status(400).json({
+        message: "Manager name is required!",
+      });
+    } else if (!trainer_name) {
+      res.status(400).json({
+        message: "Trainer name is required!",
+      });
+    } else if (!description) {
       res.status(400).json({
         message: "Description is required!",
       });
@@ -56,7 +70,9 @@ const addTeam = async (req, res) => {
       const newTeam = await Team.create({
         name,
         manager: manager ? manager : "",
+        manager_name,
         trainer: trainer ? trainer : "",
+        trainer_name,
         description,
         fee,
         created_by,

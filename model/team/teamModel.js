@@ -4,7 +4,9 @@ const teamSchema = new mongoose.Schema(
   {
     name: String,
     manager: String,
+    manager_name: String,
     trainer: String,
+    trainer_name: String,
     player: Array,
     description: String,
     image: Object,
