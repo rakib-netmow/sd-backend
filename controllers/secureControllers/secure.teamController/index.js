@@ -83,7 +83,7 @@ const addTeam = async (req, res) => {
         // update manager profile
         await User.findOneAndUpdate(
           {
-            $and: [{ _id: manager, role: "manager" }],
+            $and: [{ email: manager, role: "manager" }],
           },
           {
             $push: {
@@ -94,7 +94,7 @@ const addTeam = async (req, res) => {
         // update trainer profile
         await User.findOneAndUpdate(
           {
-            $and: [{ _id: trainer, role: "trainer" }],
+            $and: [{ email: trainer, role: "trainer" }],
           },
           {
             $push: {

@@ -93,7 +93,7 @@ router.get("/user-country", userCountryController);
 router.post("/guardian", multer.single("image"), addGuardianController);
 router.get("/guardian", allGuardianController);
 router.get("/total-guardian", totalGuardianController);
-router.patch("/guardian/:id", updateGuardianController);
+router.patch("/guardian/:id", multer.single("image"), updateGuardianController);
 router.delete("/guardian/:id", deleteGuardianController);
 router.get("/guardian/:id", singleGuardianController);
 // Player

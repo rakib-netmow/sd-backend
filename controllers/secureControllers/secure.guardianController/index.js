@@ -167,6 +167,8 @@ const updateGuardian = async (req, res) => {
   const data = req.body;
   const added_by = req.auth.id;
   const id = req?.params?.id;
+  // const y = { image, ...data };
+  // console.log(y);
   try {
     if (data?.email || data?.username) {
       res.status(400).json({
@@ -181,21 +183,54 @@ const updateGuardian = async (req, res) => {
         message: "Invalid Guardian ID",
       });
     } else {
-      const guardian = await User.findOneAndUpdate(
-        {
-          $and: [{ _id: id }, { added_by }],
-        },
-        data
-      );
+      if (req.file?.path) {
+        // ** upload the image
+        const upload = await Cloudinary.uploader.upload(req.file?.path);
+        if (upload?.secure_url) {
+          let uploadedImage = {};
+          uploadedImage = {
+            uploadedImage: upload.secure_url,
+            uploadedImage_public_url: upload.public_id,
+          };
+          const alldata = { ...data, profile_image: uploadedImage };
+          const guardian = await User.findOneAndUpdate(
+            {
+              $and: [{ _id: id }, { added_by }],
+            },
+            alldata
+          );
 
-      if (guardian) {
-        res.status(200).json({
-          message: "Infromation updated successfully.",
-        });
+          if (guardian) {
+            res.status(200).json({
+              message: "Infromation updated successfully.",
+            });
+          } else {
+            res.status(400).json({
+              message: "Can't update information. Please try again!",
+            });
+          }
+        } else {
+          res.status(400).json({
+            message: "Image upload faild! Please try again.",
+          });
+        }
       } else {
-        res.status(400).json({
-          message: "Can't update information. Please try again!",
-        });
+        const guardian = await User.findOneAndUpdate(
+          {
+            $and: [{ _id: id }, { added_by }],
+          },
+          data
+        );
+
+        if (guardian) {
+          res.status(200).json({
+            message: "Infromation updated successfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't update information. Please try again!",
+          });
+        }
       }
     }
   } catch (error) {
