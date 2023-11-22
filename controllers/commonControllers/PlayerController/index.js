@@ -99,7 +99,7 @@ const addPlayerByGuardian = async (req, res) => {
             description: description ? description : "",
             added_by,
             guardian: added_by,
-            guardian_name: guardian?._id,
+            guardian_name: guardian?.email,
             role: "player",
             // profile_image: uploadedImage
           });
