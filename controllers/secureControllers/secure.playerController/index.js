@@ -116,6 +116,9 @@ const addPlayer = async (req, res) => {
                 $push: {
                   player: newPlayer?._id,
                 },
+                $inc: {
+                  total_player: 1,
+                },
               }
             );
             res.status(200).json({
@@ -317,6 +320,9 @@ const assignTeam = async (req, res) => {
             $push: {
               team: id,
             },
+            $inc: {
+              total_player: 1,
+            },
           }
         );
         res.status(200).json({
@@ -464,6 +470,9 @@ const addPlayerForGuardian = async (req, res) => {
               {
                 $push: {
                   player: newPlayer?._id,
+                },
+                $inc: {
+                  total_player: 1,
                 },
               }
             );

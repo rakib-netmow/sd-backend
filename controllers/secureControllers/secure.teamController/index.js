@@ -186,6 +186,9 @@ const assignPlayer = async (req, res) => {
             $push: {
               player: player_id,
             },
+            $inc: {
+              total_player: 1,
+            },
           }
         );
         if (assign) {

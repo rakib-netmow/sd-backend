@@ -11,6 +11,7 @@ const teamSchema = new mongoose.Schema(
     description: String,
     image: Object,
     fee: String,
+    total_player: { type: Number, default: 0 },
     created_by: String,
   },
   {
