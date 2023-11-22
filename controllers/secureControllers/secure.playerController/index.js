@@ -276,7 +276,7 @@ const deletePlayer = async (req, res) => {
     const player = await User.findOneAndDelete({ _id: id });
     if (player) {
       res.status(200).json({
-        message: "Guardian deleted succefully.",
+        message: "Guardian deleted syccessfully.",
       });
     } else if (!isValidObjectId(id)) {
       res.status(400).json({

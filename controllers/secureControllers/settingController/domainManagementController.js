@@ -122,7 +122,7 @@ const deleteDns = async (req, res) => {
       });
       if (dns) {
         res.status(200).json({
-          message: "DNS record deleted succefully.",
+          message: "DNS record deleted syccessfully.",
         });
       } else {
         res.status(400).json({
@@ -224,7 +224,7 @@ const deleteNs = async (req, res) => {
       });
       if (ns) {
         res.status(200).json({
-          message: "NS record deleted succefully.",
+          message: "NS record deleted syccessfully.",
         });
       } else {
         res.status(400).json({
@@ -326,7 +326,7 @@ const deleteCname = async (req, res) => {
       });
       if (cname) {
         res.status(200).json({
-          message: "CNAME record deleted succefully.",
+          message: "CNAME record deleted syccessfully.",
         });
       } else {
         res.status(400).json({

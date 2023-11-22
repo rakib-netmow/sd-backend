@@ -166,7 +166,7 @@ const deleteManager = async (req, res) => {
     const manager = await User.findOneAndDelete({ _id: id });
     if (manager) {
       res.status(200).json({
-        message: "Manager deleted succefully.",
+        message: "Manager deleted syccessfully.",
       });
     } else if (!isValidObjectId(id)) {
       res.status(400).json({

@@ -178,7 +178,7 @@ const deleteTrainer = async (req, res) => {
       const trainer = await User.findOneAndDelete({ _id: id });
       if (trainer) {
         res.status(200).json({
-          message: "Trainer deleted succefully.",
+          message: "Trainer deleted syccessfully.",
         });
       } else {
         res.status(400).json({
