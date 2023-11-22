@@ -75,6 +75,7 @@ const addPlayerByGuardian = async (req, res) => {
 
       const existingPlayer = await User.findOne({ email });
       const existingTeam = await Team.findOne({ _id: team });
+      const guardian = await User.findOne({ _id: added_by });
       if (!existingPlayer) {
         if (existingTeam?._id) {
           const newPlayer = await User.create({
@@ -98,11 +99,21 @@ const addPlayerByGuardian = async (req, res) => {
             description: description ? description : "",
             added_by,
             guardian: added_by,
+            guardian_name: guardian?._id,
             role: "player",
             // profile_image: uploadedImage
           });
           if (newPlayer) {
             sendLoginCredentials(email, password);
+            // update the Guardian inactive player on database model
+            await User.findOneAndUpdate(
+              { _id: guardian?._id },
+              {
+                $inc: {
+                  inactive_player: 1,
+                },
+              }
+            );
             // update the team database model
             await Team.findOneAndUpdate(
               { _id: team },

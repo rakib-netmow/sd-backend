@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema(
       default: "unpaid",
     }, // aditional for player
     guardian: String, // aditional for player
+    guardian_name: String, // additional for player
     joining_date: { type: String, default: new Date() },
     status: { type: String, enum: ["active", "inactive"], default: "active" },
   },

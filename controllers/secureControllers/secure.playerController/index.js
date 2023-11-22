@@ -419,7 +419,8 @@ const addPlayerForGuardian = async (req, res) => {
 
       const existingPlayer = await User.findOne({ email });
       const existingTeam = await Team.findOne({ _id: team });
-      if (!existingPlayer) {
+      const guardian = await User.findOne({ _id: guardian_id });
+      if (!existingPlayer && guardian?._id) {
         if (existingTeam?._id) {
           const newPlayer = await User.create({
             email: email,
@@ -442,6 +443,7 @@ const addPlayerForGuardian = async (req, res) => {
             description: description ? description : "",
             added_by,
             guardian: guardian_id,
+            guardian_name: guardian?._id,
             role: "player",
             // profile_image: uploadedImage
           });
