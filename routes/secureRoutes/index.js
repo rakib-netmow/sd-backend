@@ -79,6 +79,8 @@ const {
   singleTeamController,
   allPlayersForGuardianController,
   allTeamsForPlayerController,
+  getGuardianFreePlayersController,
+  assignPlayerToGuardianController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -103,10 +105,16 @@ router.get("/total-player", totalPlayerController);
 router.get("/latest-player", latestPlayerController);
 router.patch("/player/:id", updatePlayerController);
 router.delete("/player/:id", deletePlayerController);
-router.post("/add-player-for-guardian/:id", addPlayerForGuardianController);
+router.post(
+  "/add-player-for-guardian/:id",
+  multer.single("image"),
+  addPlayerForGuardianController
+);
 router.post("/assign_team/:id", assignTeamController);
 router.get("/player/:id", singlePlayerController);
 router.get("/all-players-for-guardian/:id", allPlayersForGuardianController);
+router.get("/guardian-free-players", getGuardianFreePlayersController);
+router.put("/assign-player-to-guardian/:id", assignPlayerToGuardianController);
 // payment
 router.get("/transaction", allTransactionsController);
 

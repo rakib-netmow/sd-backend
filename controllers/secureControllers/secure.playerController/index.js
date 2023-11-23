@@ -400,98 +400,95 @@ const addPlayerForGuardian = async (req, res) => {
       res.status(400).json({
         message: "Fees is required!",
       });
-    }
-    // else if (!req.file?.path) {
-    //   res.status(400).json({
-    //     message: "Image is missing",
-    //   });
-    // }
-    else {
+    } else if (!req.file?.path) {
+      res.status(400).json({
+        message: "Image is missing",
+      });
+    } else {
       // ** upload the image
-      // const upload = await Cloudinary.uploader.upload(req.file?.path);
-      // if (upload?.secure_url) {
-      //   let uploadedImage = {};
-      //   uploadedImage = {
-      //     uploadedImage: upload.secure_url,
-      //     uploadedImage_public_url: upload.public_id,
-      //   };
+      const upload = await Cloudinary.uploader.upload(req.file?.path);
+      if (upload?.secure_url) {
+        let uploadedImage = {};
+        uploadedImage = {
+          uploadedImage: upload.secure_url,
+          uploadedImage_public_url: upload.public_id,
+        };
 
-      //   // Enter next code there
-      // } else {
-      //   req.status(400).json({
-      //     message: "Image upload faild! Please try again.",
-      //   });
-      // }
-
-      const existingPlayer = await User.findOne({ email });
-      const existingTeam = await Team.findOne({ _id: team });
-      const guardian = await User.findOne({ _id: guardian_id });
-      if (!existingPlayer && guardian?._id) {
-        if (existingTeam?._id) {
-          const newPlayer = await User.create({
-            email: email,
-            password: password,
-            team: [team],
-            token: generateToken(email),
-            fees,
-            name: first_name && last_name ? `${first_name} ${last_name}` : "",
-            gender: gender ? gender : "",
-            date_of_birth: date_of_birth ? date_of_birth : "",
-            address_line_1: address_line_1 ? address_line_1 : "",
-            address_line_2: address_line_2 ? address_line_2 : "",
-            country: country ? country : "",
-            city: city ? city : "",
-            state: state ? state : "",
-            zip: zip ? zip : 0,
-            phone: phone ? phone : "",
-            height: height ? height : "",
-            weight: weight ? weight : "",
-            description: description ? description : "",
-            added_by,
-            guardian: guardian_id,
-            guardian_name: guardian?.name,
-            role: "player",
-            // profile_image: uploadedImage
-          });
-          if (newPlayer) {
-            sendLoginCredentials(email, password);
-            // update the Guardian's active/inactive players in database model
-            await User.findOneAndUpdate(
-              { _id: guardian_id },
-              {
-                $inc: {
-                  inactive_player: 1,
-                },
-              }
-            );
-            // update the team database model
-            await Team.findOneAndUpdate(
-              { _id: team },
-              {
-                $push: {
-                  player: newPlayer?._id,
-                },
-                $inc: {
-                  total_player: 1,
-                },
-              }
-            );
-            res.status(200).json({
-              message: "Player added successfully.",
+        // Enter next code there
+        const existingPlayer = await User.findOne({ email });
+        const existingTeam = await Team.findOne({ _id: team });
+        const guardian = await User.findOne({ _id: guardian_id });
+        if (!existingPlayer && guardian?._id) {
+          if (existingTeam?._id) {
+            const newPlayer = await User.create({
+              email: email,
+              password: password,
+              team: [team],
+              token: generateToken(email),
+              fees,
+              name: first_name && last_name ? `${first_name} ${last_name}` : "",
+              gender: gender ? gender : "",
+              date_of_birth: date_of_birth ? date_of_birth : "",
+              address_line_1: address_line_1 ? address_line_1 : "",
+              address_line_2: address_line_2 ? address_line_2 : "",
+              country: country ? country : "",
+              city: city ? city : "",
+              state: state ? state : "",
+              zip: zip ? zip : 0,
+              phone: phone ? phone : "",
+              height: height ? height : "",
+              weight: weight ? weight : "",
+              description: description ? description : "",
+              added_by,
+              guardian: guardian_id,
+              guardian_name: guardian?.name,
+              role: "player",
+              profile_image: uploadedImage,
             });
+            if (newPlayer) {
+              sendLoginCredentials(email, password);
+              // update the Guardian's active/inactive players in database model
+              await User.findOneAndUpdate(
+                { _id: guardian_id },
+                {
+                  $inc: {
+                    inactive_player: 1,
+                  },
+                }
+              );
+              // update the team database model
+              await Team.findOneAndUpdate(
+                { _id: team },
+                {
+                  $push: {
+                    player: newPlayer?._id,
+                  },
+                  $inc: {
+                    total_player: 1,
+                  },
+                }
+              );
+              res.status(200).json({
+                message: "Player added successfully.",
+              });
+            } else {
+              res.status(400).json({
+                message: "Can not add Player. Please try again!",
+              });
+            }
           } else {
             res.status(400).json({
-              message: "Can not add Player. Please try again!",
+              message: "Invalid team ID or can't find any team to assign!",
             });
           }
         } else {
           res.status(400).json({
-            message: "Invalid team ID or can't find any team to assign!",
+            message: "Already have an user with this email",
           });
         }
       } else {
-        res.status(400).json({
-          message: "Already have an user with this email",
+        req.status(400).json({
+          message: "Image upload faild! Please try again.",
         });
       }
     }
@@ -519,6 +516,94 @@ const allPlayersForGuardian = async (req, res) => {
   }
 };
 
+const getGuardianFreePlayers = async (req, res) => {
+  try {
+    const added_by = req.auth.id;
+    const players = await User.find({
+      $and: [
+        { $or: [{ guardian: null }, { guardian: "undefined" }] },
+        { role: "player" },
+        { added_by },
+      ],
+    }).select(["-password", "-token"]);
+    res.status(200).json(players);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const assignPlayerToGuardian = async (req, res) => {
+  const player_email = req.body.email;
+  const guardianId = req.params.id;
+  try {
+    if (!player_email) {
+      res.status(400).json({
+        message: "Player email is missing!",
+      });
+    } else if (!guardianId) {
+      res.status(400).json({
+        message: "Guardian ID is missing!",
+      });
+    } else if (!isValidObjectId(guardianId)) {
+      res.status(400).json({
+        message: "Invalid Guardian ID",
+      });
+    } else {
+      const guardian = await User.findOne({ _id: guardianId });
+      const player = await User.findOne({ email: player_email });
+      if (!guardian?._id || !player?._id) {
+        res.status(400).json({
+          message: "Can't find Guardian or Player!",
+        });
+      } else {
+        const updatePlayer = await User.findOneAndUpdate(
+          { _id: player?._id },
+          {
+            $set: {
+              guardian: guardian?._id,
+              guardian_name: guardian?.name,
+            },
+          }
+        );
+        if (updatePlayer) {
+          const updateGuardian = await User.findOneAndUpdate(
+            { _id: guardian?._id },
+            {
+              $inc: {
+                inactive_player: 1,
+              },
+            }
+          );
+          if (updateGuardian) {
+            res.status(200).json({
+              message: "Player assigned successfully!",
+            });
+          } else {
+            await User.findOneAndUpdate(
+              { _id: player?._id },
+              {
+                $set: {
+                  guardian: "",
+                  guardian_name: "",
+                },
+              }
+            );
+            res.status(400).json({
+              message: "Cant't update Guardian profile for assign player!",
+            });
+          }
+        } else {
+          res.status(400).json({
+            message: "Cant't update Player profile for assign player!",
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addPlayer,
   allPlayer,
@@ -530,4 +615,6 @@ module.exports = {
   assignTeam,
   singlePlayer,
   allPlayersForGuardian,
+  getGuardianFreePlayers,
+  assignPlayerToGuardian,
 };
