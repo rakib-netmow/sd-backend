@@ -273,19 +273,65 @@ const deletePlayer = async (req, res) => {
     const id = req?.params?.id;
     const added_by = req.auth.id;
 
-    const player = await User.findOneAndDelete({ _id: id });
-    if (player) {
-      res.status(200).json({
-        message: "Guardian deleted syccessfully.",
-      });
-    } else if (!isValidObjectId(id)) {
+    if (!isValidObjectId(id)) {
       res.status(400).json({
         message: "Invalid Player ID",
       });
     } else {
-      res.status(400).json({
-        message: "Cant not delete guardian. Please try again!",
-      });
+      if (true) {
+        const player = await User.findOne({ _id: id });
+        if (player?.guardian && isValidObjectId(player.guardian)) {
+          const guardian = await User.findOne({ _id: player?.guardian });
+          if (guardian && player?.payment_status === "unpaid") {
+            await User.findOneAndUpdate(
+              { _id: guardian?._id },
+              {
+                $inc: {
+                  total_player: -1,
+                  inactive_player: -1,
+                },
+              }
+            );
+          } else {
+            await User.findOneAndUpdate(
+              { _id: guardian?._id },
+              {
+                $inc: {
+                  total_player: -1,
+                  active_player: -1,
+                },
+              }
+            );
+          }
+        }
+        if (player?.team?.length > 0) {
+          player?.team?.map(
+            async (t) =>
+              isValidObjectId(t) &&
+              (await Team.findOneAndUpdate(
+                { _id: t },
+                {
+                  $pull: { player: player?._id },
+                  $inc: { total_player: -1 },
+                }
+              ))
+          );
+        }
+        const deletePlayer = await User.findOneAndDelete({ _id: id });
+        if (deletePlayer) {
+          res.status(200).json({
+            message: "Player deleted syccessfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Faild to delete Player. Please try again.",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find any Player! Please try again.",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -453,6 +499,7 @@ const addPlayerForGuardian = async (req, res) => {
                 {
                   $inc: {
                     inactive_player: 1,
+                    total_player: 1,
                   },
                 }
               );

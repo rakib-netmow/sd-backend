@@ -42,7 +42,6 @@ const userSchema = new mongoose.Schema(
     weight: String,
     team: Array,
     fees: String,
-    profile_img: String,
     username: String,
     active_player: { type: Number, default: 0 }, // additional for guardian
     inactive_player: { type: Number, default: 0 }, // additional for guardian
