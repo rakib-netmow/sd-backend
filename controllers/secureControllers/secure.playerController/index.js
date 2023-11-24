@@ -676,18 +676,25 @@ const getAllTeamForPlayer = async (req, res) => {
     } else {
       const player = await User.findOne({ _id: playerID });
       if (player) {
-        let allTeams = [];
+        // let allTeams = [];
         if (player?.team?.length > 0) {
-          player?.team?.map(async (t) => {
-            const getTeam = await Team.findOne({ _id: ObjectId(t) });
-            if (getTeam?._id) {
-              allTeams.push(getTeam);
-            }
+          // player?.team?.map(async (t) => {
+          //   const getTeam = await Team.findOne({ _id: ObjectId(t) });
+          //   if (getTeam?._id) {
+          //     allTeams.push(getTeam);
+          //   }
+          // });
+          const allTeams = await Team.find({
+            _id: { $in: [...player?.team] },
+          });
+          res.status(200).json(allTeams);
+        } else {
+          res.status(200).json({
+            message: "Player don't any Team yet!",
           });
         }
-        res.status(200).json(allTeams);
       } else {
-        res.status(400).json({
+        res.status(200).json({
           message: "Can't find Player!",
         });
       }
