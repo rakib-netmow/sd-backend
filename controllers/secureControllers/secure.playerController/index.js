@@ -57,86 +57,83 @@ const addPlayer = async (req, res) => {
       res.status(400).json({
         message: "Fees is required!",
       });
-    }
-    // else if (!req.file?.path) {
-    //   res.status(400).json({
-    //     message: "Image is missing",
-    //   });
-    // }
-    else {
+    } else if (!req.file?.path) {
+      res.status(400).json({
+        message: "Image is missing",
+      });
+    } else {
       // ** upload the image
-      // const upload = await Cloudinary.uploader.upload(req.file?.path);
-      // if (upload?.secure_url) {
-      //   let uploadedImage = {};
-      //   uploadedImage = {
-      //     uploadedImage: upload.secure_url,
-      //     uploadedImage_public_url: upload.public_id,
-      //   };
+      const upload = await Cloudinary.uploader.upload(req.file?.path);
+      if (upload?.secure_url) {
+        let uploadedImage = {};
+        uploadedImage = {
+          uploadedImage: upload.secure_url,
+          uploadedImage_public_url: upload.public_id,
+        };
 
-      //   // Enter next code there
-      // } else {
-      //   req.status(400).json({
-      //     message: "Image upload faild! Please try again.",
-      //   });
-      // }
-
-      const existingPlayer = await User.findOne({ email });
-      if (!existingPlayer) {
-        const existingTeam = await Team.findOne({ _id: team });
-        if (existingTeam?._id) {
-          const newPlayer = await User.create({
-            email: email,
-            password: password,
-            team: [team],
-            token: generateToken(email),
-            fees,
-            name: first_name && last_name ? `${first_name} ${last_name}` : "",
-            gender: gender ? gender : "",
-            date_of_birth: date_of_birth ? date_of_birth : "",
-            address_line_1: address_line_1 ? address_line_1 : "",
-            address_line_2: address_line_2 ? address_line_2 : "",
-            country: country ? country : "",
-            city: city ? city : "",
-            state: state ? state : "",
-            zip: zip ? parseInt(zip) : 0,
-            phone: phone ? phone : "",
-            height: height ? height : "",
-            weight: weight ? weight : "",
-            description: description ? description : "",
-            added_by,
-            role: "player",
-            // profile_image: uploadedImage
-          });
-          if (newPlayer) {
-            sendLoginCredentials(email, password);
-            // update the team database model
-            await Team.findOneAndUpdate(
-              { _id: team },
-              {
-                $push: {
-                  player: newPlayer?._id,
-                },
-                $inc: {
-                  total_player: 1,
-                },
-              }
-            );
-            res.status(200).json({
-              message: "Player added successfully.",
+        // Enter next code there
+        const existingPlayer = await User.findOne({ email });
+        if (!existingPlayer) {
+          const existingTeam = await Team.findOne({ _id: team });
+          if (existingTeam?._id) {
+            const newPlayer = await User.create({
+              email: email,
+              password: password,
+              team: [team],
+              token: generateToken(email),
+              fees,
+              name: first_name && last_name ? `${first_name} ${last_name}` : "",
+              gender: gender ? gender : "",
+              date_of_birth: date_of_birth ? date_of_birth : "",
+              address_line_1: address_line_1 ? address_line_1 : "",
+              address_line_2: address_line_2 ? address_line_2 : "",
+              country: country ? country : "",
+              city: city ? city : "",
+              state: state ? state : "",
+              zip: zip ? parseInt(zip) : 0,
+              phone: phone ? phone : "",
+              height: height ? height : "",
+              weight: weight ? weight : "",
+              description: description ? description : "",
+              added_by,
+              role: "player",
+              profile_image: uploadedImage,
             });
+            if (newPlayer) {
+              sendLoginCredentials(email, password);
+              // update the team database model
+              await Team.findOneAndUpdate(
+                { _id: team },
+                {
+                  $push: {
+                    player: newPlayer?._id,
+                  },
+                  $inc: {
+                    total_player: 1,
+                  },
+                }
+              );
+              res.status(200).json({
+                message: "Player added successfully.",
+              });
+            } else {
+              res.status(400).json({
+                message: "Can not add Player. Please try again!",
+              });
+            }
           } else {
             res.status(400).json({
-              message: "Can not add Player. Please try again!",
+              message: "Invalid team ID or can't find any team to assing!",
             });
           }
         } else {
           res.status(400).json({
-            message: "Invalid team ID or can't find any team to assing!",
+            message: "Already have an user with this email",
           });
         }
       } else {
-        res.status(400).json({
-          message: "Already have an user with this email",
+        req.status(400).json({
+          message: "Image upload faild! Please try again.",
         });
       }
     }
@@ -651,6 +648,37 @@ const assignPlayerToGuardian = async (req, res) => {
   }
 };
 
+const getAllTeamForPlayer = async (req, res) => {
+  const playerID = req.params.id;
+  try {
+    if (!playerID || isValidObjectId(playerID)) {
+      res.status(400).json({
+        message: "Invalid Player id!",
+      });
+    } else {
+      const player = await User.findOne({ _id: playerID });
+      if (player) {
+        let allTeams = [];
+        if (player?.team?.length > 0) {
+          player?.team?.length?.map(async (t) => {
+            const getTeam = await Team.findOne({ _id: t });
+            if (getTeam?._id) {
+              allTeams.push(getTeam)
+            }
+          });
+        }
+        res.status(200).json(allTeams)
+      }else{
+        res.status(400).json({
+          message: "Can't find Player!"
+        })
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addPlayer,
   allPlayer,
@@ -664,4 +692,5 @@ module.exports = {
   allPlayersForGuardian,
   getGuardianFreePlayers,
   assignPlayerToGuardian,
+  getAllTeamForPlayer
 };

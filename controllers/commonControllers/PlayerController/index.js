@@ -97,7 +97,7 @@ const addPlayerByGuardian = async (req, res) => {
             height: height ? height : "",
             weight: weight ? weight : "",
             description: description ? description : "",
-            added_by,
+            added_by: guardian?.added_by,
             guardian: added_by,
             guardian_name: guardian?.name,
             role: "player",
