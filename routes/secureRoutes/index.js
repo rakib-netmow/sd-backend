@@ -140,7 +140,6 @@ router.get("/latest-team", latestTeamController);
 router.post("/assign-player/:id", assignPlayerController);
 router.delete("/team/:id", deleteTeamController);
 router.get("/team/:id", singleTeamController);
-router.get("/all-teams-for-player/:id", allTeamsForPlayerController);
 // Game Schedule
 router.post(
   "/add-game-schedule",

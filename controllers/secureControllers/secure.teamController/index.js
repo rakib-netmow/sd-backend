@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const isValidObjectId = require("../../../config/checkValidObjectId.js");
 const Cloudinary = require("../../../config/cloudinary.js");
 
@@ -261,8 +262,8 @@ const allTeamForPlayer = async (req, res) => {
       if (player.email) {
         let allTeams = [];
         if (player?.team?.length > 0) {
-          player.team?.map(async (t) => {
-            const team = await Team.findOne({ _id: t });
+          player?.team?.map(async (t) => {
+            const team = await Team.findOne({ _id: ObjectId(t) });
             if (team?._id) {
               allTeams.push(team);
             }

@@ -308,7 +308,7 @@ const deletePlayer = async (req, res) => {
             async (t) =>
               isValidObjectId(t) &&
               (await Team.findOneAndUpdate(
-                { _id: t },
+                { _id: ObjectId(t) },
                 {
                   $pull: { player: player?._id },
                   $inc: { total_player: -1 },
@@ -679,7 +679,7 @@ const getAllTeamForPlayer = async (req, res) => {
         let allTeams = [];
         if (player?.team?.length > 0) {
           player?.team?.length?.map(async (t) => {
-            const getTeam = await Team.findOne({ _id: t });
+            const getTeam = await Team.findOne({ _id: ObjectId(t) });
             if (getTeam?._id) {
               allTeams.push(getTeam);
             }
