@@ -606,6 +606,8 @@ const assignPlayerToGuardian = async (req, res) => {
             $set: {
               guardian: guardian?._id,
               guardian_name: guardian?.name,
+              guardian_email: guardian?.email,
+              guardian_phone: guardian?.phone,
             },
           }
         );
@@ -663,15 +665,15 @@ const getAllTeamForPlayer = async (req, res) => {
           player?.team?.length?.map(async (t) => {
             const getTeam = await Team.findOne({ _id: t });
             if (getTeam?._id) {
-              allTeams.push(getTeam)
+              allTeams.push(getTeam);
             }
           });
         }
-        res.status(200).json(allTeams)
-      }else{
+        res.status(200).json(allTeams);
+      } else {
         res.status(400).json({
-          message: "Can't find Player!"
-        })
+          message: "Can't find Player!",
+        });
       }
     }
   } catch (error) {
@@ -692,5 +694,5 @@ module.exports = {
   allPlayersForGuardian,
   getGuardianFreePlayers,
   assignPlayerToGuardian,
-  getAllTeamForPlayer
+  getAllTeamForPlayer,
 };
