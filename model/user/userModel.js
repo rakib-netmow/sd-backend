@@ -40,7 +40,8 @@ const userSchema = new mongoose.Schema(
     date_of_birth: String,
     height: String,
     weight: String,
-    team: Array,
+    team: Array, // additional for player (all assigned team IDs)
+    team_names: Array, // additional for player (all assigned team names)
     fees: String,
     username: String,
     active_player: { type: Number, default: 0 }, // additional for guardian

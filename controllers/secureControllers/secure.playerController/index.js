@@ -80,6 +80,7 @@ const addPlayer = async (req, res) => {
               email: email,
               password: password,
               team: [team],
+              team_names: [existingTeam?.name],
               token: generateToken(email),
               fees,
               name: first_name && last_name ? `${first_name} ${last_name}` : "",
@@ -348,33 +349,41 @@ const assignTeam = async (req, res) => {
         message: "Invalid Team ID",
       });
     } else {
-      const assign = await User.findOneAndUpdate(
-        { _id: id },
-        {
-          $push: {
-            team: team_id,
-          },
-        }
-      );
-      if (assign) {
-        await Team.findOneAndUpdate(
-          { _id: team_id },
+      const getTeam = await Team.findOne({_id: team_id})
+      if(getTeam?._id){
+        const assign = await User.findOneAndUpdate(
+          { _id: id },
           {
             $push: {
-              team: id,
-            },
-            $inc: {
-              total_player: 1,
+              team: team_id,
+              team_names: getTeam?.name,
             },
           }
         );
-        res.status(200).json({
-          message: "Team assigned successfully.",
-        });
-      } else {
+        if (assign) {
+          await Team.findOneAndUpdate(
+            { _id: team_id },
+            {
+              $push: {
+                team: id,
+              },
+              $inc: {
+                total_player: 1,
+              },
+            }
+          );
+          res.status(200).json({
+            message: "Team assigned successfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't assign Team. Please try again!",
+          });
+        }
+      }else{
         res.status(400).json({
-          message: "Can't assign Team. Please try again!",
-        });
+          message: "Can't find Team!"
+        })
       }
     }
   } catch (error) {
@@ -467,6 +476,7 @@ const addPlayerForGuardian = async (req, res) => {
               email: email,
               password: password,
               team: [team],
+              team_names: [existingTeam?.name],
               token: generateToken(email),
               fees,
               name: first_name && last_name ? `${first_name} ${last_name}` : "",
@@ -485,6 +495,8 @@ const addPlayerForGuardian = async (req, res) => {
               added_by,
               guardian: guardian_id,
               guardian_name: guardian?.name,
+              guardian_email: guardian?.email,
+              guardian_phone: guardian?.phone,
               role: "player",
               profile_image: uploadedImage,
             });
@@ -617,6 +629,7 @@ const assignPlayerToGuardian = async (req, res) => {
             {
               $inc: {
                 inactive_player: 1,
+                total_player: 1,
               },
             }
           );
@@ -631,6 +644,8 @@ const assignPlayerToGuardian = async (req, res) => {
                 $set: {
                   guardian: "",
                   guardian_name: "",
+                  guardian_email: "",
+                  guardian_phone: "",
                 },
               }
             );

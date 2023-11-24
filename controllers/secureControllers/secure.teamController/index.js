@@ -179,7 +179,8 @@ const assignPlayer = async (req, res) => {
       });
     } else {
       const player = await User.findOne({ _id: player_id });
-      if (player?._id) {
+      const getTeam = await Team.findOne({ _id: team_id });
+      if (player?._id && getTeam?._id) {
         const assign = await Team.findOneAndUpdate(
           { _id: id },
           {
@@ -197,6 +198,7 @@ const assignPlayer = async (req, res) => {
             {
               $push: {
                 team: id,
+                team_names: getTeam?.name,
               },
             }
           );
