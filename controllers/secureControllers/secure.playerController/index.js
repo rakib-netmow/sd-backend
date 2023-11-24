@@ -700,7 +700,7 @@ const getAllTeamForPlayer = async (req, res) => {
 const getRemainingTeamList = async (req, res) => {
   try {
     const playerId = req.params.id;
-    if (!playerId && !isValidObjectId(playerId)) {
+    if (!playerId || !isValidObjectId(playerId)) {
       res.status(400).json({
         message: "Invalid Player id!",
       });
