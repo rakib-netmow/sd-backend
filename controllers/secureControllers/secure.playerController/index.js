@@ -4,6 +4,7 @@ const Cloudinary = require("../../../config/cloudinary.js");
 const sendLoginCredentials = require("../../../config/credentialEmail.js");
 const Team = require("../../../model/team/teamModel.js");
 const isValidObjectId = require("../../../config/checkValidObjectId.js");
+const { ObjectId } = require("mongodb");
 
 const addPlayer = async (req, res) => {
   const {
@@ -349,8 +350,8 @@ const assignTeam = async (req, res) => {
         message: "Invalid Team ID",
       });
     } else {
-      const getTeam = await Team.findOne({_id: team_id})
-      if(getTeam?._id){
+      const getTeam = await Team.findOne({ _id: team_id });
+      if (getTeam?._id) {
         const assign = await User.findOneAndUpdate(
           { _id: id },
           {
@@ -380,10 +381,10 @@ const assignTeam = async (req, res) => {
             message: "Can't assign Team. Please try again!",
           });
         }
-      }else{
+      } else {
         res.status(400).json({
-          message: "Can't find Team!"
-        })
+          message: "Can't find Team!",
+        });
       }
     }
   } catch (error) {
@@ -668,7 +669,7 @@ const assignPlayerToGuardian = async (req, res) => {
 const getAllTeamForPlayer = async (req, res) => {
   const playerID = req.params.id;
   try {
-    if (!playerID || isValidObjectId(playerID)) {
+    if (!playerID || !isValidObjectId(playerID)) {
       res.status(400).json({
         message: "Invalid Player id!",
       });
@@ -696,6 +697,36 @@ const getAllTeamForPlayer = async (req, res) => {
   }
 };
 
+const getRemainingTeamList = async (req, res) => {
+  try {
+    const playerId = req.params.id;
+    if (!playerId && !isValidObjectId(playerId)) {
+      res.status(400).json({
+        message: "Invalid Player id!",
+      });
+    } else {
+      const player = await User.findOne({ _id: playerId });
+      if (player?._id) {
+        if (player?.team?.length > 0) {
+          const remainTeams = await Team.find({
+            _id: { $nin: [...player?.team] },
+          });
+          res.status(200).json(remainTeams);
+        } else {
+          const allTeam = await Team.find({});
+          res.status(200).json(allTeam);
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find Player!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addPlayer,
   allPlayer,
@@ -710,4 +741,5 @@ module.exports = {
   getGuardianFreePlayers,
   assignPlayerToGuardian,
   getAllTeamForPlayer,
+  getRemainingTeamList,
 };

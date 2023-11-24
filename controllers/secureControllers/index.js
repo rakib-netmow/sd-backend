@@ -50,6 +50,7 @@ const {
   getGuardianFreePlayers,
   assignPlayerToGuardian,
   getAllTeamForPlayer,
+  getRemainingTeamList,
 } = require("./secure.playerController");
 const {
   addTeam,
@@ -140,6 +141,7 @@ module.exports = {
   getGuardianFreePlayersController: getGuardianFreePlayers,
   assignPlayerToGuardianController: assignPlayerToGuardian,
   getAllTeamForPlayerController: getAllTeamForPlayer,
+  getRemainingTeamListController: getRemainingTeamList,
   // payment
   allTransactionsController: allTransactions,
   // manager
