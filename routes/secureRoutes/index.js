@@ -112,13 +112,13 @@ router.post(
   multer.single("image"),
   addPlayerForGuardianController
 );
-router.post("/assign_team/:id", assignTeamController);
+router.post("/assign-team/:id", assignTeamController);
 router.get("/player/:id", singlePlayerController);
 router.get("/all-players-for-guardian/:id", allPlayersForGuardianController);
 router.get("/guardian-free-players", getGuardianFreePlayersController);
 router.put("/assign-player-to-guardian/:id", assignPlayerToGuardianController);
 router.get("/all-team-for-player/:id", getAllTeamForPlayerController);
-router.get("/all-team-list-for-player/:id", getRemainingTeamListController);
+router.get("/all-remain-team-for-player/:id", getRemainingTeamListController);
 // payment
 router.get("/transaction", allTransactionsController);
 
