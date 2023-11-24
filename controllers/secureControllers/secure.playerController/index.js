@@ -707,9 +707,27 @@ const getRemainingTeamList = async (req, res) => {
     } else {
       const player = await User.findOne({ _id: playerId });
       if (player?._id) {
-        if (player?.team?.length > 0) {
+        if (player?.team?.length > 0 && player?.guardian) {
+          const guardian = await User.findOne({ _id: player?.guardian });
+          if (guardian?._id) {
+            const remainTeams = await Team.find({
+              $and: [
+                { _id: { $nin: [...player?.team] } },
+                { created_by: guardian?.added_by },
+              ],
+            });
+            res.status(200).json(remainTeams);
+          } else {
+            res.status(400).json({
+              message: "Can't find Admin!",
+            });
+          }
+        } else if (player?.team?.length > 0 && player?.added_by) {
           const remainTeams = await Team.find({
-            _id: { $nin: [...player?.team] },
+            $and: [
+              { _id: { $nin: [...player?.team] } },
+              { created_by: player?.added_by },
+            ],
           });
           res.status(200).json(remainTeams);
         } else {
