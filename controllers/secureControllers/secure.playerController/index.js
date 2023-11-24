@@ -277,58 +277,52 @@ const deletePlayer = async (req, res) => {
         message: "Invalid Player ID",
       });
     } else {
-      if (true) {
-        const player = await User.findOne({ _id: id });
-        if (player?.guardian && isValidObjectId(player.guardian)) {
-          const guardian = await User.findOne({ _id: player?.guardian });
-          if (guardian && player?.payment_status === "unpaid") {
-            await User.findOneAndUpdate(
-              { _id: guardian?._id },
-              {
-                $inc: {
-                  total_player: -1,
-                  inactive_player: -1,
-                },
-              }
-            );
-          } else {
-            await User.findOneAndUpdate(
-              { _id: guardian?._id },
-              {
-                $inc: {
-                  total_player: -1,
-                  active_player: -1,
-                },
-              }
-            );
-          }
-        }
-        if (player?.team?.length > 0) {
-          player?.team?.map(
-            async (t) =>
-              isValidObjectId(t) &&
-              (await Team.findOneAndUpdate(
-                { _id: ObjectId(t) },
-                {
-                  $pull: { player: player?._id },
-                  $inc: { total_player: -1 },
-                }
-              ))
+      const player = await User.findOne({ _id: id });
+      if (player?.guardian && isValidObjectId(player.guardian)) {
+        const guardian = await User.findOne({ _id: player?.guardian });
+        if (guardian && player?.payment_status === "unpaid") {
+          await User.findOneAndUpdate(
+            { _id: guardian?._id },
+            {
+              $inc: {
+                total_player: -1,
+                inactive_player: -1,
+              },
+            }
+          );
+        } else {
+          await User.findOneAndUpdate(
+            { _id: guardian?._id },
+            {
+              $inc: {
+                total_player: -1,
+                active_player: -1,
+              },
+            }
           );
         }
-        const deletePlayer = await User.findOneAndDelete({ _id: id });
-        if (deletePlayer) {
-          res.status(200).json({
-            message: "Player deleted syccessfully.",
-          });
-        } else {
-          res.status(400).json({
-            message: "Faild to delete Player. Please try again.",
-          });
-        }
+      }
+      if (player?.team?.length > 0) {
+        player?.team?.map(
+          async (t) =>
+            isValidObjectId(t) &&
+            (await Team.findOneAndUpdate(
+              { _id: ObjectId(t) },
+              {
+                $pull: { player: player?._id },
+                $inc: { total_player: -1 },
+              }
+            ))
+        );
+      }
+      const deletePlayer = await User.findOneAndDelete({ _id: id });
+      if (deletePlayer) {
+        res.status(200).json({
+          message: "Player deleted syccessfully.",
+        });
       } else {
         res.status(400).json({
-          message: "Can't find any Player! Please try again.",
+          message: "Faild to delete Player. Please try again.",
         });
       }
     }
@@ -678,12 +672,10 @@ const getAllTeamForPlayer = async (req, res) => {
       if (player) {
         // let allTeams = [];
         if (player?.team?.length > 0) {
-          // player?.team?.map(async (t) => {
-          //   const getTeam = await Team.findOne({ _id: ObjectId(t) });
-          //   if (getTeam?._id) {
-          //     allTeams.push(getTeam);
-          //   }
-          // });
+          // convert ID string to ObjectId...
+          // const newId = player?.team?.map((t) => ObjectId(t));
+          // const obj = [...newId];
+
           const allTeams = await Team.find({
             _id: { $in: [...player?.team] },
           });
@@ -752,6 +744,63 @@ const getRemainingTeamList = async (req, res) => {
   }
 };
 
+const removePlayerFromTeam = async (req, res) => {
+  try {
+    const id = req?.params?.id;
+    const { player_id } = req.body;
+
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Team ID",
+      });
+    } else if (!isValidObjectId(player_id)) {
+      res.status(400).json({
+        message: "Invalid Player ID",
+      });
+    } else {
+      const player = await User.findOne({ _id: ObjectId(player_id) });
+      if (player?.team?.length > 0 && player?.team?.includes(id)) {
+        const updateTeam = await Team.findOneAndUpdate(
+          { _id: ObjectId(id) },
+          {
+            $pull: { player: player?._id },
+            $inc: { total_player: -1 },
+          }
+        );
+
+        if (updateTeam) {
+          const updatePlayer = await User.findOneAndUpdate(
+            { _id: ObjectId(player_id) },
+            {
+              $pull: { team: id },
+            }
+          );
+          if (updatePlayer) {
+            res.status(200).json({
+              message: "Team removed syccessfully.",
+            });
+          } else {
+            res.status(400).json({
+              message: "Faild to remove Team. Please try again.",
+            });
+          }
+        } else {
+          res.status(400).json({
+            message: "Can't update Team. Please try again!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message:
+            "Faild to find Player or Team information. Please try again!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addPlayer,
   allPlayer,
@@ -767,4 +816,5 @@ module.exports = {
   assignPlayerToGuardian,
   getAllTeamForPlayer,
   getRemainingTeamList,
+  removePlayerFromTeam,
 };
