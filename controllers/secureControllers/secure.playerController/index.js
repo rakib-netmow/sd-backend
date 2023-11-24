@@ -678,7 +678,7 @@ const getAllTeamForPlayer = async (req, res) => {
       if (player) {
         let allTeams = [];
         if (player?.team?.length > 0) {
-          player?.team?.length?.map(async (t) => {
+          player?.team?.map(async (t) => {
             const getTeam = await Team.findOne({ _id: ObjectId(t) });
             if (getTeam?._id) {
               allTeams.push(getTeam);
