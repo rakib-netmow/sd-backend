@@ -62,6 +62,7 @@ const {
   latestTeam,
   singleTeam,
   allTeamForPlayer,
+  playerListForAssignIntoteam,
 } = require("./secure.teamController");
 const {
   addTrainer,
@@ -165,6 +166,7 @@ module.exports = {
   deleteTeamController: deleteTeam,
   singleTeamController: singleTeam,
   allTeamsForPlayerController: allTeamForPlayer,
+  playerListForAssignIntoteamController: playerListForAssignIntoteam,
   // game schedule
   addGameSchduleController: addGameSchedule,
   allGameScheduleController: allGameSchedule,

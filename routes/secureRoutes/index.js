@@ -84,6 +84,7 @@ const {
   getAllTeamForPlayerController,
   getRemainingTeamListController,
   removePlayerFromTeamController,
+  playerListForAssignIntoteamController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -135,13 +136,17 @@ router.get("/trainer", allTrainerController);
 router.patch("/trainer/:id", updateTrainerController);
 router.delete("/trainer/:id", deleteTrainerController);
 // Team
-router.post("/team", AddTeamController);
+router.post("/team", multer.single("image"), AddTeamController);
 router.get("/team", allTeamController);
 router.get("/total-team", totalTeamController);
 router.get("/latest-team", latestTeamController);
 router.post("/assign-player/:id", assignPlayerController);
 router.delete("/team/:id", deleteTeamController);
 router.get("/team/:id", singleTeamController);
+router.get(
+  "/player-list-for-assign-in-team/:id",
+  playerListForAssignIntoteamController
+);
 // Game Schedule
 router.post(
   "/add-game-schedule",

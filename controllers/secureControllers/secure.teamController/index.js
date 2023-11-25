@@ -45,70 +45,67 @@ const addTeam = async (req, res) => {
       res.status(400).json({
         message: "Team fee is required!",
       });
-    }
-    // else if (!req.file?.path) {
-    //   res.status(400).json({
-    //     message: "Image is missing",
-    //   });
-    // }
-    else {
-      // ** upload the image
-      // const upload = await Cloudinary.uploader.upload(req.file?.path);
-      // if (upload?.secure_url) {
-      //   let uploadedImage = {};
-      //   uploadedImage = {
-      //     uploadedImage: upload.secure_url,
-      //     uploadedImage_public_url: upload.public_id,
-      //   };
-
-      //   // Enter next code there
-      // } else {
-      //   req.status(400).json({
-      //     message: "Image upload faild! Please try again.",
-      //   });
-      // }
-
-      const newTeam = await Team.create({
-        name,
-        manager: manager ? manager : "",
-        manager_name,
-        trainer: trainer ? trainer : "",
-        trainer_name,
-        description,
-        fee,
-        created_by,
-        // image: uploadedImage
+    } else if (!req.file?.path) {
+      res.status(400).json({
+        message: "Image is missing",
       });
+    } else {
+      // ** upload the image
+      const upload = await Cloudinary.uploader.upload(req.file?.path);
+      if (upload?.secure_url) {
+        let uploadedImage = {};
+        uploadedImage = {
+          uploadedImage: upload.secure_url,
+          uploadedImage_public_url: upload.public_id,
+        };
 
-      if (newTeam) {
-        // update manager profile
-        await User.findOneAndUpdate(
-          {
-            $and: [{ email: manager, role: "manager" }],
-          },
-          {
-            $push: {
-              team: newTeam?._id,
-            },
-          }
-        );
-        // update trainer profile
-        await User.findOneAndUpdate(
-          {
-            $and: [{ email: trainer, role: "trainer" }],
-          },
-          {
-            $push: {
-              team: newTeam?._id,
-            },
-          }
-        );
-        res.status(200).json({
-          message: "New team created successfully.",
+        // Enter next code there
+        const newTeam = await Team.create({
+          name,
+          manager: manager ? manager : "",
+          manager_name,
+          trainer: trainer ? trainer : "",
+          trainer_name,
+          description,
+          fee,
+          created_by,
+          image: uploadedImage,
         });
+
+        if (newTeam) {
+          // update manager profile
+          await User.findOneAndUpdate(
+            {
+              $and: [{ email: manager, role: "manager" }],
+            },
+            {
+              $push: {
+                team: newTeam?._id,
+              },
+            }
+          );
+          // update trainer profile
+          await User.findOneAndUpdate(
+            {
+              $and: [{ email: trainer, role: "trainer" }],
+            },
+            {
+              $push: {
+                team: newTeam?._id,
+              },
+            }
+          );
+          res.status(200).json({
+            message: "New team created successfully.",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can not create new team. Please try again!",
+          });
+        }
       } else {
-        res.status(400).json({
-          message: "Can not create new team. Please try again!",
+        req.status(400).json({
+          message: "Image upload faild! Please try again.",
         });
       }
     }
@@ -174,19 +171,15 @@ const assignPlayer = async (req, res) => {
       res.status(400).json({
         message: "Invalid Team ID",
       });
-    } else if (!isValidObjectId(player_id)) {
-      res.status(400).json({
-        message: "Invalid Player ID",
-      });
     } else {
-      const player = await User.findOne({ _id: player_id });
-      const getTeam = await Team.findOne({ _id: team_id });
+      const player = await User.findOne({ email: player_id });
+      const getTeam = await Team.findOne({ _id: id });
       if (player?._id && getTeam?._id) {
         const assign = await Team.findOneAndUpdate(
           { _id: id },
           {
             $push: {
-              player: player_id,
+              player: player?._id,
             },
             $inc: {
               total_player: 1,
@@ -195,7 +188,7 @@ const assignPlayer = async (req, res) => {
         );
         if (assign) {
           await User.findOneAndUpdate(
-            { _id: player_id },
+            { email: player_id },
             {
               $push: {
                 team: id,
@@ -277,6 +270,31 @@ const allTeamForPlayer = async (req, res) => {
   }
 };
 
+const playerListForAssignIntoteam = async (req, res) => {
+  const team_id = req?.params?.id;
+  if (!isValidObjectId(team_id)) {
+    res.status(400).json({
+      message: "Invalid team ID!",
+    });
+  } else {
+    const team = await Team.findOne({ _id: team_id });
+    if (team?._id) {
+      const playerList = await User.find({
+        $and: [
+          { _id: { $nin: [...team?.player] } },
+          { added_by: team?.created_by },
+          { role: "player" },
+        ],
+      });
+      res.status(200).json(playerList);
+    } else {
+      res.status(400).json({
+        message: "Can't find Team!",
+      });
+    }
+  }
+};
+
 module.exports = {
   addTeam,
   allTeam,
@@ -286,4 +304,5 @@ module.exports = {
   deleteTeam,
   singleTeam,
   allTeamForPlayer,
+  playerListForAssignIntoteam,
 };
