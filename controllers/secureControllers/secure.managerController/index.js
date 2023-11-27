@@ -272,6 +272,7 @@ const getRemainingTeamListForManager = async (req, res) => {
     console.log(error);
   }
 };
+
 const assignTeamListForManager = async (req, res) => {
   try {
     const teamId = req.params.id;

@@ -1,6 +1,7 @@
 const isValidObjectId = require("../../../config/checkValidObjectId.js");
 const Cloudinary = require("../../../config/cloudinary.js");
 const { generateToken } = require("../../../config/generateToken.js");
+const Team = require("../../../model/team/teamModel.js");
 const User = require("../../../model/user/userModel.js");
 
 const addTrainer = async (req, res) => {
@@ -215,10 +216,172 @@ const singleTrainer = async (req, res) => {
   }
 };
 
+const allTeamForSingleTrainer = async (req, res) => {
+  const email = req.auth.id;
+  const id = req?.params?.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Trainer ID",
+      });
+    } else {
+      const trainer = await User.findOne({
+        $and: [{ _id: id }, { added_by: email }, { role: "trainer" }],
+      });
+      if (trainer?._id && trainer?.email) {
+        const team = await Team.find({
+          $and: [{ trainer: trainer?.email }, { created_by: email }],
+        });
+        if (team) {
+          res.status(200).json(team);
+        } else {
+          res.status(400).json({
+            message: "Can't find teams!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find trainer!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getRemainingTeamListForTrainer = async (req, res) => {
+  try {
+    const TrainerId = req.params.id;
+    if (!TrainerId || !isValidObjectId(TrainerId)) {
+      res.status(400).json({
+        message: "Invalid Trainer id!",
+      });
+    } else {
+      const Trainer = await User.findOne({ _id: TrainerId });
+      if (Trainer?._id && Trainer?.email) {
+        const remainTeams = await Team.find({
+          $and: [
+            { Trainer: { $nin: [Trainer?.email] } },
+            { created_by: Trainer?.added_by },
+          ],
+        });
+        res.status(200).json(remainTeams);
+      } else {
+        res.status(400).json({
+          message: "Can't find Trainer!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const removeTeamForTrainer = async (req, res) => {
+  try {
+    const teamId = req.params.id;
+    const { trainer_id } = req.body;
+    if (!teamId || !isValidObjectId(teamId)) {
+      res.status(400).json({
+        message: "Invalid Team id!",
+      });
+    } else if (!trainer_id || !isValidObjectId(trainer_id)) {
+      res.status(400).json({
+        message: "Invalid trainer id!",
+      });
+    } else {
+      const trainer = await User.findOne({
+        $and: [{ _id: trainer_id }, { role: "trainer" }],
+      });
+      if (trainer?._id && trainer?.email) {
+        const updateTeam = await Team.findOneAndUpdate(
+          { _id: teamId },
+          {
+            $set: {
+              trainer: "",
+              trainer_name: "",
+            },
+          }
+        );
+        if (updateTeam) {
+          res.status(200).json({
+            message: "Team Removed Successfully,",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't Remove Team. Please Try again!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find trainer!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const assignTeamListForTrainer = async (req, res) => {
+  try {
+    const teamId = req.params.id;
+    const { trainer_id } = req.body;
+    if (!teamId || !isValidObjectId(teamId)) {
+      res.status(400).json({
+        message: "Invalid Team id!",
+      });
+    } else if (!trainer_id || !isValidObjectId(trainer_id)) {
+      res.status(400).json({
+        message: "Invalid trainer id!",
+      });
+    } else {
+      const trainer = await User.findOne({
+        $and: [{ _id: trainer_id }, { role: "trainer" }],
+      });
+      if (trainer?._id && trainer?.email) {
+        const updateTeam = await Team.findOneAndUpdate(
+          { _id: teamId },
+          {
+            $set: {
+              trainer: trainer?.email,
+              trainer_name: trainer?.name,
+            },
+          }
+        );
+        if (updateTeam) {
+          res.status(200).json({
+            message: "Team Updated Successfully,",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't Update Team. Please Try again!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find trainer!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addTrainer,
   allTrainer,
   updateTrainer,
   deleteTrainer,
   singleTrainer,
+  allTeamForSingleTrainer,
+  getRemainingTeamListForTrainer,
+  removeTeamForTrainer,
+  assignTeamListForTrainer,
 };
