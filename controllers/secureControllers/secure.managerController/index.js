@@ -220,7 +220,7 @@ const allTeamForSingleManager = async (req, res) => {
         message: "Invalid Manager ID",
       });
     } else {
-      const manager = User.findOne({
+      const manager = await User.findOne({
         $and: [{ _id: id }, { added_by: email }, { role: "manager" }],
       });
       if (manager?._id && manager?.email) {
