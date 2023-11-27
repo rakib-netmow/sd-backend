@@ -256,24 +256,24 @@ const allTeamForSingleTrainer = async (req, res) => {
 
 const getRemainingTeamListForTrainer = async (req, res) => {
   try {
-    const TrainerId = req.params.id;
-    if (!TrainerId || !isValidObjectId(TrainerId)) {
+    const trainerId = req.params.id;
+    if (!trainerId || !isValidObjectId(trainerId)) {
       res.status(400).json({
-        message: "Invalid Trainer id!",
+        message: "Invalid trainer id!",
       });
     } else {
-      const Trainer = await User.findOne({ _id: TrainerId });
-      if (Trainer?._id && Trainer?.email) {
+      const trainer = await User.findOne({ _id: trainerId });
+      if (trainer?._id && trainer?.email) {
         const remainTeams = await Team.find({
           $and: [
-            { Trainer: { $nin: [Trainer?.email] } },
-            { created_by: Trainer?.added_by },
+            { trainer: { $nin: [trainer?.email] } },
+            { created_by: trainer?.added_by },
           ],
         });
         res.status(200).json(remainTeams);
       } else {
         res.status(400).json({
-          message: "Can't find Trainer!",
+          message: "Can't find trainer!",
         });
       }
     }
