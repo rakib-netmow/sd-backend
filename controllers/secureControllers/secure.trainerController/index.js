@@ -191,9 +191,34 @@ const deleteTrainer = async (req, res) => {
   }
 };
 
+const singleTrainer = async (req, res) => {
+  const email = req.auth.id;
+  const id = req?.params?.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Trainer ID",
+      });
+    } else {
+      const trainer = await User.findOne({
+        $and: [{ _id: id }, { added_by: email }, { role: "trainer" }],
+      }).select(["-password", "-token"]);
+
+      res.status(200).json(trainer);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addTrainer,
   allTrainer,
   updateTrainer,
   deleteTrainer,
+  singleTrainer,
 };

@@ -70,6 +70,7 @@ const {
   allTrainer,
   updateTrainer,
   deleteTrainer,
+  singleTrainer,
 } = require("./secure.trainerController");
 const {
   changeBusinessSetting,
@@ -159,6 +160,7 @@ module.exports = {
   allTrainerController: allTrainer,
   updateTrainerController: updateTrainer,
   deleteTrainerController: deleteTrainer,
+  singleTrainerController: singleTrainer,
   // team
   AddTeamController: addTeam,
   allTeamController: allTeam,

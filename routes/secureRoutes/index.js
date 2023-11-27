@@ -86,6 +86,7 @@ const {
   removePlayerFromTeamController,
   playerListForAssignIntoteamController,
   singleManagerController,
+  singleTrainerController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -135,6 +136,7 @@ router.delete("/manager/:id", deleteManagerController);
 //Trainer
 router.post("/trainer", addTrainerController);
 router.get("/trainer", allTrainerController);
+router.get("/trainer/:id", singleTrainerController);
 router.patch("/trainer/:id", updateTrainerController);
 router.delete("/trainer/:id", deleteTrainerController);
 // Team

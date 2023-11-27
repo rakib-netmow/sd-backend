@@ -196,7 +196,7 @@ const singleManager = async (req, res) => {
       });
     } else {
       const manager = await User.findOne({
-        $and: [{ _id: id }, { created_by: email }, { role: "manager" }],
+        $and: [{ _id: id }, { added_by: email }, { role: "manager" }],
       }).select(["-password", "-token"]);
 
       res.status(200).json(manager);
