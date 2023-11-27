@@ -2,6 +2,7 @@ const isValidObjectId = require("../../../config/checkValidObjectId.js");
 const Cloudinary = require("../../../config/cloudinary.js");
 const sendLoginCredentials = require("../../../config/credentialEmail.js");
 const { generateToken } = require("../../../config/generateToken.js");
+const Team = require("../../../model/team/teamModel.js");
 const User = require("../../../model/user/userModel.js");
 
 const addManager = async (req, res) => {
@@ -206,10 +207,49 @@ const singleManager = async (req, res) => {
   }
 };
 
+const allTeamForSingleManager = async (req, res) => {
+  const email = req.auth.id;
+  const id = req?.params?.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Manager ID",
+      });
+    } else {
+      const manager = User.findOne({
+        $and: [{ _id: id }, { added_by: email }, { role: "manager" }],
+      });
+      if (manager?._id && manager?.email) {
+        const team = await Team.find({
+          $and: [{ manager: manager?.email }, { created_by: email }],
+        }).select(["-password", "-token"]);
+        if (manager) {
+          res.status(200).json(team);
+        } else {
+          res.status(400).json({
+            message: "Can't find teams!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find manager!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addManager,
   allManager,
   updateManager,
   deleteManager,
   singleManager,
+  allTeamForSingleManager,
 };
