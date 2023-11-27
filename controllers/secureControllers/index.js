@@ -37,6 +37,9 @@ const {
   deleteManager,
   singleManager,
   allTeamForSingleManager,
+  getRemainingTeamListForManager,
+  assignTeamListForManager,
+  removeTeamForManager,
 } = require("./secure.managerController");
 const {
   addPlayer,
@@ -157,6 +160,9 @@ module.exports = {
   deleteManagerController: deleteManager,
   singleManagerController: singleManager,
   allTeamForSingleManagerController: allTeamForSingleManager,
+  getRemainingTeamListForManagerController: getRemainingTeamListForManager,
+  assignTeamListForManagerController: assignTeamListForManager,
+  removeTeamForManagerController: removeTeamForManager,
   // trainer
   addTrainerController: addTrainer,
   allTrainerController: allTrainer,

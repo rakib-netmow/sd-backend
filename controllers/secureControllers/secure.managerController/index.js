@@ -245,6 +245,129 @@ const allTeamForSingleManager = async (req, res) => {
   }
 };
 
+const getRemainingTeamListForManager = async (req, res) => {
+  try {
+    const managerId = req.params.id;
+    if (!managerId || !isValidObjectId(managerId)) {
+      res.status(400).json({
+        message: "Invalid manager id!",
+      });
+    } else {
+      const manager = await User.findOne({ _id: managerId });
+      if (manager?._id && manager?.email) {
+        const remainTeams = await Team.find({
+          $and: [
+            { manager: { $nin: [manager?.email] } },
+            { created_by: manager?.added_by },
+          ],
+        });
+        res.status(200).json(remainTeams);
+      } else {
+        res.status(400).json({
+          message: "Can't find manager!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+const assignTeamListForManager = async (req, res) => {
+  try {
+    const teamId = req.params.id;
+    const { manager_id } = req.body;
+    if (!teamId || !isValidObjectId(teamId)) {
+      res.status(400).json({
+        message: "Invalid Team id!",
+      });
+    } else if (!manager_id || !isValidObjectId(manager_id)) {
+      res.status(400).json({
+        message: "Invalid manager id!",
+      });
+    } else {
+      const manager = await User.findOne({
+        $and: [{ _id: manager_id }, { role: "manager" }],
+      });
+      if (manager?._id && manager?.email) {
+        const updateTeam = await Team.findOneAndUpdate(
+          { _id: teamId },
+          {
+            $set: [
+              { manager: manager?.email },
+              {
+                manager_name: manager?.name,
+              },
+            ],
+          }
+        );
+        if (updateTeam) {
+          res.status(200).json({
+            message: "Team Updated Successfully,",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't Update Team. Please Try again!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find manager!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const removeTeamForManager = async (req, res) => {
+  try {
+    const teamId = req.params.id;
+    const { manager_id } = req.body;
+    if (!teamId || !isValidObjectId(teamId)) {
+      res.status(400).json({
+        message: "Invalid Team id!",
+      });
+    } else if (!manager_id || !isValidObjectId(manager_id)) {
+      res.status(400).json({
+        message: "Invalid manager id!",
+      });
+    } else {
+      const manager = await User.findOne({
+        $and: [{ _id: manager_id }, { role: "manager" }],
+      });
+      if (manager?._id && manager?.email) {
+        const updateTeam = await Team.findOneAndUpdate(
+          { _id: teamId },
+          {
+            $set: [
+              { manager: "" },
+              {
+                manager_name: "",
+              },
+            ],
+          }
+        );
+        if (updateTeam) {
+          res.status(200).json({
+            message: "Team Removed Successfully,",
+          });
+        } else {
+          res.status(400).json({
+            message: "Can't Remove Team. Please Try again!",
+          });
+        }
+      } else {
+        res.status(400).json({
+          message: "Can't find manager!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addManager,
   allManager,
@@ -252,4 +375,7 @@ module.exports = {
   deleteManager,
   singleManager,
   allTeamForSingleManager,
+  getRemainingTeamListForManager,
+  assignTeamListForManager,
+  removeTeamForManager,
 };

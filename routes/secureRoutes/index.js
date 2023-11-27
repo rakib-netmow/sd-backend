@@ -88,6 +88,9 @@ const {
   singleManagerController,
   singleTrainerController,
   allTeamForSingleManagerController,
+  getRemainingTeamListForManagerController,
+  assignTeamListForManagerController,
+  removeTeamForManagerController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -135,6 +138,12 @@ router.get("/manager/:id", singleManagerController);
 router.patch("/manager/:id", updateManagerController);
 router.delete("/manager/:id", deleteManagerController);
 router.get("/all-team-for-manager/:id", allTeamForSingleManagerController);
+router.get(
+  "/all-remain-team-for-manager/:id",
+  getRemainingTeamListForManagerController
+);
+router.put("/assign-team-to-manager/:id", assignTeamListForManagerController);
+router.put("/remove-team-from-manager/:id", removeTeamForManagerController);
 //Trainer
 router.post("/trainer", addTrainerController);
 router.get("/trainer", allTrainerController);
