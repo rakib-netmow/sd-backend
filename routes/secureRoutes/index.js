@@ -113,7 +113,7 @@ router.post("/player", multer.single("image"), addPlayerController);
 router.get("/player", allPlayerController);
 router.get("/total-player", totalPlayerController);
 router.get("/latest-player", latestPlayerController);
-router.patch("/player/:id", updatePlayerController);
+router.patch("/player/:id", multer.single("image"), updatePlayerController);
 router.delete("/player/:id", deletePlayerController);
 router.post(
   "/add-player-for-guardian/:id",
@@ -135,7 +135,7 @@ router.get("/transaction", allTransactionsController);
 router.post("/manager", multer.single("image"), addManagerController);
 router.get("/manager", allManagerController);
 router.get("/manager/:id", singleManagerController);
-router.patch("/manager/:id", updateManagerController);
+router.patch("/manager/:id", multer.single("image"), updateManagerController);
 router.delete("/manager/:id", deleteManagerController);
 router.get("/all-team-for-manager/:id", allTeamForSingleManagerController);
 router.get(
@@ -148,7 +148,7 @@ router.put("/remove-team-from-manager/:id", removeTeamForManagerController);
 router.post("/trainer", addTrainerController);
 router.get("/trainer", allTrainerController);
 router.get("/trainer/:id", singleTrainerController);
-router.patch("/trainer/:id", updateTrainerController);
+router.patch("/trainer/:id", multer.single("image"), updateTrainerController);
 router.delete("/trainer/:id", deleteTrainerController);
 // Team
 router.post("/team", multer.single("image"), AddTeamController);

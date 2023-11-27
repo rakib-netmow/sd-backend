@@ -292,12 +292,10 @@ const assignTeamListForManager = async (req, res) => {
         const updateTeam = await Team.findOneAndUpdate(
           { _id: teamId },
           {
-            $set: [
-              { manager: manager?.email },
-              {
-                manager_name: manager?.name,
-              },
-            ],
+            $set: {
+              manager: manager?.email,
+              manager_name: manager?.name,
+            },
           }
         );
         if (updateTeam) {
@@ -340,12 +338,10 @@ const removeTeamForManager = async (req, res) => {
         const updateTeam = await Team.findOneAndUpdate(
           { _id: teamId },
           {
-            $set: [
-              { manager: "" },
-              {
-                manager_name: "",
-              },
-            ],
+            $set: {
+              manager: "",
+              manager_name: "",
+            },
           }
         );
         if (updateTeam) {
