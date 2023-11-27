@@ -226,8 +226,8 @@ const allTeamForSingleManager = async (req, res) => {
       if (manager?._id && manager?.email) {
         const team = await Team.find({
           $and: [{ manager: manager?.email }, { created_by: email }],
-        }).select(["-password", "-token"]);
-        if (manager) {
+        });
+        if (team) {
           res.status(200).json(team);
         } else {
           res.status(400).json({
