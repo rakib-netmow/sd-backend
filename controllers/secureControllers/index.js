@@ -35,6 +35,7 @@ const {
   allManager,
   updateManager,
   deleteManager,
+  singleManager,
 } = require("./secure.managerController");
 const {
   addPlayer,
@@ -152,6 +153,7 @@ module.exports = {
   allManagerController: allManager,
   updateManagerController: updateManager,
   deleteManagerController: deleteManager,
+  singleManagerController: singleManager,
   // trainer
   addTrainerController: addTrainer,
   allTrainerController: allTrainer,

@@ -182,9 +182,34 @@ const deleteManager = async (req, res) => {
   }
 };
 
+const singleManager = async (req, res) => {
+  const email = req.auth.id;
+  const id = req?.params?.id;
+  try {
+    if (!email) {
+      res.status(400).json({
+        message: "Authentication error",
+      });
+    } else if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Manager ID",
+      });
+    } else {
+      const manager = await User.findOne({
+        $and: [{ _id: id }, { created_by: email }, { role: "manager" }],
+      }).select(["-password", "-token"]);
+
+      res.status(200).json(manager);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addManager,
   allManager,
   updateManager,
   deleteManager,
+  singleManager,
 };
