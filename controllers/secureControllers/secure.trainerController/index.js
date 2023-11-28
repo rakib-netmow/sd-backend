@@ -43,64 +43,51 @@ const addTrainer = async (req, res) => {
       res.status(400).json({
         message: "Invalid status!",
       });
-    }
-    // else if (!req.file?.path) {
-    //   res.status(400).json({
-    //     message: "Image is missing",
-    //   });
-    // }
-    else {
-      // ** upload the image
-      // const upload = await Cloudinary.uploader.upload(req.file?.path);
-      // if (upload?.secure_url) {
-      //   let uploadedImage = {};
-      //   uploadedImage = {
-      //     uploadedImage: upload.secure_url,
-      //     uploadedImage_public_url: upload.public_id,
-      //   };
-
-      //   // Enter next code there
-      // } else {
-      //   req.status(400).json({
-      //     message: "Image upload faild! Please try again.",
-      //   });
-      // }
-
+    } else if (!req.file?.path) {
+      res.status(400).json({
+        message: "Image is missing",
+      });
+    } else {
       const existingTrainer = await User.findOne({ email });
 
       if (!existingTrainer) {
-        //** upload the image
-        // let avatar = {};
-        // if (req.file?.path) {
-        //   const image = await Cloudinary.uploader.upload(req.file?.path);
-        //   avatar = {
-        //     avatar: image.secure_url,
-        //     avatar_public_url: image.public_id,
-        //   };
-        // }
+        // ** upload the image
+        const upload = await Cloudinary.uploader.upload(req.file?.path);
+        if (upload?.secure_url) {
+          let uploadedImage = {};
+          uploadedImage = {
+            uploadedImage: upload.secure_url,
+            uploadedImage_public_url: upload.public_id,
+          };
 
-        const newTrainer = await User.create({
-          email,
-          password,
-          name: first_name && last_name ? `${first_name} ${last_name}` : "",
-          gender: gender ? gender : "",
-          date_of_birth: date_of_birth ? date_of_birth : "",
-          phone: phone ? phone : "",
-          username: username ? username : "",
-          status: status ? status.toLowerCase() : "inactive",
-          role: "trainer",
-          added_by,
-          token: generateToken(email),
-          // profile_image: uploadedImage
-        });
-
-        if (newTrainer) {
-          res.status(200).json({
-            message: "New trainer added successfully.",
+          // Enter next code there
+          const newTrainer = await User.create({
+            email,
+            password,
+            name: first_name && last_name ? `${first_name} ${last_name}` : "",
+            gender: gender ? gender : "",
+            date_of_birth: date_of_birth ? date_of_birth : "",
+            phone: phone ? phone : "",
+            username: username ? username : "",
+            status: status ? status.toLowerCase() : "inactive",
+            role: "trainer",
+            added_by,
+            token: generateToken(email),
+            profile_image: uploadedImage,
           });
+
+          if (newTrainer) {
+            res.status(200).json({
+              message: "New trainer added successfully.",
+            });
+          } else {
+            res.status(400).json({
+              message: "Can not add new trainer. Please try again!",
+            });
+          }
         } else {
-          res.status(400).json({
-            message: "Can not add new trainer. Please try again!",
+          req.status(400).json({
+            message: "Image upload faild! Please try again.",
           });
         }
       } else {

@@ -30,13 +30,11 @@ const addManager = async (req, res) => {
       res.status(400).json({
         message: "Password is required!",
       });
-    }
-    // else if (!req.file?.path) {
-    //   res.status(400).json({
-    //     message: "Image is missing",
-    //   });
-    // }
-    else if (!confirm_password) {
+    } else if (!req.file?.path) {
+      res.status(400).json({
+        message: "Image is missing",
+      });
+    } else if (!confirm_password) {
       res.status(400).json({
         message: "Confrim password is required!",
       });
@@ -55,49 +53,49 @@ const addManager = async (req, res) => {
       const existingManger = await User.findOne({ email });
       if (!existingManger?.email) {
         // ** upload the image
-        // const upload = await Cloudinary.uploader.upload(req.file?.path);
-        // if (upload?.secure_url) {
-        //   let uploadedImage = {};
-        //   uploadedImage = {
-        //     uploadedImage: upload.secure_url,
-        //     uploadedImage_public_url: upload.public_id,
-        //   };
+        const upload = await Cloudinary.uploader.upload(req.file?.path);
+        if (upload?.secure_url) {
+          let uploadedImage = {};
+          uploadedImage = {
+            uploadedImage: upload.secure_url,
+            uploadedImage_public_url: upload.public_id,
+          };
 
-        //   // Enter next code there
-        // } else {
-        //   req.status(400).json({
-        //     message: "Image upload faild! Please try again.",
-        //   });
-        // }
+          // Enter next code there
 
-        const newManager = await User.create({
-          email,
-          password,
-          name: first_name && last_name ? `${first_name} ${last_name}` : "",
-          gender: gender ? gender : "",
-          date_of_birth: date_of_birth ? date_of_birth : "",
-          phone: phone ? phone : "",
-          username: username ? username : "",
-          status: status ? status.toLowerCase() : "inactive",
-          role: "manager",
-          added_by,
-          token: generateToken(email),
-          // profile_image: uploadedImage
-        });
-
-        if (newManager) {
-          sendLoginCredentials(email, password);
-          res.status(200).json({
-            message: "New manager added successfully.",
+          const newManager = await User.create({
+            email,
+            password,
+            name: first_name && last_name ? `${first_name} ${last_name}` : "",
+            gender: gender ? gender : "",
+            date_of_birth: date_of_birth ? date_of_birth : "",
+            phone: phone ? phone : "",
+            username: username ? username : "",
+            status: status ? status.toLowerCase() : "inactive",
+            role: "manager",
+            added_by,
+            token: generateToken(email),
+            profile_image: uploadedImage,
           });
+
+          if (newManager) {
+            sendLoginCredentials(email, password);
+            res.status(200).json({
+              message: "New manager added successfully.",
+            });
+          } else {
+            res.status(400).json({
+              message: "Can not add new manager. Please try again!",
+            });
+          }
         } else {
           res.status(400).json({
-            message: "Can not add new manager. Please try again!",
+            message: "Email already exist!",
           });
         }
       } else {
-        res.status(400).json({
-          message: "Email already exist!",
+        req.status(400).json({
+          message: "Image upload faild! Please try again.",
         });
       }
     }
