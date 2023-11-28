@@ -345,6 +345,17 @@ const assignTeamListForTrainer = async (req, res) => {
         $and: [{ _id: trainer_id }, { role: "trainer" }],
       });
       if (trainer?._id && trainer?.email) {
+        // exsiting team
+        const existingTeam = await Team.findOne({ _id: teamId });
+        if (existingTeam?.trainer) {
+          await User.findOneAndUpdate(
+            { $and: [{ email: existingTeam?.trainer }, { role: "trainer" }] },
+            {
+              $pull: { team: existingTeam?._id },
+              $pull: { team_names: existingTeam?.name },
+            }
+          );
+        }
         const updateTeam = await Team.findOneAndUpdate(
           { _id: teamId },
           {

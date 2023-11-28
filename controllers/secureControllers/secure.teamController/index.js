@@ -21,23 +21,25 @@ const addTeam = async (req, res) => {
       res.status(400).json({
         message: "Name is required!",
       });
-    } else if (!manager) {
-      res.status(400).json({
-        message: "Manager ID is required!",
-      });
-    } else if (!trainer) {
-      res.status(400).json({
-        message: "Trainer ID is required!",
-      });
-    } else if (!manager_name) {
-      res.status(400).json({
-        message: "Manager name is required!",
-      });
-    } else if (!trainer_name) {
-      res.status(400).json({
-        message: "Trainer name is required!",
-      });
-    } else if (!description) {
+    }
+    //  else if (!manager) {
+    //   res.status(400).json({
+    //     message: "Manager ID is required!",
+    //   });
+    // } else if (!trainer) {
+    //   res.status(400).json({
+    //     message: "Trainer ID is required!",
+    //   });
+    // } else if (!manager_name) {
+    //   res.status(400).json({
+    //     message: "Manager name is required!",
+    //   });
+    // } else if (!trainer_name) {
+    //   res.status(400).json({
+    //     message: "Trainer name is required!",
+    //   });
+    // }
+    else if (!description) {
       res.status(400).json({
         message: "Description is required!",
       });
@@ -63,9 +65,9 @@ const addTeam = async (req, res) => {
         const newTeam = await Team.create({
           name,
           manager: manager ? manager : "",
-          manager_name,
+          manager_name: manager_name ? manager_name : "",
           trainer: trainer ? trainer : "",
-          trainer_name,
+          trainer_name: trainer_name ? trainer_name : "",
           description,
           fee,
           created_by,
@@ -73,28 +75,32 @@ const addTeam = async (req, res) => {
         });
 
         if (newTeam) {
-          // update manager profile
-          await User.findOneAndUpdate(
-            {
-              $and: [{ email: manager, role: "manager" }],
-            },
-            {
-              $push: {
-                team: newTeam?._id,
+          if (manager) {
+            // update manager profile
+            await User.findOneAndUpdate(
+              {
+                $and: [{ email: manager, role: "manager" }],
               },
-            }
-          );
-          // update trainer profile
-          await User.findOneAndUpdate(
-            {
-              $and: [{ email: trainer, role: "trainer" }],
-            },
-            {
-              $push: {
-                team: newTeam?._id,
+              {
+                $push: {
+                  team: newTeam?._id,
+                },
+              }
+            );
+          }
+          if (trainer) {
+            // update trainer profile
+            await User.findOneAndUpdate(
+              {
+                $and: [{ email: trainer, role: "trainer" }],
               },
-            }
-          );
+              {
+                $push: {
+                  team: newTeam?._id,
+                },
+              }
+            );
+          }
           res.status(200).json({
             message: "New team created successfully.",
           });
@@ -240,6 +246,119 @@ const deleteTeam = async (req, res) => {
   }
 };
 
+const updateTeam = async (req, res) => {
+  const data = req.body;
+  const created_by = req.auth.id;
+  const id = req?.params?.id;
+  try {
+    if (!isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid Trainer ID",
+      });
+    } else {
+      // ** have to check
+      // * image
+      // * manager
+      // * trainer
+      // * description
+      // * name
+      let newData = {};
+      if (data?.name) {
+        newData = { ...newData, name: data?.name };
+      }
+      if (data?.description) {
+        newData = { ...newData, description: data?.description };
+      }
+      if (re?.file?.path) {
+        const upload = await Cloudinary.uploader.upload(req.file?.path);
+        let uploadedImage = {};
+        if (upload?.secure_url) {
+          uploadedImage = {
+            uploadedImage: upload.secure_url,
+            uploadedImage_public_url: upload.public_id,
+          };
+        }
+        if (uploadedImage?.uploadedImage) {
+          newData = { ...newData, image: uploadedImage };
+        }
+      }
+
+      if (data?.manager && data?.manager_name) {
+        newData = { ...newData, maneger: data?.manager };
+        newData = { ...newData, manager_name: data?.manager_name };
+      }
+      if (data?.trainer && data?.trainer_name) {
+        newData = { ...newData, trainer: data?.trainer };
+        newData = { ...newData, trainer: data?.trainer_name };
+      }
+
+      //existing team
+      const existingTeam = await Team.findOne({
+        $and: [{ _id: id }, { created_by }],
+      });
+      if (
+        newData?.manager &&
+        newData?.trainer &&
+        newData?.manager_name &&
+        newData?.trainer_name
+      ) {
+        if (existingTeam?.manager && existingTeam?.trainer) {
+          // remove existing manager
+          await User.findOneAndUpdate(
+            { $and: [{ email: existingTeam?.manager }, { role: "manager" }] },
+            {
+              $pull: { team: existingTeam?._id },
+              $pull: { team_names: existingTeam?.name },
+            }
+          );
+          // remove existing trainer
+          await User.findOneAndUpdate(
+            { $and: [{ email: existingTeam?.trainer }, { role: "trainer" }] },
+            {
+              $pull: { team: existingTeam?._id },
+              $pull: { team_names: existingTeam?.name },
+            }
+          );
+        }
+      } else if (newData?.manager && newData?.manager_name) {
+        // remove existing manager
+        await User.findOneAndUpdate(
+          { $and: [{ email: existingTeam?.manager }, { role: "manager" }] },
+          {
+            $pull: { team: existingTeam?._id },
+            $pull: { team_names: existingTeam?.name },
+          }
+        );
+      } else if (newData?.trainer && newData?.trainer_name) {
+        // remove existing trainer
+        await User.findOneAndUpdate(
+          { $and: [{ email: existingTeam?.trainer }, { role: "trainer" }] },
+          {
+            $pull: { team: existingTeam?._id },
+            $pull: { team_names: existingTeam?.name },
+          }
+        );
+      }
+      // update team
+      const updateTeam = await Team.findOneAndUpdate(
+        { _id: existingTeam?._id },
+        newData
+      );
+      if (updateTeam) {
+        res.status(200).json({
+          message: "Information updated successfully,",
+        });
+      } else {
+        res.status(400).json({
+          message: "Can't update Information!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const allTeamForPlayer = async (req, res) => {
   try {
     const player_id = req?.params?.id;
@@ -305,4 +424,5 @@ module.exports = {
   singleTeam,
   allTeamForPlayer,
   playerListForAssignIntoteam,
+  updateTeam,
 };

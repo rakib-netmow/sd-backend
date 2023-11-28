@@ -46,15 +46,17 @@ const addPlayer = async (req, res) => {
       res.status(400).json({
         message: "Confrim password does not match!",
       });
-    } else if (!team) {
-      res.status(400).json({
-        message: "Team is required!",
-      });
-    } else if (!isValidObjectId(team)) {
-      res.status(400).json({
-        message: "Invalid team ID!",
-      });
-    } else if (!fees) {
+    }
+    //  else if (!team) {
+    //   res.status(400).json({
+    //     message: "Team is required!",
+    //   });
+    // } else if (!isValidObjectId(team)) {
+    //   res.status(400).json({
+    //     message: "Invalid team ID!",
+    //   });
+    // }
+    else if (!fees) {
       res.status(400).json({
         message: "Fees is required!",
       });
@@ -75,13 +77,67 @@ const addPlayer = async (req, res) => {
         // Enter next code there
         const existingPlayer = await User.findOne({ email });
         if (!existingPlayer) {
-          const existingTeam = await Team.findOne({ _id: team });
-          if (existingTeam?._id) {
+          if (team && isValidObjectId(team)) {
+            const existingTeam = await Team.findOne({ _id: team });
+            if (existingTeam?._id) {
+              const newPlayer = await User.create({
+                email: email,
+                password: password,
+                team: [team],
+                team_names: [existingTeam?.name],
+                token: generateToken(email),
+                fees,
+                name:
+                  first_name && last_name ? `${first_name} ${last_name}` : "",
+                gender: gender ? gender : "",
+                date_of_birth: date_of_birth ? date_of_birth : "",
+                address_line_1: address_line_1 ? address_line_1 : "",
+                address_line_2: address_line_2 ? address_line_2 : "",
+                country: country ? country : "",
+                city: city ? city : "",
+                state: state ? state : "",
+                zip: zip ? parseInt(zip) : 0,
+                phone: phone ? phone : "",
+                height: height ? height : "",
+                weight: weight ? weight : "",
+                description: description ? description : "",
+                added_by,
+                role: "player",
+                profile_image: uploadedImage,
+              });
+              if (newPlayer) {
+                sendLoginCredentials(email, password);
+                // update the team database model
+                await Team.findOneAndUpdate(
+                  { _id: team },
+                  {
+                    $push: {
+                      player: newPlayer?._id,
+                    },
+                    $inc: {
+                      total_player: 1,
+                    },
+                  }
+                );
+                res.status(200).json({
+                  message: "Player added successfully.",
+                });
+              } else {
+                res.status(400).json({
+                  message: "Can not add Player. Please try again!",
+                });
+              }
+            } else {
+              res.status(400).json({
+                message: "Invalid team ID or can't find any team to assing!",
+              });
+            }
+          } else {
             const newPlayer = await User.create({
               email: email,
               password: password,
-              team: [team],
-              team_names: [existingTeam?.name],
+              team: [],
+              team_names: [],
               token: generateToken(email),
               fees,
               name: first_name && last_name ? `${first_name} ${last_name}` : "",
@@ -103,18 +159,6 @@ const addPlayer = async (req, res) => {
             });
             if (newPlayer) {
               sendLoginCredentials(email, password);
-              // update the team database model
-              await Team.findOneAndUpdate(
-                { _id: team },
-                {
-                  $push: {
-                    player: newPlayer?._id,
-                  },
-                  $inc: {
-                    total_player: 1,
-                  },
-                }
-              );
               res.status(200).json({
                 message: "Player added successfully.",
               });
@@ -123,10 +167,6 @@ const addPlayer = async (req, res) => {
                 message: "Can not add Player. Please try again!",
               });
             }
-          } else {
-            res.status(400).json({
-              message: "Invalid team ID or can't find any team to assing!",
-            });
           }
         } else {
           res.status(400).json({
@@ -435,15 +475,17 @@ const addPlayerForGuardian = async (req, res) => {
       res.status(400).json({
         message: "Confirm password does not match!",
       });
-    } else if (!team) {
-      res.status(400).json({
-        message: "Team is required!",
-      });
-    } else if (!isValidObjectId(team)) {
-      res.status(400).json({
-        message: "Invalid team ID!",
-      });
-    } else if (!fees) {
+    }
+    //  else if (!team) {
+    //   res.status(400).json({
+    //     message: "Team is required!",
+    //   });
+    // } else if (!isValidObjectId(team)) {
+    //   res.status(400).json({
+    //     message: "Invalid team ID!",
+    //   });
+    // }
+    else if (!fees) {
       res.status(400).json({
         message: "Fees is required!",
       });
@@ -463,15 +505,86 @@ const addPlayerForGuardian = async (req, res) => {
 
         // Enter next code there
         const existingPlayer = await User.findOne({ email });
-        const existingTeam = await Team.findOne({ _id: team });
         const guardian = await User.findOne({ _id: guardian_id });
         if (!existingPlayer && guardian?._id) {
-          if (existingTeam?._id) {
+          if (team && isValidObjectId(team)) {
+            const existingTeam = await Team.findOne({ _id: team });
+            if (existingTeam?._id) {
+              const newPlayer = await User.create({
+                email: email,
+                password: password,
+                team: [team],
+                team_names: [existingTeam?.name],
+                token: generateToken(email),
+                fees,
+                name:
+                  first_name && last_name ? `${first_name} ${last_name}` : "",
+                gender: gender ? gender : "",
+                date_of_birth: date_of_birth ? date_of_birth : "",
+                address_line_1: address_line_1 ? address_line_1 : "",
+                address_line_2: address_line_2 ? address_line_2 : "",
+                country: country ? country : "",
+                city: city ? city : "",
+                state: state ? state : "",
+                zip: zip ? zip : 0,
+                phone: phone ? phone : "",
+                height: height ? height : "",
+                weight: weight ? weight : "",
+                description: description ? description : "",
+                added_by,
+                guardian: guardian_id,
+                guardian_name: guardian?.name,
+                guardian_email: guardian?.email,
+                guardian_phone: guardian?.phone,
+                guardian_image: guardian?.profile_image?.uploadedImage
+                  ? guardian?.profile_image?.uploadedImage
+                  : "",
+                role: "player",
+                profile_image: uploadedImage,
+              });
+              if (newPlayer) {
+                sendLoginCredentials(email, password);
+                // update the Guardian's active/inactive players in database model
+                await User.findOneAndUpdate(
+                  { _id: guardian_id },
+                  {
+                    $inc: {
+                      inactive_player: 1,
+                      total_player: 1,
+                    },
+                  }
+                );
+                // update the team database model
+                await Team.findOneAndUpdate(
+                  { _id: team },
+                  {
+                    $push: {
+                      player: newPlayer?._id,
+                    },
+                    $inc: {
+                      total_player: 1,
+                    },
+                  }
+                );
+                res.status(200).json({
+                  message: "Player added successfully.",
+                });
+              } else {
+                res.status(400).json({
+                  message: "Can not add Player. Please try again!",
+                });
+              }
+            } else {
+              res.status(400).json({
+                message: "Invalid team ID or can't find any team to assign!",
+              });
+            }
+          } else {
             const newPlayer = await User.create({
               email: email,
               password: password,
-              team: [team],
-              team_names: [existingTeam?.name],
+              team: [],
+              team_names: [],
               token: generateToken(email),
               fees,
               name: first_name && last_name ? `${first_name} ${last_name}` : "",
@@ -492,6 +605,9 @@ const addPlayerForGuardian = async (req, res) => {
               guardian_name: guardian?.name,
               guardian_email: guardian?.email,
               guardian_phone: guardian?.phone,
+              guardian_image: guardian?.profile_image?.uploadedImage
+                ? guardian?.profile_image?.uploadedImage
+                : "",
               role: "player",
               profile_image: uploadedImage,
             });
@@ -507,18 +623,6 @@ const addPlayerForGuardian = async (req, res) => {
                   },
                 }
               );
-              // update the team database model
-              await Team.findOneAndUpdate(
-                { _id: team },
-                {
-                  $push: {
-                    player: newPlayer?._id,
-                  },
-                  $inc: {
-                    total_player: 1,
-                  },
-                }
-              );
               res.status(200).json({
                 message: "Player added successfully.",
               });
@@ -527,10 +631,6 @@ const addPlayerForGuardian = async (req, res) => {
                 message: "Can not add Player. Please try again!",
               });
             }
-          } else {
-            res.status(400).json({
-              message: "Invalid team ID or can't find any team to assign!",
-            });
           }
         } else {
           res.status(400).json({
@@ -730,7 +830,7 @@ const getRemainingTeamList = async (req, res) => {
           });
           res.status(200).json(remainTeams);
         } else {
-          const allTeam = await Team.find({});
+          const allTeam = await Team.find({ created_by: player?.added_by });
           res.status(200).json(allTeam);
         }
       } else {

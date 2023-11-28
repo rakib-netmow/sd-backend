@@ -95,6 +95,7 @@ const {
   removeTeamForTrainerController,
   assignTeamListForTrainerController,
   getRemainingTeamListForTrainerController,
+  updateTeamController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -164,7 +165,7 @@ router.put("/assign-team-to-trainer/:id", assignTeamListForTrainerController);
 // Team
 router.post("/team", multer.single("image"), AddTeamController);
 router.get("/team", allTeamController);
-// router.patch("/team", multer.single("image"), allTeamController);
+router.patch("/team", multer.single("image"), updateTeamController);
 router.get("/total-team", totalTeamController);
 router.get("/latest-team", latestTeamController);
 router.post("/assign-player/:id", assignPlayerController);

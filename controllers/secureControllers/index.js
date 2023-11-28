@@ -68,6 +68,7 @@ const {
   singleTeam,
   allTeamForPlayer,
   playerListForAssignIntoteam,
+  updateTeam,
 } = require("./secure.teamController");
 const {
   addTrainer,
@@ -187,6 +188,7 @@ module.exports = {
   singleTeamController: singleTeam,
   allTeamsForPlayerController: allTeamForPlayer,
   playerListForAssignIntoteamController: playerListForAssignIntoteam,
+  updateTeamController: updateTeam,
   // game schedule
   addGameSchduleController: addGameSchedule,
   allGameScheduleController: allGameSchedule,
