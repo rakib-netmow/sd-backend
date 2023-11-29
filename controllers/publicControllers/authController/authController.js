@@ -3,6 +3,8 @@ const BusinessSetting = require("../../../model/settings/businessSettingModel");
 const Otp = require("../../../model/user/otpModel");
 const Subdomain = require("../../../model/user/subdomainModel");
 const User = require("../../../model/user/userModel");
+const getCurrencyAbbreviation =
+  require("country-currency-map").getCurrencyAbbreviation;
 
 const register = async (req, res) => {
   const {
@@ -13,6 +15,8 @@ const register = async (req, res) => {
     email,
     phone,
     country,
+    player_registration_fee,
+    gst,
     password,
     confirm_password,
   } = req.body;
@@ -32,6 +36,14 @@ const register = async (req, res) => {
     } else if (!country) {
       res.status(400).json({
         message: "Location is required!",
+      });
+    } else if (!player_registration_fee) {
+      res.status(400).json({
+        message: "Player registration fee is required!",
+      });
+    } else if (!gst) {
+      res.status(400).json({
+        message: "GST is required!",
       });
     } else if (!password) {
       res.status(400).json({
@@ -53,6 +65,9 @@ const register = async (req, res) => {
           email,
           phone,
           country,
+          player_registration_fee,
+          gst,
+          currency: getCurrencyAbbreviation(country),
           password,
           token: generateToken(email),
         });
