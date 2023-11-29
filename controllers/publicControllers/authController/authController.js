@@ -1,10 +1,9 @@
+const { getCurrency } = require("../../../config/countryToCurrency");
 const { generateToken } = require("../../../config/generateToken");
 const BusinessSetting = require("../../../model/settings/businessSettingModel");
 const Otp = require("../../../model/user/otpModel");
 const Subdomain = require("../../../model/user/subdomainModel");
 const User = require("../../../model/user/userModel");
-const getCurrencyAbbreviation =
-  require("country-currency-map").getCurrencyAbbreviation;
 
 const register = async (req, res) => {
   const {
@@ -57,7 +56,7 @@ const register = async (req, res) => {
           message: "This email is already taken!",
         });
       } else {
-        console.log(getCurrencyAbbreviation(country));
+        console.log(getCurrency(country));
         const user = await User.create({
           sports_category,
           // theme,
@@ -68,7 +67,7 @@ const register = async (req, res) => {
           country,
           player_registration_fee,
           gst,
-          currency: getCurrencyAbbreviation(country),
+          currency: getCurrency(country),
           password,
           token: generateToken(email),
         });
