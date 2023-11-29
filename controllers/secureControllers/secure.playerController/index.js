@@ -159,9 +159,12 @@ const addPlayer = async (req, res) => {
             });
             if (newPlayer) {
               sendLoginCredentials(email, password);
-              res.status(200).json({
-                message: "Player added successfully.",
-              });
+              const {
+                password: passwordHashed,
+                token,
+                ...sanitizedData
+              } = newPlayer?._doc;
+              res.status(200).json(sanitizedData);
             } else {
               res.status(400).json({
                 message: "Can not add Player. Please try again!",
@@ -566,9 +569,12 @@ const addPlayerForGuardian = async (req, res) => {
                     },
                   }
                 );
-                res.status(200).json({
-                  message: "Player added successfully.",
-                });
+                const {
+                  password: passwordHashed,
+                  token,
+                  ...sanitizedData
+                } = newPlayer?._doc;
+                res.status(200).json(sanitizedData);
               } else {
                 res.status(400).json({
                   message: "Can not add Player. Please try again!",
@@ -623,9 +629,12 @@ const addPlayerForGuardian = async (req, res) => {
                   },
                 }
               );
-              res.status(200).json({
-                message: "Player added successfully.",
-              });
+              const {
+                password: passwordHashed,
+                token,
+                ...sanitizedData
+              } = newPlayer?._doc;
+              res.status(200).json(sanitizedData);
             } else {
               res.status(400).json({
                 message: "Can not add Player. Please try again!",
