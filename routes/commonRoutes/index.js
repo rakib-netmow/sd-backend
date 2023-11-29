@@ -4,6 +4,7 @@ const {
   stripePaymentIntentController,
   createTransactionController,
   myTransactionsController,
+  getPlayerRegistrationFeeController,
 } = require("../../controllers/commonControllers");
 const { verifyJWT } = require("../../middleware/authMiddleware");
 const router = express.Router();
@@ -14,5 +15,6 @@ router.put("/user-additional-info", updateUserAdintionInfoController);
 router.post("/stripe-payment-intent", stripePaymentIntentController);
 router.post("/transaction", createTransactionController);
 router.get("/transaction", myTransactionsController);
+router.get("/player-registration-fee", getPlayerRegistrationFeeController);
 
 module.exports = router;

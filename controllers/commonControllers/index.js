@@ -1,3 +1,4 @@
+const { getPlayerRegistrationFee } = require("./feesAndCurrencyController");
 const {
   stripePaymentIntent,
   createTransaction,
@@ -10,4 +11,5 @@ module.exports = {
   stripePaymentIntentController: stripePaymentIntent,
   createTransactionController: createTransaction,
   myTransactionsController: myTransaction,
+  getPlayerRegistrationFeeController: getPlayerRegistrationFee,
 };
