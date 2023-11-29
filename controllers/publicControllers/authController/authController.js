@@ -57,6 +57,7 @@ const register = async (req, res) => {
           message: "This email is already taken!",
         });
       } else {
+        console.log(getCurrencyAbbreviation(country));
         const user = await User.create({
           sports_category,
           // theme,
