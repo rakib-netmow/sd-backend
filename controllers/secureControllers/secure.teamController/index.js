@@ -185,7 +185,7 @@ const assignPlayer = async (req, res) => {
           { _id: id },
           {
             $push: {
-              player: player?._id,
+              player: ObjectId(player?._id),
             },
             $inc: {
               total_player: 1,
@@ -197,7 +197,7 @@ const assignPlayer = async (req, res) => {
             { email: player_id },
             {
               $push: {
-                team: id,
+                team: ObjectId(id),
                 team_names: getTeam?.name,
               },
             }
