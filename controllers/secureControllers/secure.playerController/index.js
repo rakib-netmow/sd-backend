@@ -784,7 +784,7 @@ const getAllTeamForPlayer = async (req, res) => {
       const player = await User.findOne({ _id: playerID });
       if (player) {
         // let allTeams = [];
-        if (typeof player?.team !== "object" && player?.team?.length > 0) {
+        if (typeof player?.team === "object" && player?.team?.length > 0) {
           // convert ID string to ObjectId...
           // const newId = player?.team?.map((t) => ObjectId(t));
           // const obj = [...newId];
