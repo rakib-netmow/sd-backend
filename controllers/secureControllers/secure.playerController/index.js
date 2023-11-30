@@ -397,7 +397,7 @@ const assignTeam = async (req, res) => {
           { _id: id },
           {
             $push: {
-              team: ObjectId(team_id),
+              team: team_id,
               team_names: getTeam?.name,
             },
           }
@@ -407,7 +407,7 @@ const assignTeam = async (req, res) => {
             { _id: team_id },
             {
               $push: {
-                team: ObjectId(id),
+                team: id,
               },
               $inc: {
                 total_player: 1,
@@ -823,10 +823,9 @@ const getRemainingTeamList = async (req, res) => {
         if (player?.team?.length > 0 && player?.guardian) {
           const guardian = await User.findOne({ _id: player?.guardian });
           if (guardian?._id) {
-            const playersTeam = player?.team?.map((t) => ObjectId(t));
             const remainTeams = await Team.find({
               $and: [
-                { _id: { $nin: [...playersTeam] } },
+                { _id: { $nin: [...player?.team] } },
                 { created_by: guardian?.added_by },
               ],
             });
@@ -837,10 +836,9 @@ const getRemainingTeamList = async (req, res) => {
             });
           }
         } else if (player?.team?.length > 0 && player?.added_by) {
-          const playersTeam = player?.team?.map((t) => ObjectId(t));
           const remainTeams = await Team.find({
             $and: [
-              { _id: { $nin: [...playersTeam] } },
+              { _id: { $nin: [...player?.team] } },
               { created_by: player?.added_by },
             ],
           });

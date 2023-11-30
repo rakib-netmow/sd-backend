@@ -185,7 +185,7 @@ const assignPlayer = async (req, res) => {
           { _id: id },
           {
             $push: {
-              player: ObjectId(player?._id),
+              player: player?._id,
             },
             $inc: {
               total_player: 1,
@@ -197,7 +197,7 @@ const assignPlayer = async (req, res) => {
             { email: player_id },
             {
               $push: {
-                team: ObjectId(id),
+                team: id,
                 team_names: getTeam?.name,
               },
             }
@@ -398,10 +398,9 @@ const playerListForAssignIntoteam = async (req, res) => {
   } else {
     const team = await Team.findOne({ _id: team_id });
     if (team?._id) {
-      const playersTeam = team?.player?.map((p) => ObjectId(p));
       const playerList = await User.find({
         $and: [
-          { _id: { $nin: [...playersTeam] } },
+          { _id: { $nin: [...team?.player] } },
           { added_by: team?.created_by },
           { role: "player" },
         ],
