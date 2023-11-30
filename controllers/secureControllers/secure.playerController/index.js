@@ -34,6 +34,10 @@ const addPlayer = async (req, res) => {
       res.status(400).json({
         message: "Email is required!",
       });
+    } else if (!first_name) {
+      res.status(400).json({
+        message: "Name is required!",
+      });
     } else if (!password) {
       res.status(400).json({
         message: "Password is required!",
@@ -780,13 +784,14 @@ const getAllTeamForPlayer = async (req, res) => {
       const player = await User.findOne({ _id: playerID });
       if (player) {
         // let allTeams = [];
-        if (player?.team?.length > 0) {
+        if (typeof player?.team !== "object" && player?.team?.length > 0) {
           // convert ID string to ObjectId...
           // const newId = player?.team?.map((t) => ObjectId(t));
           // const obj = [...newId];
 
+          const playersTeam = player?.team?.map((t) => ObjectId(t));
           const allTeams = await Team.find({
-            _id: { $in: [...player?.team] },
+            _id: { $in: [...playersTeam] },
           });
           res.status(200).json(allTeams);
         } else {
