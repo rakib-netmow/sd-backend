@@ -789,7 +789,9 @@ const getAllTeamForPlayer = async (req, res) => {
           // const newId = player?.team?.map((t) => ObjectId(t));
           // const obj = [...newId];
 
-          const playersTeam = player?.team?.map((t) => ObjectId(t));
+          const playersTeam = player?.team?.map(
+            (t) => isValidObjectId(t) && ObjectId(t)
+          );
           const allTeams = await Team.find({
             _id: { $in: [...playersTeam] },
           });
