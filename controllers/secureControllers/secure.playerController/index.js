@@ -823,9 +823,10 @@ const getRemainingTeamList = async (req, res) => {
         if (player?.team?.length > 0 && player?.guardian) {
           const guardian = await User.findOne({ _id: player?.guardian });
           if (guardian?._id) {
+            const playersTeam = player?.team?.map((t) => ObjectId(t));
             const remainTeams = await Team.find({
               $and: [
-                { _id: { $nin: [...player?.team] } },
+                { _id: { $nin: [...playersTeam] } },
                 { created_by: guardian?.added_by },
               ],
             });
@@ -836,9 +837,10 @@ const getRemainingTeamList = async (req, res) => {
             });
           }
         } else if (player?.team?.length > 0 && player?.added_by) {
+          const playersTeam = player?.team?.map((t) => ObjectId(t));
           const remainTeams = await Team.find({
             $and: [
-              { _id: { $nin: [...player?.team] } },
+              { _id: { $nin: [...playersTeam] } },
               { created_by: player?.added_by },
             ],
           });
