@@ -9,6 +9,7 @@ const publicRoutes = require("./routes/publicRoutes/index");
 const commonRoutes = require("./routes/commonRoutes/index");
 const privateRoutes = require("./routes/privateRoutes/index");
 const secureRoutes = require("./routes/secureRoutes/index");
+const SystemAuthority = require("./model/systemAuthority/systemAuthorityModel");
 
 const app = express();
 
@@ -108,6 +109,17 @@ connectDB();
 //   }
 //   next();
 // });
+
+// create system authority on db
+const createAuthority = async () => {
+  const authority = await SystemAuthority.find({});
+  // console.log(await SystemAuthority.findOne({}));
+  if (authority && authority?.length <= 0) {
+    SystemAuthority.create({});
+  }
+};
+
+createAuthority();
 
 // folder structred
 app.use("/public/api", publicRoutes);

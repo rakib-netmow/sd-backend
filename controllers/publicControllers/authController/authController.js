@@ -1,9 +1,11 @@
+const moment = require("moment/moment");
 const { getCurrency } = require("../../../config/countryToCurrency");
 const { generateToken } = require("../../../config/generateToken");
 const BusinessSetting = require("../../../model/settings/businessSettingModel");
 const Otp = require("../../../model/user/otpModel");
 const Subdomain = require("../../../model/user/subdomainModel");
 const User = require("../../../model/user/userModel");
+const Wallet = require("../../../model/wallet/walletModel");
 
 const register = async (req, res) => {
   const {
@@ -77,6 +79,13 @@ const register = async (req, res) => {
           await Subdomain.create({
             name: subdomain,
             woner: email,
+          });
+          await Wallet.create({
+            admin_id: user?._id,
+            admin_email: user?.email,
+            total_charges: "0",
+            last_payment_date: moment(),
+            created_by: user?.email,
           });
 
           // await BusinessSetting.create({

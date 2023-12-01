@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema(
   {
-    invoice_no: String,
-    charges_details: Array,
+    // invoice_no: String,
+    charges_details: Array, // {chargesDetails ID, sub invoice ID, details,}
     billing_form: String,
     billing_to: String,
     last_payment_date: String,

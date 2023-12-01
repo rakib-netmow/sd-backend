@@ -21,7 +21,7 @@ const {
   allWeeklyTrainingSchedule,
   allCustomTrainingSchedule,
 } = require("./eventsController/trainingScheduleController");
-const { allTransactions } = require("./paymentController");
+const { allTransactions } = require("./secure.paymentController");
 const {
   addGuardian,
   allGuardian,
