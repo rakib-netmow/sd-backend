@@ -21,7 +21,10 @@ const {
   allWeeklyTrainingSchedule,
   allCustomTrainingSchedule,
 } = require("./eventsController/trainingScheduleController");
-const { allTransactions } = require("./secure.paymentController");
+const {
+  allTransactions,
+  paidByCashForPlayer,
+} = require("./secure.paymentController");
 const {
   addGuardian,
   allGuardian,
@@ -158,6 +161,7 @@ module.exports = {
   removePlayerFromTeamController: removePlayerFromTeam,
   // payment
   allTransactionsController: allTransactions,
+  paidByCashForPlayerController: paidByCashForPlayer,
   // manager
   addManagerController: addManager,
   allManagerController: allManager,

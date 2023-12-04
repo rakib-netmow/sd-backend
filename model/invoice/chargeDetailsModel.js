@@ -13,6 +13,11 @@ const chargeDetailsSchema = new mongoose.Schema(
     billing_status: String,
     amount: String,
     created_by: String,
+    identity_type: {
+      type: String,
+      enum: ["player registration", "ecommerce purchase"],
+      required: true,
+    },
   },
   {
     timestamps: true,
