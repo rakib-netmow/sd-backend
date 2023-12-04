@@ -14,6 +14,7 @@ const subInvoiceSchema = new mongoose.Schema(
     identity_type: {
       type: String,
       enum: ["player registration", "ecommerce purchase"],
+      required: true,
     },
   },
   {
