@@ -97,6 +97,7 @@ const {
   getRemainingTeamListForTrainerController,
   updateTeamController,
   paidByCashForPlayerController,
+  getTotalChargeController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -136,7 +137,8 @@ router.get("/all-remain-team-for-player/:id", getRemainingTeamListController);
 router.put("/remove-team-from-player/:id", removePlayerFromTeamController);
 // payment
 router.get("/transaction", allTransactionsController);
-router.post("/paid-by-cash/:id", paidByCashForPlayerController);
+router.get("/paid-by-cash/:id", paidByCashForPlayerController);
+router.post("/get-total-charge", getTotalChargeController);
 
 // Manager
 router.post("/manager", multer.single("image"), addManagerController);

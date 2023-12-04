@@ -379,7 +379,30 @@ const allTransactions = async (req, res) => {
   }
 };
 
+const getTotalCharge = async (req, res) => {
+  try {
+    const id = req?.auth?.id;
+    if (!id || !isValidObjectId(id)) {
+      res.status(400).json({
+        message: "Invalid admin ID",
+      });
+    } else {
+      const wallet = await Wallet.findOne({ admin_id: id });
+      if (wallet) {
+        res.status(200).json(wallet);
+      } else {
+        res.status(400).json({
+          message: "Can't find wallet!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   allTransactions,
   paidByCashForPlayer,
+  getTotalCharge,
 };
