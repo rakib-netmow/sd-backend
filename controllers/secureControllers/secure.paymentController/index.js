@@ -387,7 +387,7 @@ const getTotalCharge = async (req, res) => {
         message: "Invalid admin ID",
       });
     } else {
-      const wallet = await Wallet.findOne({ admin_id: id });
+      const wallet = await Wallet.findOne({ admin_email: id });
       if (wallet) {
         res.status(200).json(wallet);
       } else {
