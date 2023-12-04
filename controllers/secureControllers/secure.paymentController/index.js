@@ -382,7 +382,7 @@ const allTransactions = async (req, res) => {
 const getTotalCharge = async (req, res) => {
   try {
     const id = req?.auth?.id;
-    if (!id || !isValidObjectId(id)) {
+    if (!id) {
       res.status(400).json({
         message: "Invalid admin ID",
       });
