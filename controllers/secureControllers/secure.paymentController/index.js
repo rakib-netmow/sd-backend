@@ -31,7 +31,7 @@ const paidByCashForPlayer = async (req, res) => {
         $and: [{ _id: player_id }, { role: "player" }],
       });
       const system = await SystemAuthority.findOne({});
-      if (player && player?._id) {
+      if (player && player?._id && player?.payment_status === "unpaid") {
         const admin = await User.findOne({
           $and: [{ email: admin_id }, { role: "admin" }],
         });
@@ -146,7 +146,7 @@ const paidByCashForPlayer = async (req, res) => {
                       } else {
                         await Transaction.findOneAndDelete({
                           $and: [
-                            { admin_email },
+                            { admin_email: admin?.email },
                             { payment_for_id: player_id },
                           ],
                         });
@@ -198,7 +198,10 @@ const paidByCashForPlayer = async (req, res) => {
                       }
                     } else {
                       await Transaction.findOneAndDelete({
-                        $and: [{ admin_email }, { payment_for_id: player_id }],
+                        $and: [
+                          { admin_email: admin?.email },
+                          { payment_for_id: player_id },
+                        ],
                       });
                       await ChargeDetails.findOneAndUpdate(
                         {
@@ -248,7 +251,10 @@ const paidByCashForPlayer = async (req, res) => {
                     }
                   } else {
                     await Transaction.findOneAndDelete({
-                      $and: [{ admin_email }, { payment_for_id: player_id }],
+                      $and: [
+                        { admin_email: admin?.email },
+                        { payment_for_id: player_id },
+                      ],
                     });
                     await Wallet.findOneAndUpdate(
                       {
@@ -280,7 +286,10 @@ const paidByCashForPlayer = async (req, res) => {
                   }
                 } else {
                   await Transaction.findOneAndDelete({
-                    $and: [{ admin_email }, { payment_for_id: player_id }],
+                    $and: [
+                      { admin_email: admin?.email },
+                      { payment_for_id: player_id },
+                    ],
                   });
                   await Wallet.findOneAndUpdate(
                     {
@@ -312,7 +321,10 @@ const paidByCashForPlayer = async (req, res) => {
                 }
               } else {
                 await Transaction.findOneAndDelete({
-                  $and: [{ admin_email }, { payment_for_id: player_id }],
+                  $and: [
+                    { admin_email: admin?.email },
+                    { payment_for_id: player_id },
+                  ],
                 });
                 await User.findOneAndUpdate(
                   {
@@ -357,7 +369,7 @@ const paidByCashForPlayer = async (req, res) => {
       } else {
         // cant find player
         res.status(400).json({
-          message: "Can't find player!",
+          message: "Can't find player or player's payment is clear!",
         });
       }
     }
