@@ -351,10 +351,10 @@ const paidByCashForPlayer = async (req, res) => {
                   },
                 }
               );
+              res.status(400).json({
+                message: "Can't create transaction info!",
+              });
             }
-            res.status(400).json({
-              message: "Can't create transaction info!",
-            });
           } else {
             res.status(400).json({
               message: "Can't update player payment status!",
