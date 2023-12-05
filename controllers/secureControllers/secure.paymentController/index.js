@@ -25,10 +25,6 @@ const paidByCashForPlayer = async (req, res) => {
       req.status(400).json({
         message: "Admin id is missing!",
       });
-    } else if (!isValidObjectId(admin_id)) {
-      res.status(400).json({
-        message: "Invalid Admin id!",
-      });
     } else {
       const player = await User.findOne({
         $and: [{ _id: player_id }, { role: "player" }],
@@ -36,7 +32,7 @@ const paidByCashForPlayer = async (req, res) => {
       const system = await SystemAuthority.findOne({});
       if (player && player?._id) {
         const admin = await User.findOne({
-          $and: [{ _id: admin_id }, { role: "admin" }],
+          $and: [{ email: admin_id }, { role: "admin" }],
         });
         if (admin && admin?._id) {
           const wallet = await Wallet.findOne({ admin_id });
