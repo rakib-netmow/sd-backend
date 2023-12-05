@@ -133,6 +133,827 @@ const addPlayer = async (req, res) => {
                   profile_image: uploadedImage,
                 });
                 if (newPlayer) {
+                  const existingInvoice = await Invoice.findOne({
+                    $and: [
+                      { created_by: admin?.email },
+                      { identity_type: "player registration" },
+                      { bill_status: "unpaid" },
+                    ],
+                  });
+                  if (existingInvoice?._id) {
+                    const subInvoice = await SubInvoice.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const chargesDetails = await ChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const subChargesDetails = await SubChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    if (
+                      !subInvoice?._id ||
+                      !chargesDetails?._id ||
+                      !subChargesDetails?._id
+                    ) {
+                      isValidObjectId(subInvoice?._id) &&
+                        (await SubInvoice.findOneAndDelete({
+                          _id: subInvoice?._id,
+                        }));
+                      isValidObjectId(chargesDetails?._id) &&
+                        (await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        }));
+                      isValidObjectId(subChargesDetails?._id) &&
+                        (await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        }));
+
+                      await User.findOneAndDelete({ _id: newPlayer?._id });
+                      res.status(400).json({
+                        message: "Can't Create invoices!",
+                      });
+                    } else {
+                      const completeInvoice = await Invoice.findOneAndUpdate(
+                        { _id: existingInvoice?._id },
+                        {
+                          $push: {
+                            charges_details: {
+                              chargesDetailsId: chargesDetails?._id,
+                              subInvoiceId: subInvoice?._id,
+                              details: `Player [${
+                                newPlayer?.name
+                              }] registration fees 1 unit charge = ${
+                                system?.core_charge ? system?.core_charge : 1
+                              } USD`,
+                            },
+                          },
+                          $set: {
+                            // billing_from: wallet?.last_payment_date,
+                            billing_to: moment().format(),
+                            // bill_status: "unpaid",
+                            // last_payment_date: wallet?.last_payment_date,
+                            amount:
+                              parseFloat(existingInvoice?.amount) +
+                              (system?.core_charge
+                                ? parseFloat(system?.core_charge)
+                                : 1),
+                          },
+                        }
+                      );
+                      if (completeInvoice) {
+                        const completeChargesDetails =
+                          await ChargeDetails.findOneAndUpdate(
+                            {
+                              _id: chargesDetails?._id,
+                            },
+                            {
+                              $set: {
+                                invoice_no: existingInvoice?._id,
+                                date: moment().format(),
+                                total_amount: wallet?.total_charges,
+                                chages_type: `Player [${
+                                  newPlayer?.name
+                                }] registration fees 1 unit charge = ${
+                                  system?.core_charge ? system?.core_charge : 1
+                                } USD`,
+                                guardian_id: newPlayer?.guardian
+                                  ? newPlayer?.guardian
+                                  : "",
+                                player_id: newPlayer?._id,
+                                fees: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                                billing_status: "unpaid",
+                                amount: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                              },
+                            }
+                          );
+                        if (completeChargesDetails) {
+                          const completeSubInvoice =
+                            await SubInvoice.findOneAndUpdate(
+                              { _id: subInvoice?._id },
+                              {
+                                $set: {
+                                  main_invoice_no: existingInvoice?._id,
+                                  charges_details: {
+                                    id: subChargesDetails?._id,
+                                    details: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                  },
+                                  billing_from: wallet?.last_payment_date,
+                                  billing_to: moment().format(),
+                                  last_payment_date: wallet?.last_payment_date,
+                                  amount: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                },
+                              }
+                            );
+                          if (completeSubInvoice) {
+                            const completeSubChargeDetails =
+                              await SubChargeDetails.findOneAndUpdate(
+                                { _id: subChargesDetails?._id },
+                                {
+                                  $set: {
+                                    main_invoice_no: existingInvoice?._id,
+                                    sub_invoice_no: subInvoice?._id,
+                                    main_charges_details: chargesDetails?._id,
+                                    date: moment().format(),
+                                    charge_type: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                    guardian_id: newPlayer?.guardian
+                                      ? newPlayer?.guardian
+                                      : "",
+                                    player_id: newPlayer?._id,
+                                    fees: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                    billing_status: "unpaid",
+                                    amount: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                  },
+                                }
+                              );
+                            if (completeSubChargeDetails) {
+                              // update the team database model
+                              const updateTeam = await Team.findOneAndUpdate(
+                                { _id: team },
+                                {
+                                  $push: {
+                                    player: newPlayer?._id,
+                                  },
+                                  $inc: {
+                                    total_player: 1,
+                                  },
+                                }
+                              );
+                              if (updateTeam) {
+                                const {
+                                  password: passwordHashed,
+                                  token,
+                                  ...sanitizedData
+                                } = newPlayer?._doc;
+                                sendLoginCredentials(email, password);
+                                res.status(200).json(sanitizedData);
+                              } else {
+                                await User.findOneAndDelete({
+                                  _id: newPlayer?._id,
+                                });
+                                res.status(400).json({
+                                  message: "Can't update team!",
+                                });
+                              }
+                            } else {
+                              // delete subinvoice
+                              SubInvoice.findOneAndDelete({
+                                _id: subInvoice?._id,
+                              });
+                              // delete charges details
+                              await ChargeDetails.findOneAndDelete({
+                                _id: chargesDetails?._id,
+                              });
+                              // delete subcharges details
+                              await SubChargeDetails.findOneAndDelete({
+                                _id: subChargesDetails?._id,
+                              });
+                              // undo player status unpaid
+                              await User.findOneAndDelete({
+                                _id: newPlayer?._id,
+                              });
+                              // send response as unable to create transaction info
+                              res.status(400).json({
+                                message: "Can't create sub charges details!",
+                              });
+                            }
+                          } else {
+                            // delete subinvoice
+                            SubInvoice.findOneAndDelete({
+                              _id: subInvoice?._id,
+                            });
+                            // delete charges details
+                            await ChargeDetails.findOneAndDelete({
+                              _id: chargesDetails?._id,
+                            });
+                            // delete subcharges details
+                            await SubChargeDetails.findOneAndDelete({
+                              _id: subChargesDetails?._id,
+                            });
+                            // undo player status unpaid
+                            await User.findOneAndDelete({
+                              _id: newPlayer?._id,
+                            });
+                            // send response as unable to create transaction info
+                            res.status(400).json({
+                              message: "Can't create sub invoice!",
+                            });
+                          }
+                        } else {
+                          // delete subinvoice
+                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                          // delete charges details
+                          await ChargeDetails.findOneAndDelete({
+                            _id: chargesDetails?._id,
+                          });
+                          // delete subcharges details
+                          await SubChargeDetails.findOneAndDelete({
+                            _id: subChargesDetails?._id,
+                          });
+                          // undo player status unpaid
+                          await User.findOneAndDelete({ _id: newPlayer?._id });
+                          // send response as unable to create transaction info
+                          res.status(400).json({
+                            message: "Can't create charges details!",
+                          });
+                        }
+                      } else {
+                        // delete subinvoice
+                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                        // delete charges details
+                        await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        });
+                        // delete subcharges details
+                        await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        });
+                        // undo player status unpaid
+                        await User.findOneAndDelete({ _id: newPlayer?._id });
+                        // send response as unable to create transaction info
+                        res.status(400).json({
+                          message: "Can't create invoice!",
+                        });
+                      }
+                    }
+                  } else {
+                    const invoice = await Invoice.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const subInvoice = await SubInvoice.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const chargesDetails = await ChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const subChargesDetails = await SubChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    if (
+                      !invoice?._id ||
+                      !subInvoice?._id ||
+                      !chargesDetails?._id ||
+                      !subChargesDetails?._id
+                    ) {
+                      isValidObjectId(invoice?._id) &&
+                        (await Invoice.findOneAndDelete({ _id: invoice?._id }));
+                      isValidObjectId(subInvoice?._id) &&
+                        (await SubInvoice.findOneAndDelete({
+                          _id: subInvoice?._id,
+                        }));
+                      isValidObjectId(chargesDetails?._id) &&
+                        (await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        }));
+                      isValidObjectId(subChargesDetails?._id) &&
+                        (await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        }));
+
+                      await User.findOneAndDelete({ _id: newPlayer?._id });
+                      res.status(400).json({
+                        message: "Can't Create invoices!",
+                      });
+                    } else {
+                      const completeInvoice = await Invoice.findOneAndUpdate(
+                        { _id: invoice?._id },
+                        {
+                          $push: {
+                            charges_details: {
+                              chargesDetailsId: chargesDetails?._id,
+                              subInvoiceId: subInvoice?._id,
+                              details: `Player [${
+                                newPlayer?.name
+                              }] registration fees 1 unit charge = ${
+                                system?.core_charge ? system?.core_charge : 1
+                              } USD`,
+                            },
+                          },
+                          $set: {
+                            billing_from: wallet?.last_payment_date,
+                            billing_to: moment().format(),
+                            bill_status: "unpaid",
+                            last_payment_date: wallet?.last_payment_date,
+                            amount: system?.core_charge
+                              ? system?.core_charge
+                              : 1,
+                          },
+                        }
+                      );
+                      if (completeInvoice) {
+                        const completeChargesDetails =
+                          await ChargeDetails.findOneAndUpdate(
+                            {
+                              _id: chargesDetails?._id,
+                            },
+                            {
+                              $set: {
+                                invoice_no: invoice?._id,
+                                date: moment().format(),
+                                total_amount: wallet?.total_charges,
+                                chages_type: `Player [${
+                                  newPlayer?.name
+                                }] registration fees 1 unit charge = ${
+                                  system?.core_charge ? system?.core_charge : 1
+                                } USD`,
+                                guardian_id: newPlayer?.guardian
+                                  ? newPlayer?.guardian
+                                  : "",
+                                player_id: newPlayer?._id,
+                                fees: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                                billing_status: "unpaid",
+                                amount: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                              },
+                            }
+                          );
+                        if (completeChargesDetails) {
+                          const completeSubInvoice =
+                            await SubInvoice.findOneAndUpdate(
+                              { _id: subInvoice?._id },
+                              {
+                                $set: {
+                                  main_invoice_no: invoice?._id,
+                                  charges_details: {
+                                    id: subChargesDetails?._id,
+                                    details: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                  },
+                                  billing_from: wallet?.last_payment_date,
+                                  billing_to: moment().format(),
+                                  last_payment_date: wallet?.last_payment_date,
+                                  amount: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                },
+                              }
+                            );
+                          if (completeSubInvoice) {
+                            const completeSubChargeDetails =
+                              await SubChargeDetails.findOneAndUpdate(
+                                { _id: subChargesDetails?._id },
+                                {
+                                  $set: {
+                                    main_invoice_no: invoice?._id,
+                                    sub_invoice_no: subInvoice?._id,
+                                    main_charges_details: chargesDetails?._id,
+                                    date: moment().format(),
+                                    charge_type: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                    guardian_id: newPlayer?.guardian
+                                      ? newPlayer?.guardian
+                                      : "",
+                                    player_id: newPlayer?._id,
+                                    fees: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                    billing_status: "unpaid",
+                                    amount: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                  },
+                                }
+                              );
+                            if (completeSubChargeDetails) {
+                              // update the team database model
+                              const updateTeam = await Team.findOneAndUpdate(
+                                { _id: team },
+                                {
+                                  $push: {
+                                    player: newPlayer?._id,
+                                  },
+                                  $inc: {
+                                    total_player: 1,
+                                  },
+                                }
+                              );
+                              if (updateTeam) {
+                                const {
+                                  password: passwordHashed,
+                                  token,
+                                  ...sanitizedData
+                                } = newPlayer?._doc;
+                                sendLoginCredentials(email, password);
+                                res.status(200).json(sanitizedData);
+                              } else {
+                                await User.findOneAndDelete({
+                                  _id: newPlayer?._id,
+                                });
+                                res.status(400).json({
+                                  message: "Can't update team!",
+                                });
+                              }
+                            } else {
+                              // delete invoice
+                              Invoice.findOneAndDelete({ _id: invoice?._id });
+                              // delete subinvoice
+                              SubInvoice.findOneAndDelete({
+                                _id: subInvoice?._id,
+                              });
+                              // delete charges details
+                              await ChargeDetails.findOneAndDelete({
+                                _id: chargesDetails?._id,
+                              });
+                              // delete subcharges details
+                              await SubChargeDetails.findOneAndDelete({
+                                _id: subChargesDetails?._id,
+                              });
+                              // undo player status unpaid
+                              await User.findOneAndDelete({
+                                _id: newPlayer?._id,
+                              });
+                              // send response as unable to create transaction info
+                              res.status(400).json({
+                                message: "Can't create sub charges details!",
+                              });
+                            }
+                          } else {
+                            // delete invoice
+                            Invoice.findOneAndDelete({ _id: invoice?._id });
+                            // delete subinvoice
+                            SubInvoice.findOneAndDelete({
+                              _id: subInvoice?._id,
+                            });
+                            // delete charges details
+                            await ChargeDetails.findOneAndDelete({
+                              _id: chargesDetails?._id,
+                            });
+                            // delete subcharges details
+                            await SubChargeDetails.findOneAndDelete({
+                              _id: subChargesDetails?._id,
+                            });
+                            // undo player status unpaid
+                            await User.findOneAndDelete({
+                              _id: newPlayer?._id,
+                            });
+                            // send response as unable to create transaction info
+                            res.status(400).json({
+                              message: "Can't create sub invoice!",
+                            });
+                          }
+                        } else {
+                          // delete invoice
+                          Invoice.findOneAndDelete({ _id: invoice?._id });
+                          // delete subinvoice
+                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                          // delete charges details
+                          await ChargeDetails.findOneAndDelete({
+                            _id: chargesDetails?._id,
+                          });
+                          // delete subcharges details
+                          await SubChargeDetails.findOneAndDelete({
+                            _id: subChargesDetails?._id,
+                          });
+                          // undo player status unpaid
+                          await User.findOneAndDelete({ _id: newPlayer?._id });
+                          // send response as unable to create transaction info
+                          res.status(400).json({
+                            message: "Can't create charges details!",
+                          });
+                        }
+                      } else {
+                        // delete invoice
+                        Invoice.findOneAndDelete({ _id: invoice?._id });
+                        // delete subinvoice
+                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                        // delete charges details
+                        await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        });
+                        // delete subcharges details
+                        await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        });
+                        // undo player status unpaid
+                        await User.findOneAndDelete({ _id: newPlayer?._id });
+                        // send response as unable to create transaction info
+                        res.status(400).json({
+                          message: "Can't create invoice!",
+                        });
+                      }
+                    }
+                  }
+                } else {
+                  res.status(400).json({
+                    message: "Can not add Player. Please try again!",
+                  });
+                }
+              } else {
+                res.status(400).json({
+                  message: "Invalid team ID or can't find any team to assing!",
+                });
+              }
+            } else {
+              const newPlayer = await User.create({
+                email: email,
+                password: password,
+                team: [],
+                team_names: [],
+                token: generateToken(email),
+                fees,
+                name:
+                  first_name && last_name ? `${first_name} ${last_name}` : "",
+                gender: gender ? gender : "",
+                date_of_birth: date_of_birth ? date_of_birth : "",
+                address_line_1: address_line_1 ? address_line_1 : "",
+                address_line_2: address_line_2 ? address_line_2 : "",
+                country: country ? country : "",
+                city: city ? city : "",
+                state: state ? state : "",
+                zip: zip ? parseInt(zip) : 0,
+                phone: phone ? phone : "",
+                height: height ? height : "",
+                weight: weight ? weight : "",
+                description: description ? description : "",
+                added_by,
+                role: "player",
+                profile_image: uploadedImage,
+              });
+              if (newPlayer) {
+                const existingInvoice = await Invoice.findOne({
+                  $and: [
+                    { created_by: admin?.email },
+                    { identity_type: "player registration" },
+                    { bill_status: "unpaid" },
+                  ],
+                });
+                if (existingInvoice?._id) {
+                  const subInvoice = await SubInvoice.create({
+                    created_by: admin?.email,
+                    identity_type: "player registration",
+                  });
+                  const chargesDetails = await ChargeDetails.create({
+                    created_by: admin?.email,
+                    identity_type: "player registration",
+                  });
+                  const subChargesDetails = await SubChargeDetails.create({
+                    created_by: admin?.email,
+                    identity_type: "player registration",
+                  });
+                  if (
+                    !subInvoice?._id ||
+                    !chargesDetails?._id ||
+                    !subChargesDetails?._id
+                  ) {
+                    isValidObjectId(subInvoice?._id) &&
+                      (await SubInvoice.findOneAndDelete({
+                        _id: subInvoice?._id,
+                      }));
+                    isValidObjectId(chargesDetails?._id) &&
+                      (await ChargeDetails.findOneAndDelete({
+                        _id: chargesDetails?._id,
+                      }));
+                    isValidObjectId(subChargesDetails?._id) &&
+                      (await SubChargeDetails.findOneAndDelete({
+                        _id: subChargesDetails?._id,
+                      }));
+
+                    await User.findOneAndDelete({ _id: newPlayer?._id });
+                    res.status(400).json({
+                      message: "Can't Create invoices!",
+                    });
+                  } else {
+                    const completeInvoice = await Invoice.findOneAndUpdate(
+                      { _id: existingInvoice?._id },
+                      {
+                        $push: {
+                          charges_details: {
+                            chargesDetailsId: chargesDetails?._id,
+                            subInvoiceId: subInvoice?._id,
+                            details: `Player [${
+                              newPlayer?.name
+                            }] registration fees 1 unit charge = ${
+                              system?.core_charge ? system?.core_charge : 1
+                            } USD`,
+                          },
+                        },
+                        $set: {
+                          billing_from: wallet?.last_payment_date,
+                          billing_to: moment().format(),
+                          bill_status: "unpaid",
+                          last_payment_date: wallet?.last_payment_date,
+                          amount:
+                            parseFloat(existingInvoice?.amount) +
+                            (system?.core_charge
+                              ? parseFloat(system?.core_charge)
+                              : 1),
+                        },
+                      }
+                    );
+                    if (completeInvoice) {
+                      const completeChargesDetails =
+                        await ChargeDetails.findOneAndUpdate(
+                          {
+                            _id: chargesDetails?._id,
+                          },
+                          {
+                            $set: {
+                              invoice_no: existingInvoice?._id,
+                              date: moment().format(),
+                              total_amount: wallet?.total_charges,
+                              chages_type: `Player [${
+                                newPlayer?.name
+                              }] registration fees 1 unit charge = ${
+                                system?.core_charge ? system?.core_charge : 1
+                              } USD`,
+                              guardian_id: newPlayer?.guardian
+                                ? newPlayer?.guardian
+                                : "",
+                              player_id: newPlayer?._id,
+                              fees: system?.core_charge
+                                ? system?.core_charge
+                                : 1,
+                              billing_status: "unpaid",
+                              amount: system?.core_charge
+                                ? system?.core_charge
+                                : 1,
+                            },
+                          }
+                        );
+                      if (completeChargesDetails) {
+                        const completeSubInvoice =
+                          await SubInvoice.findOneAndUpdate(
+                            { _id: subInvoice?._id },
+                            {
+                              $set: {
+                                main_invoice_no: existingInvoice?._id,
+                                charges_details: {
+                                  id: subChargesDetails?._id,
+                                  details: `Player [${
+                                    newPlayer?.name
+                                  }] registration fees 1 unit charge = ${
+                                    system?.core_charge
+                                      ? system?.core_charge
+                                      : 1
+                                  } USD`,
+                                },
+                                billing_from: wallet?.last_payment_date,
+                                billing_to: moment().format(),
+                                last_payment_date: wallet?.last_payment_date,
+                                amount: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                              },
+                            }
+                          );
+                        if (completeSubInvoice) {
+                          const completeSubChargeDetails =
+                            await SubChargeDetails.findOneAndUpdate(
+                              { _id: subChargesDetails?._id },
+                              {
+                                $set: {
+                                  main_invoice_no: existingInvoice?._id,
+                                  sub_invoice_no: subInvoice?._id,
+                                  main_charges_details: chargesDetails?._id,
+                                  date: moment().format(),
+                                  charge_type: `Player [${
+                                    newPlayer?.name
+                                  }] registration fees 1 unit charge = ${
+                                    system?.core_charge
+                                      ? system?.core_charge
+                                      : 1
+                                  } USD`,
+                                  guardian_id: newPlayer?.guardian
+                                    ? newPlayer?.guardian
+                                    : "",
+                                  player_id: newPlayer?._id,
+                                  fees: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                  billing_status: "unpaid",
+                                  amount: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                },
+                              }
+                            );
+                          if (completeSubChargeDetails) {
+                            sendLoginCredentials(email, password);
+                            const {
+                              password: passwordHashed,
+                              token,
+                              ...sanitizedData
+                            } = newPlayer?._doc;
+                            res.status(200).json(sanitizedData);
+                          } else {
+                            // delete subinvoice
+                            SubInvoice.findOneAndDelete({
+                              _id: subInvoice?._id,
+                            });
+                            // delete charges details
+                            await ChargeDetails.findOneAndDelete({
+                              _id: chargesDetails?._id,
+                            });
+                            // delete subcharges details
+                            await SubChargeDetails.findOneAndDelete({
+                              _id: subChargesDetails?._id,
+                            });
+                            // undo player status unpaid
+                            await User.findOneAndDelete({
+                              _id: newPlayer?._id,
+                            });
+                            // send response as unable to create transaction info
+                            res.status(400).json({
+                              message: "Can't create sub charges details!",
+                            });
+                          }
+                        } else {
+                          // delete subinvoice
+                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                          // delete charges details
+                          await ChargeDetails.findOneAndDelete({
+                            _id: chargesDetails?._id,
+                          });
+                          // delete subcharges details
+                          await SubChargeDetails.findOneAndDelete({
+                            _id: subChargesDetails?._id,
+                          });
+                          // undo player status unpaid
+                          await User.findOneAndDelete({ _id: newPlayer?._id });
+                          // send response as unable to create transaction info
+                          res.status(400).json({
+                            message: "Can't create sub invoice!",
+                          });
+                        }
+                      } else {
+                        // delete subinvoice
+                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                        // delete charges details
+                        await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        });
+                        // delete subcharges details
+                        await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        });
+                        // undo player status unpaid
+                        await User.findOneAndDelete({ _id: newPlayer?._id });
+                        // send response as unable to create transaction info
+                        res.status(400).json({
+                          message: "Can't create charges details!",
+                        });
+                      }
+                    } else {
+                      // delete subinvoice
+                      SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                      // delete charges details
+                      await ChargeDetails.findOneAndDelete({
+                        _id: chargesDetails?._id,
+                      });
+                      // delete subcharges details
+                      await SubChargeDetails.findOneAndDelete({
+                        _id: subChargesDetails?._id,
+                      });
+                      // undo player status unpaid
+                      await User.findOneAndDelete({ _id: newPlayer?._id });
+                      // send response as unable to create transaction info
+                      res.status(400).json({
+                        message: "Can't create invoice!",
+                      });
+                    }
+                  }
+                } else {
                   const invoice = await Invoice.create({
                     created_by: admin?.email,
                     identity_type: "player registration",
@@ -182,7 +1003,7 @@ const addPlayer = async (req, res) => {
                           charges_details: {
                             chargesDetailsId: chargesDetails?._id,
                             subInvoiceId: subInvoice?._id,
-                            details: `Player[${
+                            details: `Player [${
                               newPlayer?.name
                             }] registration fees 1 unit charge = ${
                               system?.core_charge ? system?.core_charge : 1
@@ -209,7 +1030,7 @@ const addPlayer = async (req, res) => {
                               invoice_no: invoice?._id,
                               date: moment().format(),
                               total_amount: wallet?.total_charges,
-                              chages_type: `Player[${
+                              chages_type: `Player [${
                                 newPlayer?.name
                               }] registration fees 1 unit charge = ${
                                 system?.core_charge ? system?.core_charge : 1
@@ -286,34 +1107,13 @@ const addPlayer = async (req, res) => {
                               }
                             );
                           if (completeSubChargeDetails) {
-                            // update the team database model
-                            const updateTeam = await Team.findOneAndUpdate(
-                              { _id: team },
-                              {
-                                $push: {
-                                  player: newPlayer?._id,
-                                },
-                                $inc: {
-                                  total_player: 1,
-                                },
-                              }
-                            );
-                            if (updateTeam) {
-                              const {
-                                password: passwordHashed,
-                                token,
-                                ...sanitizedData
-                              } = newPlayer?._doc;
-                              sendLoginCredentials(email, password);
-                              res.status(200).json(sanitizedData);
-                            } else {
-                              await User.findOneAndDelete({
-                                _id: newPlayer?._id,
-                              });
-                              res.status(400).json({
-                                message: "Can't update team!",
-                              });
-                            }
+                            sendLoginCredentials(email, password);
+                            const {
+                              password: passwordHashed,
+                              token,
+                              ...sanitizedData
+                            } = newPlayer?._doc;
+                            res.status(200).json(sanitizedData);
                           } else {
                             // delete invoice
                             Invoice.findOneAndDelete({ _id: invoice?._id });
@@ -398,277 +1198,6 @@ const addPlayer = async (req, res) => {
                         message: "Can't create invoice!",
                       });
                     }
-                  }
-                } else {
-                  res.status(400).json({
-                    message: "Can not add Player. Please try again!",
-                  });
-                }
-              } else {
-                res.status(400).json({
-                  message: "Invalid team ID or can't find any team to assing!",
-                });
-              }
-            } else {
-              const newPlayer = await User.create({
-                email: email,
-                password: password,
-                team: [],
-                team_names: [],
-                token: generateToken(email),
-                fees,
-                name:
-                  first_name && last_name ? `${first_name} ${last_name}` : "",
-                gender: gender ? gender : "",
-                date_of_birth: date_of_birth ? date_of_birth : "",
-                address_line_1: address_line_1 ? address_line_1 : "",
-                address_line_2: address_line_2 ? address_line_2 : "",
-                country: country ? country : "",
-                city: city ? city : "",
-                state: state ? state : "",
-                zip: zip ? parseInt(zip) : 0,
-                phone: phone ? phone : "",
-                height: height ? height : "",
-                weight: weight ? weight : "",
-                description: description ? description : "",
-                added_by,
-                role: "player",
-                profile_image: uploadedImage,
-              });
-              if (newPlayer) {
-                const invoice = await Invoice.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                const subInvoice = await SubInvoice.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                const chargesDetails = await ChargeDetails.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                const subChargesDetails = await SubChargeDetails.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                if (
-                  !invoice?._id ||
-                  !subInvoice?._id ||
-                  !chargesDetails?._id ||
-                  !subChargesDetails?._id
-                ) {
-                  isValidObjectId(invoice?._id) &&
-                    (await Invoice.findOneAndDelete({ _id: invoice?._id }));
-                  isValidObjectId(subInvoice?._id) &&
-                    (await SubInvoice.findOneAndDelete({
-                      _id: subInvoice?._id,
-                    }));
-                  isValidObjectId(chargesDetails?._id) &&
-                    (await ChargeDetails.findOneAndDelete({
-                      _id: chargesDetails?._id,
-                    }));
-                  isValidObjectId(subChargesDetails?._id) &&
-                    (await SubChargeDetails.findOneAndDelete({
-                      _id: subChargesDetails?._id,
-                    }));
-
-                  await User.findOneAndDelete({ _id: newPlayer?._id });
-                  res.status(400).json({
-                    message: "Can't Create invoices!",
-                  });
-                } else {
-                  const completeInvoice = await Invoice.findOneAndUpdate(
-                    { _id: invoice?._id },
-                    {
-                      $push: {
-                        charges_details: {
-                          chargesDetailsId: chargesDetails?._id,
-                          subInvoiceId: subInvoice?._id,
-                          details: `Player[${
-                            newPlayer?.name
-                          }] registration fees 1 unit charge = ${
-                            system?.core_charge ? system?.core_charge : 1
-                          } USD`,
-                        },
-                      },
-                      $set: {
-                        billing_from: wallet?.last_payment_date,
-                        billing_to: moment().format(),
-                        bill_status: "unpaid",
-                        last_payment_date: wallet?.last_payment_date,
-                        amount: system?.core_charge ? system?.core_charge : 1,
-                      },
-                    }
-                  );
-                  if (completeInvoice) {
-                    const completeChargesDetails =
-                      await ChargeDetails.findOneAndUpdate(
-                        {
-                          _id: chargesDetails?._id,
-                        },
-                        {
-                          $set: {
-                            invoice_no: invoice?._id,
-                            date: moment().format(),
-                            total_amount: wallet?.total_charges,
-                            chages_type: `Player[${
-                              newPlayer?.name
-                            }] registration fees 1 unit charge = ${
-                              system?.core_charge ? system?.core_charge : 1
-                            } USD`,
-                            guardian_id: newPlayer?.guardian
-                              ? newPlayer?.guardian
-                              : "",
-                            player_id: newPlayer?._id,
-                            fees: system?.core_charge ? system?.core_charge : 1,
-                            billing_status: "unpaid",
-                            amount: system?.core_charge
-                              ? system?.core_charge
-                              : 1,
-                          },
-                        }
-                      );
-                    if (completeChargesDetails) {
-                      const completeSubInvoice =
-                        await SubInvoice.findOneAndUpdate(
-                          { _id: subInvoice?._id },
-                          {
-                            $set: {
-                              main_invoice_no: invoice?._id,
-                              charges_details: {
-                                id: subChargesDetails?._id,
-                                details: `Player[${
-                                  newPlayer?.name
-                                }] registration fees 1 unit charge = ${
-                                  system?.core_charge ? system?.core_charge : 1
-                                } USD`,
-                              },
-                              billing_from: wallet?.last_payment_date,
-                              billing_to: moment().format(),
-                              last_payment_date: wallet?.last_payment_date,
-                              amount: system?.core_charge
-                                ? system?.core_charge
-                                : 1,
-                            },
-                          }
-                        );
-                      if (completeSubInvoice) {
-                        const completeSubChargeDetails =
-                          await SubChargeDetails.findOneAndUpdate(
-                            { _id: subChargesDetails?._id },
-                            {
-                              $set: {
-                                main_invoice_no: invoice?._id,
-                                sub_invoice_no: subInvoice?._id,
-                                main_charges_details: chargesDetails?._id,
-                                date: moment().format(),
-                                charge_type: `Player[${
-                                  newPlayer?.name
-                                }] registration fees 1 unit charge = ${
-                                  system?.core_charge ? system?.core_charge : 1
-                                } USD`,
-                                guardian_id: newPlayer?.guardian
-                                  ? newPlayer?.guardian
-                                  : "",
-                                player_id: newPlayer?._id,
-                                fees: system?.core_charge
-                                  ? system?.core_charge
-                                  : 1,
-                                billing_status: "unpaid",
-                                amount: system?.core_charge
-                                  ? system?.core_charge
-                                  : 1,
-                              },
-                            }
-                          );
-                        if (completeSubChargeDetails) {
-                          sendLoginCredentials(email, password);
-                          const {
-                            password: passwordHashed,
-                            token,
-                            ...sanitizedData
-                          } = newPlayer?._doc;
-                          res.status(200).json(sanitizedData);
-                        } else {
-                          // delete invoice
-                          Invoice.findOneAndDelete({ _id: invoice?._id });
-                          // delete subinvoice
-                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                          // delete charges details
-                          await ChargeDetails.findOneAndDelete({
-                            _id: chargesDetails?._id,
-                          });
-                          // delete subcharges details
-                          await SubChargeDetails.findOneAndDelete({
-                            _id: subChargesDetails?._id,
-                          });
-                          // undo player status unpaid
-                          await User.findOneAndDelete({ _id: newPlayer?._id });
-                          // send response as unable to create transaction info
-                          res.status(400).json({
-                            message: "Can't create sub charges details!",
-                          });
-                        }
-                      } else {
-                        // delete invoice
-                        Invoice.findOneAndDelete({ _id: invoice?._id });
-                        // delete subinvoice
-                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                        // delete charges details
-                        await ChargeDetails.findOneAndDelete({
-                          _id: chargesDetails?._id,
-                        });
-                        // delete subcharges details
-                        await SubChargeDetails.findOneAndDelete({
-                          _id: subChargesDetails?._id,
-                        });
-                        // undo player status unpaid
-                        await User.findOneAndDelete({ _id: newPlayer?._id });
-                        // send response as unable to create transaction info
-                        res.status(400).json({
-                          message: "Can't create sub invoice!",
-                        });
-                      }
-                    } else {
-                      // delete invoice
-                      Invoice.findOneAndDelete({ _id: invoice?._id });
-                      // delete subinvoice
-                      SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                      // delete charges details
-                      await ChargeDetails.findOneAndDelete({
-                        _id: chargesDetails?._id,
-                      });
-                      // delete subcharges details
-                      await SubChargeDetails.findOneAndDelete({
-                        _id: subChargesDetails?._id,
-                      });
-                      // undo player status unpaid
-                      await User.findOneAndDelete({ _id: newPlayer?._id });
-                      // send response as unable to create transaction info
-                      res.status(400).json({
-                        message: "Can't create charges details!",
-                      });
-                    }
-                  } else {
-                    // delete invoice
-                    Invoice.findOneAndDelete({ _id: invoice?._id });
-                    // delete subinvoice
-                    SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                    // delete charges details
-                    await ChargeDetails.findOneAndDelete({
-                      _id: chargesDetails?._id,
-                    });
-                    // delete subcharges details
-                    await SubChargeDetails.findOneAndDelete({
-                      _id: subChargesDetails?._id,
-                    });
-                    // undo player status unpaid
-                    await User.findOneAndDelete({ _id: newPlayer?._id });
-                    // send response as unable to create transaction info
-                    res.status(400).json({
-                      message: "Can't create invoice!",
-                    });
                   }
                 }
               } else {
@@ -1063,6 +1592,892 @@ const addPlayerForGuardian = async (req, res) => {
                   profile_image: uploadedImage,
                 });
                 if (newPlayer) {
+                  const existingInvoice = await Invoice.findOne({
+                    $and: [
+                      { created_by: admin?.email },
+                      { identity_type: "player registration" },
+                      { bill_status: "unpaid" },
+                    ],
+                  });
+                  if (existingInvoice?._id) {
+                    const subInvoice = await SubInvoice.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const chargesDetails = await ChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const subChargesDetails = await SubChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    if (
+                      !subInvoice?._id ||
+                      !chargesDetails?._id ||
+                      !subChargesDetails?._id
+                    ) {
+                      isValidObjectId(subInvoice?._id) &&
+                        (await SubInvoice.findOneAndDelete({
+                          _id: subInvoice?._id,
+                        }));
+                      isValidObjectId(chargesDetails?._id) &&
+                        (await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        }));
+                      isValidObjectId(subChargesDetails?._id) &&
+                        (await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        }));
+
+                      await User.findOneAndDelete({ _id: newPlayer?._id });
+                      res.status(400).json({
+                        message: "Can't Create invoices!",
+                      });
+                    } else {
+                      const completeInvoice = await Invoice.findOneAndUpdate(
+                        { _id: existingInvoice?._id },
+                        {
+                          $push: {
+                            charges_details: {
+                              chargesDetailsId: chargesDetails?._id,
+                              subInvoiceId: subInvoice?._id,
+                              details: `Player [${
+                                newPlayer?.name
+                              }] registration fees 1 unit charge = ${
+                                system?.core_charge ? system?.core_charge : 1
+                              } USD`,
+                            },
+                          },
+                          $set: {
+                            billing_from: wallet?.last_payment_date,
+                            billing_to: moment().format(),
+                            bill_status: "unpaid",
+                            last_payment_date: wallet?.last_payment_date,
+                            amount:
+                              parseFloat(existingInvoice?.amount) +
+                              (system?.core_charge
+                                ? parseFloat(system?.core_charge)
+                                : 1),
+                          },
+                        }
+                      );
+                      if (completeInvoice) {
+                        const completeChargesDetails =
+                          await ChargeDetails.findOneAndUpdate(
+                            {
+                              _id: chargesDetails?._id,
+                            },
+                            {
+                              $set: {
+                                invoice_no: existingInvoice?._id,
+                                date: moment().format(),
+                                total_amount: wallet?.total_charges,
+                                chages_type: `Player [${
+                                  newPlayer?.name
+                                }] registration fees 1 unit charge = ${
+                                  system?.core_charge ? system?.core_charge : 1
+                                } USD`,
+                                guardian_id: newPlayer?.guardian
+                                  ? newPlayer?.guardian
+                                  : "",
+                                player_id: newPlayer?._id,
+                                fees: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                                billing_status: "unpaid",
+                                amount: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                              },
+                            }
+                          );
+                        if (completeChargesDetails) {
+                          const completeSubInvoice =
+                            await SubInvoice.findOneAndUpdate(
+                              { _id: subInvoice?._id },
+                              {
+                                $set: {
+                                  main_invoice_no: existingInvoice?._id,
+                                  charges_details: {
+                                    id: subChargesDetails?._id,
+                                    details: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                  },
+                                  billing_from: wallet?.last_payment_date,
+                                  billing_to: moment().format(),
+                                  last_payment_date: wallet?.last_payment_date,
+                                  amount: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                },
+                              }
+                            );
+                          if (completeSubInvoice) {
+                            const completeSubChargeDetails =
+                              await SubChargeDetails.findOneAndUpdate(
+                                { _id: subChargesDetails?._id },
+                                {
+                                  $set: {
+                                    main_invoice_no: existingInvoice?._id,
+                                    sub_invoice_no: subInvoice?._id,
+                                    main_charges_details: chargesDetails?._id,
+                                    date: moment().format(),
+                                    charge_type: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                    guardian_id: newPlayer?.guardian
+                                      ? newPlayer?.guardian
+                                      : "",
+                                    player_id: newPlayer?._id,
+                                    fees: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                    billing_status: "unpaid",
+                                    amount: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                  },
+                                }
+                              );
+                            if (completeSubChargeDetails) {
+                              // update the Guardian's active/inactive players in database model
+                              const updateGuardian =
+                                await User.findOneAndUpdate(
+                                  { _id: guardian_id },
+                                  {
+                                    $inc: {
+                                      inactive_player: 1,
+                                      total_player: 1,
+                                    },
+                                  }
+                                );
+                              if (updateGuardian) {
+                                // update the team database model
+                                const updateTeam = await Team.findOneAndUpdate(
+                                  { _id: team },
+                                  {
+                                    $push: {
+                                      player: newPlayer?._id,
+                                    },
+                                    $inc: {
+                                      total_player: 1,
+                                    },
+                                  }
+                                );
+                                if (updateTeam) {
+                                  const {
+                                    password: passwordHashed,
+                                    token,
+                                    ...sanitizedData
+                                  } = newPlayer?._doc;
+                                  sendLoginCredentials(email, password);
+                                  res.status(200).json(sanitizedData);
+                                } else {
+                                  await User.findOneAndDelete({
+                                    _id: newPlayer?._id,
+                                  });
+                                  res.status(400).json({
+                                    message: "Can't update team!",
+                                  });
+                                }
+                              } else {
+                                await User.findOneAndDelete({
+                                  _id: newPlayer?._id,
+                                });
+                                res.status(400).json({
+                                  message: "Can't update guardian!",
+                                });
+                              }
+                            } else {
+                              // delete subinvoice
+                              SubInvoice.findOneAndDelete({
+                                _id: subInvoice?._id,
+                              });
+                              // delete charges details
+                              await ChargeDetails.findOneAndDelete({
+                                _id: chargesDetails?._id,
+                              });
+                              // delete subcharges details
+                              await SubChargeDetails.findOneAndDelete({
+                                _id: subChargesDetails?._id,
+                              });
+                              // undo player status unpaid
+                              await User.findOneAndDelete({
+                                _id: newPlayer?._id,
+                              });
+                              // send response as unable to create transaction info
+                              res.status(400).json({
+                                message: "Can't create sub charges details!",
+                              });
+                            }
+                          } else {
+                            // delete subinvoice
+                            SubInvoice.findOneAndDelete({
+                              _id: subInvoice?._id,
+                            });
+                            // delete charges details
+                            await ChargeDetails.findOneAndDelete({
+                              _id: chargesDetails?._id,
+                            });
+                            // delete subcharges details
+                            await SubChargeDetails.findOneAndDelete({
+                              _id: subChargesDetails?._id,
+                            });
+                            // undo player status unpaid
+                            await User.findOneAndDelete({
+                              _id: newPlayer?._id,
+                            });
+                            // send response as unable to create transaction info
+                            res.status(400).json({
+                              message: "Can't create sub invoice!",
+                            });
+                          }
+                        } else {
+                          // delete subinvoice
+                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                          // delete charges details
+                          await ChargeDetails.findOneAndDelete({
+                            _id: chargesDetails?._id,
+                          });
+                          // delete subcharges details
+                          await SubChargeDetails.findOneAndDelete({
+                            _id: subChargesDetails?._id,
+                          });
+                          // undo player status unpaid
+                          await User.findOneAndDelete({ _id: newPlayer?._id });
+                          // send response as unable to create transaction info
+                          res.status(400).json({
+                            message: "Can't create charges details!",
+                          });
+                        }
+                      } else {
+                        // delete subinvoice
+                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                        // delete charges details
+                        await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        });
+                        // delete subcharges details
+                        await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        });
+                        // undo player status unpaid
+                        await User.findOneAndDelete({ _id: newPlayer?._id });
+                        // send response as unable to create transaction info
+                        res.status(400).json({
+                          message: "Can't create invoice!",
+                        });
+                      }
+                    }
+                  } else {
+                    const invoice = await Invoice.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const subInvoice = await SubInvoice.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const chargesDetails = await ChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    const subChargesDetails = await SubChargeDetails.create({
+                      created_by: admin?.email,
+                      identity_type: "player registration",
+                    });
+                    if (
+                      !invoice?._id ||
+                      !subInvoice?._id ||
+                      !chargesDetails?._id ||
+                      !subChargesDetails?._id
+                    ) {
+                      isValidObjectId(invoice?._id) &&
+                        (await Invoice.findOneAndDelete({ _id: invoice?._id }));
+                      isValidObjectId(subInvoice?._id) &&
+                        (await SubInvoice.findOneAndDelete({
+                          _id: subInvoice?._id,
+                        }));
+                      isValidObjectId(chargesDetails?._id) &&
+                        (await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        }));
+                      isValidObjectId(subChargesDetails?._id) &&
+                        (await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        }));
+
+                      await User.findOneAndDelete({ _id: newPlayer?._id });
+                      res.status(400).json({
+                        message: "Can't Create invoices!",
+                      });
+                    } else {
+                      const completeInvoice = await Invoice.findOneAndUpdate(
+                        { _id: invoice?._id },
+                        {
+                          $push: {
+                            charges_details: {
+                              chargesDetailsId: chargesDetails?._id,
+                              subInvoiceId: subInvoice?._id,
+                              details: `Player [${
+                                newPlayer?.name
+                              }] registration fees 1 unit charge = ${
+                                system?.core_charge ? system?.core_charge : 1
+                              } USD`,
+                            },
+                          },
+                          $set: {
+                            billing_from: wallet?.last_payment_date,
+                            billing_to: moment().format(),
+                            bill_status: "unpaid",
+                            last_payment_date: wallet?.last_payment_date,
+                            amount: system?.core_charge
+                              ? system?.core_charge
+                              : 1,
+                          },
+                        }
+                      );
+                      if (completeInvoice) {
+                        const completeChargesDetails =
+                          await ChargeDetails.findOneAndUpdate(
+                            {
+                              _id: chargesDetails?._id,
+                            },
+                            {
+                              $set: {
+                                invoice_no: invoice?._id,
+                                date: moment().format(),
+                                total_amount: wallet?.total_charges,
+                                chages_type: `Player [${
+                                  newPlayer?.name
+                                }] registration fees 1 unit charge = ${
+                                  system?.core_charge ? system?.core_charge : 1
+                                } USD`,
+                                guardian_id: newPlayer?.guardian
+                                  ? newPlayer?.guardian
+                                  : "",
+                                player_id: newPlayer?._id,
+                                fees: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                                billing_status: "unpaid",
+                                amount: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                              },
+                            }
+                          );
+                        if (completeChargesDetails) {
+                          const completeSubInvoice =
+                            await SubInvoice.findOneAndUpdate(
+                              { _id: subInvoice?._id },
+                              {
+                                $set: {
+                                  main_invoice_no: invoice?._id,
+                                  charges_details: {
+                                    id: subChargesDetails?._id,
+                                    details: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                  },
+                                  billing_from: wallet?.last_payment_date,
+                                  billing_to: moment().format(),
+                                  last_payment_date: wallet?.last_payment_date,
+                                  amount: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                },
+                              }
+                            );
+                          if (completeSubInvoice) {
+                            const completeSubChargeDetails =
+                              await SubChargeDetails.findOneAndUpdate(
+                                { _id: subChargesDetails?._id },
+                                {
+                                  $set: {
+                                    main_invoice_no: invoice?._id,
+                                    sub_invoice_no: subInvoice?._id,
+                                    main_charges_details: chargesDetails?._id,
+                                    date: moment().format(),
+                                    charge_type: `Player [${
+                                      newPlayer?.name
+                                    }] registration fees 1 unit charge = ${
+                                      system?.core_charge
+                                        ? system?.core_charge
+                                        : 1
+                                    } USD`,
+                                    guardian_id: newPlayer?.guardian
+                                      ? newPlayer?.guardian
+                                      : "",
+                                    player_id: newPlayer?._id,
+                                    fees: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                    billing_status: "unpaid",
+                                    amount: system?.core_charge
+                                      ? system?.core_charge
+                                      : 1,
+                                  },
+                                }
+                              );
+                            if (completeSubChargeDetails) {
+                              // update the Guardian's active/inactive players in database model
+                              const updateGuardian =
+                                await User.findOneAndUpdate(
+                                  { _id: guardian_id },
+                                  {
+                                    $inc: {
+                                      inactive_player: 1,
+                                      total_player: 1,
+                                    },
+                                  }
+                                );
+                              if (updateGuardian) {
+                                // update the team database model
+                                const updateTeam = await Team.findOneAndUpdate(
+                                  { _id: team },
+                                  {
+                                    $push: {
+                                      player: newPlayer?._id,
+                                    },
+                                    $inc: {
+                                      total_player: 1,
+                                    },
+                                  }
+                                );
+                                if (updateTeam) {
+                                  const {
+                                    password: passwordHashed,
+                                    token,
+                                    ...sanitizedData
+                                  } = newPlayer?._doc;
+                                  sendLoginCredentials(email, password);
+                                  res.status(200).json(sanitizedData);
+                                } else {
+                                  await User.findOneAndDelete({
+                                    _id: newPlayer?._id,
+                                  });
+                                  res.status(400).json({
+                                    message: "Can't update team!",
+                                  });
+                                }
+                              } else {
+                                await User.findOneAndDelete({
+                                  _id: newPlayer?._id,
+                                });
+                                res.status(400).json({
+                                  message: "Can't update guardian!",
+                                });
+                              }
+                            } else {
+                              // delete invoice
+                              Invoice.findOneAndDelete({ _id: invoice?._id });
+                              // delete subinvoice
+                              SubInvoice.findOneAndDelete({
+                                _id: subInvoice?._id,
+                              });
+                              // delete charges details
+                              await ChargeDetails.findOneAndDelete({
+                                _id: chargesDetails?._id,
+                              });
+                              // delete subcharges details
+                              await SubChargeDetails.findOneAndDelete({
+                                _id: subChargesDetails?._id,
+                              });
+                              // undo player status unpaid
+                              await User.findOneAndDelete({
+                                _id: newPlayer?._id,
+                              });
+                              // send response as unable to create transaction info
+                              res.status(400).json({
+                                message: "Can't create sub charges details!",
+                              });
+                            }
+                          } else {
+                            // delete invoice
+                            Invoice.findOneAndDelete({ _id: invoice?._id });
+                            // delete subinvoice
+                            SubInvoice.findOneAndDelete({
+                              _id: subInvoice?._id,
+                            });
+                            // delete charges details
+                            await ChargeDetails.findOneAndDelete({
+                              _id: chargesDetails?._id,
+                            });
+                            // delete subcharges details
+                            await SubChargeDetails.findOneAndDelete({
+                              _id: subChargesDetails?._id,
+                            });
+                            // undo player status unpaid
+                            await User.findOneAndDelete({
+                              _id: newPlayer?._id,
+                            });
+                            // send response as unable to create transaction info
+                            res.status(400).json({
+                              message: "Can't create sub invoice!",
+                            });
+                          }
+                        } else {
+                          // delete invoice
+                          Invoice.findOneAndDelete({ _id: invoice?._id });
+                          // delete subinvoice
+                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                          // delete charges details
+                          await ChargeDetails.findOneAndDelete({
+                            _id: chargesDetails?._id,
+                          });
+                          // delete subcharges details
+                          await SubChargeDetails.findOneAndDelete({
+                            _id: subChargesDetails?._id,
+                          });
+                          // undo player status unpaid
+                          await User.findOneAndDelete({ _id: newPlayer?._id });
+                          // send response as unable to create transaction info
+                          res.status(400).json({
+                            message: "Can't create charges details!",
+                          });
+                        }
+                      } else {
+                        // delete invoice
+                        Invoice.findOneAndDelete({ _id: invoice?._id });
+                        // delete subinvoice
+                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                        // delete charges details
+                        await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        });
+                        // delete subcharges details
+                        await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        });
+                        // undo player status unpaid
+                        await User.findOneAndDelete({ _id: newPlayer?._id });
+                        // send response as unable to create transaction info
+                        res.status(400).json({
+                          message: "Can't create invoice!",
+                        });
+                      }
+                    }
+                  }
+                } else {
+                  res.status(400).json({
+                    message: "Can not add Player. Please try again!",
+                  });
+                }
+              } else {
+                res.status(400).json({
+                  message: "Invalid team ID or can't find any team to assign!",
+                });
+              }
+            } else {
+              const newPlayer = await User.create({
+                email: email,
+                password: password,
+                team: [],
+                team_names: [],
+                token: generateToken(email),
+                fees,
+                name:
+                  first_name && last_name ? `${first_name} ${last_name}` : "",
+                gender: gender ? gender : "",
+                date_of_birth: date_of_birth ? date_of_birth : "",
+                address_line_1: address_line_1 ? address_line_1 : "",
+                address_line_2: address_line_2 ? address_line_2 : "",
+                country: country ? country : "",
+                city: city ? city : "",
+                state: state ? state : "",
+                zip: zip ? zip : 0,
+                phone: phone ? phone : "",
+                height: height ? height : "",
+                weight: weight ? weight : "",
+                description: description ? description : "",
+                added_by,
+                guardian: guardian_id,
+                guardian_name: guardian?.name,
+                guardian_email: guardian?.email,
+                guardian_phone: guardian?.phone,
+                guardian_image: guardian?.profile_image?.uploadedImage
+                  ? guardian?.profile_image?.uploadedImage
+                  : "",
+                role: "player",
+                profile_image: uploadedImage,
+              });
+              if (newPlayer) {
+                const existingInvoice = await Invoice.findOne({
+                  $and: [
+                    { created_by: admin?.email },
+                    { identity_type: "player registration" },
+                    { bill_status: "unpaid" },
+                  ],
+                });
+                if (existingInvoice?._id) {
+                  const subInvoice = await SubInvoice.create({
+                    created_by: admin?.email,
+                    identity_type: "player registration",
+                  });
+                  const chargesDetails = await ChargeDetails.create({
+                    created_by: admin?.email,
+                    identity_type: "player registration",
+                  });
+                  const subChargesDetails = await SubChargeDetails.create({
+                    created_by: admin?.email,
+                    identity_type: "player registration",
+                  });
+                  if (
+                    !subInvoice?._id ||
+                    !chargesDetails?._id ||
+                    !subChargesDetails?._id
+                  ) {
+                    isValidObjectId(subInvoice?._id) &&
+                      (await SubInvoice.findOneAndDelete({
+                        _id: subInvoice?._id,
+                      }));
+                    isValidObjectId(chargesDetails?._id) &&
+                      (await ChargeDetails.findOneAndDelete({
+                        _id: chargesDetails?._id,
+                      }));
+                    isValidObjectId(subChargesDetails?._id) &&
+                      (await SubChargeDetails.findOneAndDelete({
+                        _id: subChargesDetails?._id,
+                      }));
+
+                    await User.findOneAndDelete({ _id: newPlayer?._id });
+                    res.status(400).json({
+                      message: "Can't Create invoices!",
+                    });
+                  } else {
+                    const completeInvoice = await Invoice.findOneAndUpdate(
+                      { _id: existingInvoice?._id },
+                      {
+                        $push: {
+                          charges_details: {
+                            chargesDetailsId: chargesDetails?._id,
+                            subInvoiceId: subInvoice?._id,
+                            details: `Player [${
+                              newPlayer?.name
+                            }] registration fees 1 unit charge = ${
+                              system?.core_charge ? system?.core_charge : 1
+                            } USD`,
+                          },
+                        },
+                        $set: {
+                          billing_from: wallet?.last_payment_date,
+                          billing_to: moment().format(),
+                          bill_status: "unpaid",
+                          last_payment_date: wallet?.last_payment_date,
+                          amount:
+                            parseFloat(existingInvoice?.amount) +
+                            (system?.core_charge
+                              ? parseFloat(system?.core_charge)
+                              : 1),
+                        },
+                      }
+                    );
+                    if (completeInvoice) {
+                      const completeChargesDetails =
+                        await ChargeDetails.findOneAndUpdate(
+                          {
+                            _id: chargesDetails?._id,
+                          },
+                          {
+                            $set: {
+                              invoice_no: existingInvoice?._id,
+                              date: moment().format(),
+                              total_amount: wallet?.total_charges,
+                              chages_type: `Player [${
+                                newPlayer?.name
+                              }] registration fees 1 unit charge = ${
+                                system?.core_charge ? system?.core_charge : 1
+                              } USD`,
+                              guardian_id: newPlayer?.guardian
+                                ? newPlayer?.guardian
+                                : "",
+                              player_id: newPlayer?._id,
+                              fees: system?.core_charge
+                                ? system?.core_charge
+                                : 1,
+                              billing_status: "unpaid",
+                              amount: system?.core_charge
+                                ? system?.core_charge
+                                : 1,
+                            },
+                          }
+                        );
+                      if (completeChargesDetails) {
+                        const completeSubInvoice =
+                          await SubInvoice.findOneAndUpdate(
+                            { _id: subInvoice?._id },
+                            {
+                              $set: {
+                                main_invoice_no: existingInvoice?._id,
+                                charges_details: {
+                                  id: subChargesDetails?._id,
+                                  details: `Player [${
+                                    newPlayer?.name
+                                  }] registration fees 1 unit charge = ${
+                                    system?.core_charge
+                                      ? system?.core_charge
+                                      : 1
+                                  } USD`,
+                                },
+                                billing_from: wallet?.last_payment_date,
+                                billing_to: moment().format(),
+                                last_payment_date: wallet?.last_payment_date,
+                                amount: system?.core_charge
+                                  ? system?.core_charge
+                                  : 1,
+                              },
+                            }
+                          );
+                        if (completeSubInvoice) {
+                          const completeSubChargeDetails =
+                            await SubChargeDetails.findOneAndUpdate(
+                              { _id: subChargesDetails?._id },
+                              {
+                                $set: {
+                                  main_invoice_no: existingInvoice?._id,
+                                  sub_invoice_no: subInvoice?._id,
+                                  main_charges_details: chargesDetails?._id,
+                                  date: moment().format(),
+                                  charge_type: `Player [${
+                                    newPlayer?.name
+                                  }] registration fees 1 unit charge = ${
+                                    system?.core_charge
+                                      ? system?.core_charge
+                                      : 1
+                                  } USD`,
+                                  guardian_id: newPlayer?.guardian
+                                    ? newPlayer?.guardian
+                                    : "",
+                                  player_id: newPlayer?._id,
+                                  fees: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                  billing_status: "unpaid",
+                                  amount: system?.core_charge
+                                    ? system?.core_charge
+                                    : 1,
+                                },
+                              }
+                            );
+                          if (completeSubChargeDetails) {
+                            const updateGuardian = await User.findOneAndUpdate(
+                              { _id: guardian_id },
+                              {
+                                $inc: {
+                                  inactive_player: 1,
+                                  total_player: 1,
+                                },
+                              }
+                            );
+                            if (updateGuardian) {
+                              const {
+                                password: passwordHashed,
+                                token,
+                                ...sanitizedData
+                              } = newPlayer?._doc;
+                              sendLoginCredentials(email, password);
+                              res.status(200).json(sanitizedData);
+                            } else {
+                              await User.findOneAndDelete({
+                                _id: newPlayer?._id,
+                              });
+                              res.status(400).json({
+                                message: "Can't update guardian!",
+                              });
+                            }
+                          } else {
+                            // delete subinvoice
+                            SubInvoice.findOneAndDelete({
+                              _id: subInvoice?._id,
+                            });
+                            // delete charges details
+                            await ChargeDetails.findOneAndDelete({
+                              _id: chargesDetails?._id,
+                            });
+                            // delete subcharges details
+                            await SubChargeDetails.findOneAndDelete({
+                              _id: subChargesDetails?._id,
+                            });
+                            // undo player status unpaid
+                            await User.findOneAndDelete({
+                              _id: newPlayer?._id,
+                            });
+                            // send response as unable to create transaction info
+                            res.status(400).json({
+                              message: "Can't create sub charges details!",
+                            });
+                          }
+                        } else {
+                          // delete subinvoice
+                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                          // delete charges details
+                          await ChargeDetails.findOneAndDelete({
+                            _id: chargesDetails?._id,
+                          });
+                          // delete subcharges details
+                          await SubChargeDetails.findOneAndDelete({
+                            _id: subChargesDetails?._id,
+                          });
+                          // undo player status unpaid
+                          await User.findOneAndDelete({ _id: newPlayer?._id });
+                          // send response as unable to create transaction info
+                          res.status(400).json({
+                            message: "Can't create sub invoice!",
+                          });
+                        }
+                      } else {
+                        // delete subinvoice
+                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                        // delete charges details
+                        await ChargeDetails.findOneAndDelete({
+                          _id: chargesDetails?._id,
+                        });
+                        // delete subcharges details
+                        await SubChargeDetails.findOneAndDelete({
+                          _id: subChargesDetails?._id,
+                        });
+                        // undo player status unpaid
+                        await User.findOneAndDelete({ _id: newPlayer?._id });
+                        // send response as unable to create transaction info
+                        res.status(400).json({
+                          message: "Can't create charges details!",
+                        });
+                      }
+                    } else {
+                      // delete subinvoice
+                      SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
+                      // delete charges details
+                      await ChargeDetails.findOneAndDelete({
+                        _id: chargesDetails?._id,
+                      });
+                      // delete subcharges details
+                      await SubChargeDetails.findOneAndDelete({
+                        _id: subChargesDetails?._id,
+                      });
+                      // undo player status unpaid
+                      await User.findOneAndDelete({ _id: newPlayer?._id });
+                      // send response as unable to create transaction info
+                      res.status(400).json({
+                        message: "Can't create invoice!",
+                      });
+                    }
+                  }
+                } else {
                   const invoice = await Invoice.create({
                     created_by: admin?.email,
                     identity_type: "player registration",
@@ -1112,7 +2527,7 @@ const addPlayerForGuardian = async (req, res) => {
                           charges_details: {
                             chargesDetailsId: chargesDetails?._id,
                             subInvoiceId: subInvoice?._id,
-                            details: `Player[${
+                            details: `Player [${
                               newPlayer?.name
                             }] registration fees 1 unit charge = ${
                               system?.core_charge ? system?.core_charge : 1
@@ -1139,7 +2554,7 @@ const addPlayerForGuardian = async (req, res) => {
                               invoice_no: invoice?._id,
                               date: moment().format(),
                               total_amount: wallet?.total_charges,
-                              chages_type: `Player[${
+                              chages_type: `Player [${
                                 newPlayer?.name
                               }] registration fees 1 unit charge = ${
                                 system?.core_charge ? system?.core_charge : 1
@@ -1167,7 +2582,7 @@ const addPlayerForGuardian = async (req, res) => {
                                 main_invoice_no: invoice?._id,
                                 charges_details: {
                                   id: subChargesDetails?._id,
-                                  details: `Player[${
+                                  details: `Player [${
                                     newPlayer?.name
                                   }] registration fees 1 unit charge = ${
                                     system?.core_charge
@@ -1194,7 +2609,7 @@ const addPlayerForGuardian = async (req, res) => {
                                   sub_invoice_no: subInvoice?._id,
                                   main_charges_details: chargesDetails?._id,
                                   date: moment().format(),
-                                  charge_type: `Player[${
+                                  charge_type: `Player [${
                                     newPlayer?.name
                                   }] registration fees 1 unit charge = ${
                                     system?.core_charge
@@ -1216,7 +2631,6 @@ const addPlayerForGuardian = async (req, res) => {
                               }
                             );
                           if (completeSubChargeDetails) {
-                            // update the Guardian's active/inactive players in database model
                             const updateGuardian = await User.findOneAndUpdate(
                               { _id: guardian_id },
                               {
@@ -1227,34 +2641,13 @@ const addPlayerForGuardian = async (req, res) => {
                               }
                             );
                             if (updateGuardian) {
-                              // update the team database model
-                              const updateTeam = await Team.findOneAndUpdate(
-                                { _id: team },
-                                {
-                                  $push: {
-                                    player: newPlayer?._id,
-                                  },
-                                  $inc: {
-                                    total_player: 1,
-                                  },
-                                }
-                              );
-                              if (updateTeam) {
-                                const {
-                                  password: passwordHashed,
-                                  token,
-                                  ...sanitizedData
-                                } = newPlayer?._doc;
-                                sendLoginCredentials(email, password);
-                                res.status(200).json(sanitizedData);
-                              } else {
-                                await User.findOneAndDelete({
-                                  _id: newPlayer?._id,
-                                });
-                                res.status(400).json({
-                                  message: "Can't update team!",
-                                });
-                              }
+                              const {
+                                password: passwordHashed,
+                                token,
+                                ...sanitizedData
+                              } = newPlayer?._doc;
+                              sendLoginCredentials(email, password);
+                              res.status(200).json(sanitizedData);
                             } else {
                               await User.findOneAndDelete({
                                 _id: newPlayer?._id,
@@ -1347,302 +2740,6 @@ const addPlayerForGuardian = async (req, res) => {
                         message: "Can't create invoice!",
                       });
                     }
-                  }
-                } else {
-                  res.status(400).json({
-                    message: "Can not add Player. Please try again!",
-                  });
-                }
-              } else {
-                res.status(400).json({
-                  message: "Invalid team ID or can't find any team to assign!",
-                });
-              }
-            } else {
-              const newPlayer = await User.create({
-                email: email,
-                password: password,
-                team: [],
-                team_names: [],
-                token: generateToken(email),
-                fees,
-                name:
-                  first_name && last_name ? `${first_name} ${last_name}` : "",
-                gender: gender ? gender : "",
-                date_of_birth: date_of_birth ? date_of_birth : "",
-                address_line_1: address_line_1 ? address_line_1 : "",
-                address_line_2: address_line_2 ? address_line_2 : "",
-                country: country ? country : "",
-                city: city ? city : "",
-                state: state ? state : "",
-                zip: zip ? zip : 0,
-                phone: phone ? phone : "",
-                height: height ? height : "",
-                weight: weight ? weight : "",
-                description: description ? description : "",
-                added_by,
-                guardian: guardian_id,
-                guardian_name: guardian?.name,
-                guardian_email: guardian?.email,
-                guardian_phone: guardian?.phone,
-                guardian_image: guardian?.profile_image?.uploadedImage
-                  ? guardian?.profile_image?.uploadedImage
-                  : "",
-                role: "player",
-                profile_image: uploadedImage,
-              });
-              if (newPlayer) {
-                const invoice = await Invoice.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                const subInvoice = await SubInvoice.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                const chargesDetails = await ChargeDetails.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                const subChargesDetails = await SubChargeDetails.create({
-                  created_by: admin?.email,
-                  identity_type: "player registration",
-                });
-                if (
-                  !invoice?._id ||
-                  !subInvoice?._id ||
-                  !chargesDetails?._id ||
-                  !subChargesDetails?._id
-                ) {
-                  isValidObjectId(invoice?._id) &&
-                    (await Invoice.findOneAndDelete({ _id: invoice?._id }));
-                  isValidObjectId(subInvoice?._id) &&
-                    (await SubInvoice.findOneAndDelete({
-                      _id: subInvoice?._id,
-                    }));
-                  isValidObjectId(chargesDetails?._id) &&
-                    (await ChargeDetails.findOneAndDelete({
-                      _id: chargesDetails?._id,
-                    }));
-                  isValidObjectId(subChargesDetails?._id) &&
-                    (await SubChargeDetails.findOneAndDelete({
-                      _id: subChargesDetails?._id,
-                    }));
-
-                  await User.findOneAndDelete({ _id: newPlayer?._id });
-                  res.status(400).json({
-                    message: "Can't Create invoices!",
-                  });
-                } else {
-                  const completeInvoice = await Invoice.findOneAndUpdate(
-                    { _id: invoice?._id },
-                    {
-                      $push: {
-                        charges_details: {
-                          chargesDetailsId: chargesDetails?._id,
-                          subInvoiceId: subInvoice?._id,
-                          details: `Player[${
-                            newPlayer?.name
-                          }] registration fees 1 unit charge = ${
-                            system?.core_charge ? system?.core_charge : 1
-                          } USD`,
-                        },
-                      },
-                      $set: {
-                        billing_from: wallet?.last_payment_date,
-                        billing_to: moment().format(),
-                        bill_status: "unpaid",
-                        last_payment_date: wallet?.last_payment_date,
-                        amount: system?.core_charge ? system?.core_charge : 1,
-                      },
-                    }
-                  );
-                  if (completeInvoice) {
-                    const completeChargesDetails =
-                      await ChargeDetails.findOneAndUpdate(
-                        {
-                          _id: chargesDetails?._id,
-                        },
-                        {
-                          $set: {
-                            invoice_no: invoice?._id,
-                            date: moment().format(),
-                            total_amount: wallet?.total_charges,
-                            chages_type: `Player[${
-                              newPlayer?.name
-                            }] registration fees 1 unit charge = ${
-                              system?.core_charge ? system?.core_charge : 1
-                            } USD`,
-                            guardian_id: newPlayer?.guardian
-                              ? newPlayer?.guardian
-                              : "",
-                            player_id: newPlayer?._id,
-                            fees: system?.core_charge ? system?.core_charge : 1,
-                            billing_status: "unpaid",
-                            amount: system?.core_charge
-                              ? system?.core_charge
-                              : 1,
-                          },
-                        }
-                      );
-                    if (completeChargesDetails) {
-                      const completeSubInvoice =
-                        await SubInvoice.findOneAndUpdate(
-                          { _id: subInvoice?._id },
-                          {
-                            $set: {
-                              main_invoice_no: invoice?._id,
-                              charges_details: {
-                                id: subChargesDetails?._id,
-                                details: `Player[${
-                                  newPlayer?.name
-                                }] registration fees 1 unit charge = ${
-                                  system?.core_charge ? system?.core_charge : 1
-                                } USD`,
-                              },
-                              billing_from: wallet?.last_payment_date,
-                              billing_to: moment().format(),
-                              last_payment_date: wallet?.last_payment_date,
-                              amount: system?.core_charge
-                                ? system?.core_charge
-                                : 1,
-                            },
-                          }
-                        );
-                      if (completeSubInvoice) {
-                        const completeSubChargeDetails =
-                          await SubChargeDetails.findOneAndUpdate(
-                            { _id: subChargesDetails?._id },
-                            {
-                              $set: {
-                                main_invoice_no: invoice?._id,
-                                sub_invoice_no: subInvoice?._id,
-                                main_charges_details: chargesDetails?._id,
-                                date: moment().format(),
-                                charge_type: `Player[${
-                                  newPlayer?.name
-                                }] registration fees 1 unit charge = ${
-                                  system?.core_charge ? system?.core_charge : 1
-                                } USD`,
-                                guardian_id: newPlayer?.guardian
-                                  ? newPlayer?.guardian
-                                  : "",
-                                player_id: newPlayer?._id,
-                                fees: system?.core_charge
-                                  ? system?.core_charge
-                                  : 1,
-                                billing_status: "unpaid",
-                                amount: system?.core_charge
-                                  ? system?.core_charge
-                                  : 1,
-                              },
-                            }
-                          );
-                        if (completeSubChargeDetails) {
-                          const updateGuardian = await User.findOneAndUpdate(
-                            { _id: guardian_id },
-                            {
-                              $inc: {
-                                inactive_player: 1,
-                                total_player: 1,
-                              },
-                            }
-                          );
-                          if (updateGuardian) {
-                            const {
-                              password: passwordHashed,
-                              token,
-                              ...sanitizedData
-                            } = newPlayer?._doc;
-                            sendLoginCredentials(email, password);
-                            res.status(200).json(sanitizedData);
-                          } else {
-                            await User.findOneAndDelete({
-                              _id: newPlayer?._id,
-                            });
-                            res.status(400).json({
-                              message: "Can't update guardian!",
-                            });
-                          }
-                        } else {
-                          // delete invoice
-                          Invoice.findOneAndDelete({ _id: invoice?._id });
-                          // delete subinvoice
-                          SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                          // delete charges details
-                          await ChargeDetails.findOneAndDelete({
-                            _id: chargesDetails?._id,
-                          });
-                          // delete subcharges details
-                          await SubChargeDetails.findOneAndDelete({
-                            _id: subChargesDetails?._id,
-                          });
-                          // undo player status unpaid
-                          await User.findOneAndDelete({ _id: newPlayer?._id });
-                          // send response as unable to create transaction info
-                          res.status(400).json({
-                            message: "Can't create sub charges details!",
-                          });
-                        }
-                      } else {
-                        // delete invoice
-                        Invoice.findOneAndDelete({ _id: invoice?._id });
-                        // delete subinvoice
-                        SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                        // delete charges details
-                        await ChargeDetails.findOneAndDelete({
-                          _id: chargesDetails?._id,
-                        });
-                        // delete subcharges details
-                        await SubChargeDetails.findOneAndDelete({
-                          _id: subChargesDetails?._id,
-                        });
-                        // undo player status unpaid
-                        await User.findOneAndDelete({ _id: newPlayer?._id });
-                        // send response as unable to create transaction info
-                        res.status(400).json({
-                          message: "Can't create sub invoice!",
-                        });
-                      }
-                    } else {
-                      // delete invoice
-                      Invoice.findOneAndDelete({ _id: invoice?._id });
-                      // delete subinvoice
-                      SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                      // delete charges details
-                      await ChargeDetails.findOneAndDelete({
-                        _id: chargesDetails?._id,
-                      });
-                      // delete subcharges details
-                      await SubChargeDetails.findOneAndDelete({
-                        _id: subChargesDetails?._id,
-                      });
-                      // undo player status unpaid
-                      await User.findOneAndDelete({ _id: newPlayer?._id });
-                      // send response as unable to create transaction info
-                      res.status(400).json({
-                        message: "Can't create charges details!",
-                      });
-                    }
-                  } else {
-                    // delete invoice
-                    Invoice.findOneAndDelete({ _id: invoice?._id });
-                    // delete subinvoice
-                    SubInvoice.findOneAndDelete({ _id: subInvoice?._id });
-                    // delete charges details
-                    await ChargeDetails.findOneAndDelete({
-                      _id: chargesDetails?._id,
-                    });
-                    // delete subcharges details
-                    await SubChargeDetails.findOneAndDelete({
-                      _id: subChargesDetails?._id,
-                    });
-                    // undo player status unpaid
-                    await User.findOneAndDelete({ _id: newPlayer?._id });
-                    // send response as unable to create transaction info
-                    res.status(400).json({
-                      message: "Can't create invoice!",
-                    });
                   }
                 }
               } else {
