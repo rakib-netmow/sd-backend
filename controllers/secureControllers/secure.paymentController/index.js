@@ -36,7 +36,7 @@ const paidByCashForPlayer = async (req, res) => {
           $and: [{ email: admin_id }, { role: "admin" }],
         });
         if (admin && admin?._id) {
-          const wallet = await Wallet.findOne({ admin_id });
+          const wallet = await Wallet.findOne({ admin_id: admin?._id });
           // if (wallet?._id) {
           // } else {
           //   const newWalet = await Wallet.create({
@@ -70,7 +70,10 @@ const paidByCashForPlayer = async (req, res) => {
               // update wallet
               const updateWallet = await Wallet.findOneAndUpdate(
                 {
-                  $and: [{ admin_id }, { created_by: admin?.email }],
+                  $and: [
+                    { admin_id: admin?._id },
+                    { created_by: admin?.email },
+                  ],
                 },
                 {
                   $set: {
@@ -170,7 +173,10 @@ const paidByCashForPlayer = async (req, res) => {
                         );
                         await Wallet.findOneAndUpdate(
                           {
-                            $and: [{ admin_id }, { created_by: admin?.email }],
+                            $and: [
+                              { admin_id: admin?._id },
+                              { created_by: admin?.email },
+                            ],
                           },
                           {
                             $set: {
@@ -223,7 +229,10 @@ const paidByCashForPlayer = async (req, res) => {
                       );
                       await Wallet.findOneAndUpdate(
                         {
-                          $and: [{ admin_id }, { created_by: admin?.email }],
+                          $and: [
+                            { admin_id: admin?._id },
+                            { created_by: admin?.email },
+                          ],
                         },
                         {
                           $set: {
@@ -258,7 +267,10 @@ const paidByCashForPlayer = async (req, res) => {
                     });
                     await Wallet.findOneAndUpdate(
                       {
-                        $and: [{ admin_id }, { created_by: admin?.email }],
+                        $and: [
+                          { admin_id: admin?._id },
+                          { created_by: admin?.email },
+                        ],
                       },
                       {
                         $set: {
@@ -293,7 +305,10 @@ const paidByCashForPlayer = async (req, res) => {
                   });
                   await Wallet.findOneAndUpdate(
                     {
-                      $and: [{ admin_id }, { created_by: admin?.email }],
+                      $and: [
+                        { admin_id: admin?._id },
+                        { created_by: admin?.email },
+                      ],
                     },
                     {
                       $set: {
