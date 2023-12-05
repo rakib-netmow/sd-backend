@@ -5,6 +5,7 @@ const SubChargeDetails = require("../../../model/invoice/subChargeDetails");
 const SubInvoice = require("../../../model/invoice/subInvoiceModel");
 const SystemAuthority = require("../../../model/systemAuthority/systemAuthorityModel");
 const Transaction = require("../../../model/transactions/transactionsModel");
+const User = require("../../../model/user/userModel");
 const Wallet = require("../../../model/wallet/walletModel");
 const moment = require("moment/moment");
 
