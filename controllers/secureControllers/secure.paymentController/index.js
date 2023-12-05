@@ -7,7 +7,7 @@ const SystemAuthority = require("../../../model/systemAuthority/systemAuthorityM
 const Transaction = require("../../../model/transactions/transactionsModel");
 const User = require("../../../model/user/userModel");
 const Wallet = require("../../../model/wallet/walletModel");
-const moment = require("moment/moment");
+const moment = require("moment");
 
 // admin paid by cash
 const paidByCashForPlayer = async (req, res) => {
@@ -43,7 +43,7 @@ const paidByCashForPlayer = async (req, res) => {
           //     admin_id: admin?._id,
           //     admin_email: admin?.email,
           //     total_charges: "0",
-          //     last_payment_date: moment(),
+          //     last_payment_date: moment().format(),
           //     created_by: admin?.email,
           //   });
           // }
@@ -78,9 +78,10 @@ const paidByCashForPlayer = async (req, res) => {
                 {
                   $set: {
                     total_charges:
-                      parseFloat(wallet?.total_charges) + system?.core_charges
-                        ? parseFloat(system?.core_charges)
-                        : 1,
+                      parseFloat(wallet?.total_charges) +
+                      (system?.core_charge
+                        ? parseFloat(system?.core_charge)
+                        : 1),
                   },
                 }
               );
@@ -107,9 +108,9 @@ const paidByCashForPlayer = async (req, res) => {
                         $set: {
                           total_amount:
                             parseFloat(chargesDetails?.total_amount) +
-                            system?.core_charges
-                              ? parseFloat(system?.core_charges)
-                              : 1,
+                            (system?.core_charge
+                              ? parseFloat(system?.core_charge)
+                              : 1),
                         },
                       }
                     );
@@ -136,9 +137,9 @@ const paidByCashForPlayer = async (req, res) => {
                             $set: {
                               total_amount:
                                 parseFloat(subChargesDetails?.total_amount) +
-                                system?.core_charges
-                                  ? parseFloat(system?.core_charges)
-                                  : 1,
+                                (system?.core_charge
+                                  ? parseFloat(system?.core_charge)
+                                  : 1),
                             },
                           }
                         );
@@ -165,9 +166,9 @@ const paidByCashForPlayer = async (req, res) => {
                             $set: {
                               total_amount:
                                 parseFloat(chargesDetails?.total_amount) -
-                                system?.core_charges
-                                  ? parseFloat(system?.core_charges)
-                                  : 1,
+                                (system?.core_charge
+                                  ? parseFloat(system?.core_charge)
+                                  : 1),
                             },
                           }
                         );
@@ -182,9 +183,9 @@ const paidByCashForPlayer = async (req, res) => {
                             $set: {
                               total_charges:
                                 parseFloat(wallet?.total_charges) -
-                                system?.core_charges
-                                  ? parseFloat(system?.core_charges)
-                                  : 1,
+                                (system?.core_charge
+                                  ? parseFloat(system?.core_charge)
+                                  : 1),
                             },
                           }
                         );
@@ -221,9 +222,9 @@ const paidByCashForPlayer = async (req, res) => {
                           $set: {
                             total_amount:
                               parseFloat(chargesDetails?.total_amount) -
-                              system?.core_charges
-                                ? parseFloat(system?.core_charges)
-                                : 1,
+                              (system?.core_charge
+                                ? parseFloat(system?.core_charge)
+                                : 1),
                           },
                         }
                       );
@@ -238,9 +239,9 @@ const paidByCashForPlayer = async (req, res) => {
                           $set: {
                             total_charges:
                               parseFloat(wallet?.total_charges) -
-                              system?.core_charges
-                                ? parseFloat(system?.core_charges)
-                                : 1,
+                              (system?.core_charge
+                                ? parseFloat(system?.core_charge)
+                                : 1),
                           },
                         }
                       );
@@ -276,9 +277,9 @@ const paidByCashForPlayer = async (req, res) => {
                         $set: {
                           total_charges:
                             parseFloat(wallet?.total_charges) -
-                            system?.core_charges
-                              ? parseFloat(system?.core_charges)
-                              : 1,
+                            (system?.core_charge
+                              ? parseFloat(system?.core_charge)
+                              : 1),
                         },
                       }
                     );
@@ -314,9 +315,9 @@ const paidByCashForPlayer = async (req, res) => {
                       $set: {
                         total_charges:
                           parseFloat(wallet?.total_charges) -
-                          system?.core_charges
-                            ? parseFloat(system?.core_charges)
-                            : 1,
+                          (system?.core_charge
+                            ? parseFloat(system?.core_charge)
+                            : 1),
                       },
                     }
                   );

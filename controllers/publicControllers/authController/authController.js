@@ -1,4 +1,4 @@
-const moment = require("moment/moment");
+const moment = require("moment");
 const { getCurrency } = require("../../../config/countryToCurrency");
 const { generateToken } = require("../../../config/generateToken");
 const BusinessSetting = require("../../../model/settings/businessSettingModel");
@@ -84,7 +84,7 @@ const register = async (req, res) => {
             admin_id: user?._id,
             admin_email: user?.email,
             total_charges: "0",
-            last_payment_date: moment(),
+            last_payment_date: moment().format(),
             created_by: user?.email,
           });
 

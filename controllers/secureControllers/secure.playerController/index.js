@@ -11,7 +11,7 @@ const ChargeDetails = require("../../../model/invoice/chargeDetailsModel.js");
 const SubChargeDetails = require("../../../model/invoice/subChargeDetails.js");
 const Wallet = require("../../../model/wallet/walletModel.js");
 const SystemAuthority = require("../../../model/systemAuthority/systemAuthorityModel.js");
-const moment = require("moment/moment.js");
+const moment = require("moment");
 
 const addPlayer = async (req, res) => {
   const {
@@ -99,7 +99,7 @@ const addPlayer = async (req, res) => {
           //     admin_id: admin?._id,
           //     admin_email: admin?.email,
           //     total_charges: "0",
-          //     last_payment_date: moment(),
+          //     last_payment_date: moment().format(),
           //     created_by: admin?.email,
           //   });
           // }
@@ -191,7 +191,7 @@ const addPlayer = async (req, res) => {
                         },
                         $set: {
                           billing_from: wallet?.last_payment_date,
-                          billing_from: moment(),
+                          billing_to: moment().format(),
                           bill_status: "unpaid",
                           last_payment_date: wallet?.last_payment_date,
                           amount: system?.core_charge ? system?.core_charge : 1,
@@ -207,7 +207,7 @@ const addPlayer = async (req, res) => {
                           {
                             $set: {
                               invoice_no: invoice?._id,
-                              date: moment(),
+                              date: moment().format(),
                               total_amount: wallet?.total_charges,
                               chages_type: `Player[${
                                 newPlayer?.name
@@ -237,7 +237,7 @@ const addPlayer = async (req, res) => {
                                 main_invoice_no: invoice?._id,
                                 charges_details: {
                                   id: subChargesDetails?._id,
-                                  details: `Player[${
+                                  details: `Player [${
                                     newPlayer?.name
                                   }] registration fees 1 unit charge = ${
                                     system?.core_charge
@@ -246,7 +246,7 @@ const addPlayer = async (req, res) => {
                                   } USD`,
                                 },
                                 billing_from: wallet?.last_payment_date,
-                                billing_to: moment(),
+                                billing_to: moment().format(),
                                 last_payment_date: wallet?.last_payment_date,
                                 amount: system?.core_charge
                                   ? system?.core_charge
@@ -263,8 +263,8 @@ const addPlayer = async (req, res) => {
                                   main_invoice_no: invoice?._id,
                                   sub_invoice_no: subInvoice?._id,
                                   main_charges_details: chargesDetails?._id,
-                                  date: moment(),
-                                  charge_type: `Player[${
+                                  date: moment().format(),
+                                  charge_type: `Player [${
                                     newPlayer?.name
                                   }] registration fees 1 unit charge = ${
                                     system?.core_charge
@@ -494,7 +494,7 @@ const addPlayer = async (req, res) => {
                       },
                       $set: {
                         billing_from: wallet?.last_payment_date,
-                        billing_from: moment(),
+                        billing_to: moment().format(),
                         bill_status: "unpaid",
                         last_payment_date: wallet?.last_payment_date,
                         amount: system?.core_charge ? system?.core_charge : 1,
@@ -510,7 +510,7 @@ const addPlayer = async (req, res) => {
                         {
                           $set: {
                             invoice_no: invoice?._id,
-                            date: moment(),
+                            date: moment().format(),
                             total_amount: wallet?.total_charges,
                             chages_type: `Player[${
                               newPlayer?.name
@@ -545,7 +545,7 @@ const addPlayer = async (req, res) => {
                                 } USD`,
                               },
                               billing_from: wallet?.last_payment_date,
-                              billing_to: moment(),
+                              billing_to: moment().format(),
                               last_payment_date: wallet?.last_payment_date,
                               amount: system?.core_charge
                                 ? system?.core_charge
@@ -562,7 +562,7 @@ const addPlayer = async (req, res) => {
                                 main_invoice_no: invoice?._id,
                                 sub_invoice_no: subInvoice?._id,
                                 main_charges_details: chargesDetails?._id,
-                                date: moment(),
+                                date: moment().format(),
                                 charge_type: `Player[${
                                   newPlayer?.name
                                 }] registration fees 1 unit charge = ${
@@ -1121,7 +1121,7 @@ const addPlayerForGuardian = async (req, res) => {
                         },
                         $set: {
                           billing_from: wallet?.last_payment_date,
-                          billing_from: moment(),
+                          billing_to: moment().format(),
                           bill_status: "unpaid",
                           last_payment_date: wallet?.last_payment_date,
                           amount: system?.core_charge ? system?.core_charge : 1,
@@ -1137,7 +1137,7 @@ const addPlayerForGuardian = async (req, res) => {
                           {
                             $set: {
                               invoice_no: invoice?._id,
-                              date: moment(),
+                              date: moment().format(),
                               total_amount: wallet?.total_charges,
                               chages_type: `Player[${
                                 newPlayer?.name
@@ -1176,7 +1176,7 @@ const addPlayerForGuardian = async (req, res) => {
                                   } USD`,
                                 },
                                 billing_from: wallet?.last_payment_date,
-                                billing_to: moment(),
+                                billing_to: moment().format(),
                                 last_payment_date: wallet?.last_payment_date,
                                 amount: system?.core_charge
                                   ? system?.core_charge
@@ -1193,7 +1193,7 @@ const addPlayerForGuardian = async (req, res) => {
                                   main_invoice_no: invoice?._id,
                                   sub_invoice_no: subInvoice?._id,
                                   main_charges_details: chargesDetails?._id,
-                                  date: moment(),
+                                  date: moment().format(),
                                   charge_type: `Player[${
                                     newPlayer?.name
                                   }] registration fees 1 unit charge = ${
@@ -1450,7 +1450,7 @@ const addPlayerForGuardian = async (req, res) => {
                       },
                       $set: {
                         billing_from: wallet?.last_payment_date,
-                        billing_from: moment(),
+                        billing_to: moment().format(),
                         bill_status: "unpaid",
                         last_payment_date: wallet?.last_payment_date,
                         amount: system?.core_charge ? system?.core_charge : 1,
@@ -1466,7 +1466,7 @@ const addPlayerForGuardian = async (req, res) => {
                         {
                           $set: {
                             invoice_no: invoice?._id,
-                            date: moment(),
+                            date: moment().format(),
                             total_amount: wallet?.total_charges,
                             chages_type: `Player[${
                               newPlayer?.name
@@ -1501,7 +1501,7 @@ const addPlayerForGuardian = async (req, res) => {
                                 } USD`,
                               },
                               billing_from: wallet?.last_payment_date,
-                              billing_to: moment(),
+                              billing_to: moment().format(),
                               last_payment_date: wallet?.last_payment_date,
                               amount: system?.core_charge
                                 ? system?.core_charge
@@ -1518,7 +1518,7 @@ const addPlayerForGuardian = async (req, res) => {
                                 main_invoice_no: invoice?._id,
                                 sub_invoice_no: subInvoice?._id,
                                 main_charges_details: chargesDetails?._id,
-                                date: moment(),
+                                date: moment().format(),
                                 charge_type: `Player[${
                                   newPlayer?.name
                                 }] registration fees 1 unit charge = ${
