@@ -1783,6 +1783,15 @@ const addPlayerForGuardian = async (req, res) => {
                                   sendLoginCredentials(email, password);
                                   res.status(200).json(sanitizedData);
                                 } else {
+                                  await User.findOneAndUpdate(
+                                    { _id: guardian_id },
+                                    {
+                                      $inc: {
+                                        inactive_player: -1,
+                                        total_player: -1,
+                                      },
+                                    }
+                                  );
                                   await User.findOneAndDelete({
                                     _id: newPlayer?._id,
                                   });
@@ -2068,6 +2077,15 @@ const addPlayerForGuardian = async (req, res) => {
                                   sendLoginCredentials(email, password);
                                   res.status(200).json(sanitizedData);
                                 } else {
+                                  await User.findOneAndUpdate(
+                                    { _id: guardian_id },
+                                    {
+                                      $inc: {
+                                        inactive_player: -1,
+                                        total_player: -1,
+                                      },
+                                    }
+                                  );
                                   await User.findOneAndDelete({
                                     _id: newPlayer?._id,
                                   });
