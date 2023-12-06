@@ -17,7 +17,7 @@ const register = async (req, res) => {
     phone,
     country,
     player_registration_fee,
-    gst,
+    // gst,
     password,
     confirm_password,
   } = req.body;
@@ -42,11 +42,13 @@ const register = async (req, res) => {
       res.status(400).json({
         message: "Player registration fee is required!",
       });
-    } else if (!gst) {
-      res.status(400).json({
-        message: "GST is required!",
-      });
-    } else if (!password) {
+    }
+    // else if (!gst) {
+    //   res.status(400).json({
+    //     message: "GST is required!",
+    //   });
+    // }
+    else if (!password) {
       res.status(400).json({
         message: "Password is required!",
       });
@@ -67,7 +69,7 @@ const register = async (req, res) => {
           phone,
           country,
           player_registration_fee,
-          gst,
+          // gst,
           currency: getCurrency(country),
           password,
           token: generateToken(email),
