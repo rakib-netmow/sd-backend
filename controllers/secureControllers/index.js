@@ -25,6 +25,7 @@ const {
   allTransactions,
   paidByCashForPlayer,
   getTotalCharge,
+  paidByCashForAllPlayerOfSingleGuardian,
 } = require("./secure.paymentController");
 const {
   addGuardian,
@@ -163,6 +164,8 @@ module.exports = {
   // payment
   allTransactionsController: allTransactions,
   paidByCashForPlayerController: paidByCashForPlayer,
+  paidByCashForAllPlayerOfSingleGuardianController:
+    paidByCashForAllPlayerOfSingleGuardian,
   getTotalChargeController: getTotalCharge,
   // manager
   addManagerController: addManager,
