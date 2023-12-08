@@ -270,7 +270,7 @@ const getAllUnpaidPlayerForGuardian = async (req, res) => {
     } else {
       const players = await User.find({
         $and: [{ role: "player" }, { guardian }, { payment_status: "unpaid" }],
-      }).select(["-token", "password"]);
+      }).select(["-token", "-password"]);
       res.status(200).json(players);
     }
   } catch (error) {
