@@ -776,7 +776,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
       req.status(400).json({
         message: "Admin id is missing!",
       });
-    } else if (players_id?.length <= 0) {
+    } else if (players_id && players_id?.length <= 0) {
       req.status(400).json({
         message: "Players ids is missing!",
       });
@@ -856,6 +856,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                         }
                       );
                       if (updateWallet) {
+                        console.log("wallet updated");
                         // update charges details
                         const chargesDetails = await ChargeDetails.findOne({
                           $and: [
@@ -926,7 +927,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                                 await Transaction.findOneAndDelete({
                                   $and: [
                                     { admin_email: admin?.email },
-                                    { payment_for_id: player_id },
+                                    { payment_for_id: player?._id },
                                   ],
                                 });
                                 await ChargeDetails.findOneAndUpdate(
@@ -934,7 +935,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                                     $and: [
                                       { identity_type: "player registration" },
                                       { created_by: admin?.email },
-                                      { player_id },
+                                      { player_id: player?._id },
                                     ],
                                   },
                                   {
@@ -969,7 +970,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                                 await User.findOneAndUpdate(
                                   {
                                     $and: [
-                                      { _id: player_id },
+                                      { _id: player?._id },
                                       { role: "player" },
                                     ],
                                   },
@@ -985,7 +986,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                               await Transaction.findOneAndDelete({
                                 $and: [
                                   { admin_email: admin?.email },
-                                  { payment_for_id: player_id },
+                                  { payment_for_id: player?._id },
                                 ],
                               });
                               await ChargeDetails.findOneAndUpdate(
@@ -993,7 +994,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                                   $and: [
                                     { identity_type: "player registration" },
                                     { created_by: admin?.email },
-                                    { player_id },
+                                    { player_id: player?._id },
                                   ],
                                 },
                                 {
@@ -1026,7 +1027,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                               await User.findOneAndUpdate(
                                 {
                                   $and: [
-                                    { _id: player_id },
+                                    { _id: player?._id },
                                     { role: "player" },
                                   ],
                                 },
@@ -1044,7 +1045,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                             await Transaction.findOneAndDelete({
                               $and: [
                                 { admin_email: admin?.email },
-                                { payment_for_id: player_id },
+                                { payment_for_id: player?._id },
                               ],
                             });
                             await Wallet.findOneAndUpdate(
@@ -1066,7 +1067,10 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                             );
                             await User.findOneAndUpdate(
                               {
-                                $and: [{ _id: player_id }, { role: "player" }],
+                                $and: [
+                                  { _id: player?._id },
+                                  { role: "player" },
+                                ],
                               },
                               {
                                 $set: {
@@ -1080,7 +1084,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                           await Transaction.findOneAndDelete({
                             $and: [
                               { admin_email: admin?.email },
-                              { payment_for_id: player_id },
+                              { payment_for_id: player?._id },
                             ],
                           });
                           await Wallet.findOneAndUpdate(
@@ -1102,7 +1106,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                           );
                           await User.findOneAndUpdate(
                             {
-                              $and: [{ _id: player_id }, { role: "player" }],
+                              $and: [{ _id: player?._id }, { role: "player" }],
                             },
                             {
                               $set: {
@@ -1116,12 +1120,12 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                         await Transaction.findOneAndDelete({
                           $and: [
                             { admin_email: admin?.email },
-                            { payment_for_id: player_id },
+                            { payment_for_id: player?._id },
                           ],
                         });
                         await User.findOneAndUpdate(
                           {
-                            $and: [{ _id: player_id }, { role: "player" }],
+                            $and: [{ _id: player?._id }, { role: "player" }],
                           },
                           {
                             $set: {
@@ -1147,7 +1151,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                   } else {
                     await User.findOneAndUpdate(
                       {
-                        $and: [{ _id: player_id }, { role: "player" }],
+                        $and: [{ _id: player?._id }, { role: "player" }],
                       },
                       {
                         $set: {
@@ -1160,7 +1164,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                 } else {
                   await User.findOneAndUpdate(
                     {
-                      $and: [{ _id: player_id }, { role: "player" }],
+                      $and: [{ _id: player?._id }, { role: "player" }],
                     },
                     {
                       $set: {
