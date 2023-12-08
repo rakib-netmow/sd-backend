@@ -262,6 +262,22 @@ const deleteGuardian = async (req, res) => {
   }
 };
 
+const getAllUnpaidPlayerForGuardian = async (req, res) => {
+  try {
+    const guardian = req.params.id;
+    if (!guardian || !isValidObjectId(guardian)) {
+      res.status(400).json({ message: "Invalid guardian id!" });
+    } else {
+      const players = await User.find({
+        $and: [{ role: "player" }, { guardian }, { payment_status: "unpaid" }],
+      }).select(["-token", "password"]);
+      res.status(200).json(players);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   addGuardian,
   allGuardian,
@@ -269,4 +285,5 @@ module.exports = {
   updateGuardian,
   deleteGuardian,
   singleGuardian,
+  getAllUnpaidPlayerForGuardian,
 };

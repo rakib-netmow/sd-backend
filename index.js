@@ -115,7 +115,7 @@ const createAuthority = async () => {
   const authority = await SystemAuthority.find({});
   // console.log(await SystemAuthority.findOne({}));
   if (authority && authority?.length <= 0) {
-    SystemAuthority.create({});
+    await SystemAuthority.create({});
   }
 };
 

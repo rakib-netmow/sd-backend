@@ -99,6 +99,7 @@ const {
   paidByCashForPlayerController,
   getTotalChargeController,
   paidByCashForAllPlayerOfSingleGuardianController,
+  getAllUnpaidPlayersForGuardianController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -116,6 +117,7 @@ router.get("/total-guardian", totalGuardianController);
 router.patch("/guardian/:id", multer.single("image"), updateGuardianController);
 router.delete("/guardian/:id", deleteGuardianController);
 router.get("/guardian/:id", singleGuardianController);
+router.get("/all-unpaid-player/:id", getAllUnpaidPlayersForGuardianController);
 // Player
 router.post("/player", multer.single("image"), addPlayerController);
 router.get("/player", allPlayerController);

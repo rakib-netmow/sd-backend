@@ -34,6 +34,7 @@ const {
   deleteGuardian,
   totalGuardian,
   singleGuardian,
+  getAllUnpaidPlayerForGuardian,
 } = require("./secure.guardianController");
 const {
   addManager,
@@ -145,6 +146,7 @@ module.exports = {
   updateGuardianController: updateGuardian,
   deleteGuardianController: deleteGuardian,
   singleGuardianController: singleGuardian,
+  getAllUnpaidPlayersForGuardianController: getAllUnpaidPlayerForGuardian,
   // player
   addPlayerController: addPlayer,
   allPlayerController: allPlayer,
