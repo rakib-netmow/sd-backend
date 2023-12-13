@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendPlayerRegistrationInvoiceEmail = (email, data) => {
+const sendPlayerRegistrationInvoiceEmail = async (email, data) => {
   let mailRes = null;
   let transpoter = nodemailer.createTransport({
     service: "Gmail",
@@ -32,10 +32,9 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
           }
           .header-nav {
             flex-direction: column;
-          }
-          .invoice-cover {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .invoice-cover {
+            flex-direction: column;
           }
         }
   
@@ -108,8 +107,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
           margin-top: 1rem;
         }
         .invoice-cover {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          display: flex;
         }
         .invoice-details p {
           font-size: 0.875rem;
@@ -256,7 +254,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                       >
                         Payment Status
                       </p>
-                      <p class="text-xs md:text-sm mb-0 text-success font-semibold">
+                      <p class="text-xs md:text-sm mb-0 text-success">
                         <span class="text-center"
                           >${data?.status ? data?.status : "--"}</span
                         >
@@ -375,7 +373,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
     `,
   };
 
-  transpoter.sendMail(mailOption, async (error, info) => {
+  await transpoter.sendMail(mailOption, async (error, info) => {
     if (error) {
       console.log(error);
       mailRes = false;
