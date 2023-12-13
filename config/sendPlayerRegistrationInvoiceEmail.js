@@ -187,6 +187,20 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                       alt="Logo"
                       class="h-8 md:h-12"
                     />
+                    <p class="text-muted text-xs md:text-sm mb-1">
+                      ${data?.address ? data?.address : "--"}, ${
+      data?.zip ? " " + data?.zip : "--"
+    }, ${data?.country ? data?.country : "--"}
+                    </p>
+                    <p class="text-muted text-xs md:text-sm mb-1">
+                      ${data?.city ? data?.city : "--"}
+                    </p>
+                    <p class="text-muted text-xs md:text-sm mb-1">
+                      ${data?.zip ? data?.zip : "--"}
+                    </p>
+                    <p class="text-muted text-xs md:text-sm mb-1">
+                     ${data?.zip ? " " + data?.zip : "--"}
+                    </p>
                   </div>
     
                   <!-- Billing Address -->
@@ -201,14 +215,6 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                     </p>
                     <p class="text-muted text-xs md:text-sm mb-1">
                       ${data?.email ? data?.email : "--"}
-                    </p>
-                    <p class="text-muted text-xs md:text-sm mb-1">
-                      ${data?.city ? data?.city : "--"}
-                    </p>
-                    <p class="text-muted text-xs md:text-sm mb-1">
-                      ${data?.address ? data?.address : "--"}, ${
-      data?.zip ? " " + data?.zip : "--"
-    }, ${data?.country ? data?.country : "--"}
                     </p>
                     <p class="text-muted text-xs md:text-sm mb-1">
                       Phone: ${data?.phone ? data?.phone : "--"}
@@ -254,7 +260,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                         Total Amount
                       </p>
                       <p class="text-xs md:text-sm mb-0">
-                        $<span
+                        <span
                           >${data?.totalFees ? data?.totalFees : "00"}
                           ${data?.currency ? " " + data?.currency : ""}</span
                         >
@@ -329,7 +335,9 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                     <div class="child-total">
                       <div class="text-sm md:text-base">GST (1 %) :</div>
                       <div class="text-sm md:text-base text-end">
-                        ${data.gst ? data?.gst : "00"} 
+                        ${data.gst ? data?.gst : "00"} ${
+      data?.currency ? " " + data?.currency : ""
+    } 
                       </div>
                     </div>
                     <div
