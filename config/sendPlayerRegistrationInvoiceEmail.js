@@ -29,6 +29,9 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
             .scrollable-table {
               overflow-x: auto;
             }
+            .header-nav {
+                flex-direction: column;
+              }
           }
     
           body {
@@ -78,6 +81,11 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
     
           .logo {
             margin-bottom: 0.5rem;
+          }
+          .header-nav {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
           }
     
           .billing-address {
