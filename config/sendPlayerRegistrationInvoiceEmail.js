@@ -37,7 +37,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
           }
     
           .container {
-            max-width: 60%;
+            max-width: 100%;
             margin: auto;
             padding: 1rem;
           }
