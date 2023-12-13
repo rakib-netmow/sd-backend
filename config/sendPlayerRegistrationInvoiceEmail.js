@@ -24,148 +24,156 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
           rel="stylesheet"
         />
         <style>
-          /* Additional styling for scrollable table on mobile */
-          @media (max-width: 767px) {
-            .scrollable-table {
-              overflow-x: auto;
-            }
-            .header-nav {
-                flex-direction: column;
-              }
-          }
-    
-          body {
-            font-family: sans-serif;
-            background-color: #ffff;
-          }
-    
-          .container {
-            max-width: 100%;
-            margin: auto;
-            padding: 1rem;
-          }
-    
-          /* Breadcrumb */
-          nav {
-            color: #718096;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-          }
-    
-          nav a {
-            color: #3490dc;
-            text-decoration: none;
-          }
-    
-          nav a:hover {
-            text-decoration: underline;
-          }
-    
-          /* Invoice Card */
-          .invoice-card {
-            background-color: #fff;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-          }
-    
-          /* Header */
-          .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-          }
-    
-          .logo {
-            margin-bottom: 0.5rem;
-          }
-          .header-nav {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-          }
-    
-          .billing-address {
-            display: flex;
-            flex-direction: column;
-            width: 40%;
-            justify-content: end;
-            text-align: start;
-            margin-bottom: 0.5rem;
-          }
-    
-          /* Invoice Details */
-          .invoice-details {
-            margin-bottom: 0.5rem;
-          }
-    
-          .invoice-details p {
-            font-size: 0.875rem;
-            margin-bottom: 0;
-          }
-    
-          .invoice-details .font-semibold {
-            font-weight: 600;
-          }
-    
-          /* Table */
-          .table-container {
-            margin-bottom: 1rem;
-          }
-    
+        /* Additional styling for scrollable table on mobile */
+        @media (max-width: 767px) {
           .scrollable-table {
             overflow-x: auto;
           }
-    
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid #cbd5e0;
-          }
-    
-          th,
-          td {
-            border: 1px solid #cbd5e0;
-            padding: 0.5rem;
-            text-align: center;
-          }
-    
-          th {
-            background-color: #edf2f7;
-            font-size: 0.75rem;
-          }
-    
-          td {
-            font-size: 0.875rem;
-          }
-    
-          /* Totals */
-          .totals {
-            border-top: 1px solid #cbd5e0;
-            border-bottom: 1px solid #cbd5e0;
-            padding: 1rem 0;
-          }
-    
-          .total-particle {
-            width: 100%;
-            display: flex;
+          .header-nav {
             flex-direction: column;
-            justify-content: center;
-            align-items: end;
-            font-size: 0.875rem;
           }
-    
-          .totals .text-end {
-            text-align: start;
+          .invoice-cover {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr) !important;
           }
-          .child-total {
-            display: flex;
-            width: 100%;
-            justify-content: end;
-          }
+        }
+  
+        body {
+          font-family: sans-serif;
+          background-color: #ffff;
+        }
+  
+        .container {
+          max-width: 100%;
+          margin: auto;
+          padding: 1rem;
+        }
+  
+        /* Breadcrumb */
+        nav {
+          color: #718096;
+          font-size: 0.875rem;
+          margin-bottom: 1rem;
+        }
+  
+        nav a {
+          color: #3490dc;
+          text-decoration: none;
+        }
+  
+        nav a:hover {
+          text-decoration: underline;
+        }
+  
+        /* Invoice Card */
+        .invoice-card {
+          background-color: #fff;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+  
+        /* Header */
+        .header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 0.5rem;
+        }
+  
+        .logo {
+          margin-bottom: 1rem;
+        }
+        .header-nav {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+        }
+  
+        .billing-address {
+          display: flex;
+          flex-direction: column;
+          width: 40%;
+          justify-content: end;
+          text-align: start;
+          margin-bottom: 0.5rem;
+        }
+  
+        /* Invoice Details */
+        .invoice-details {
+          margin-bottom: 0.5rem;
+          margin-top: 1rem;
+        }
+        .invoice-cover {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .invoice-details p {
+          font-size: 0.875rem;
+          margin-bottom: 0;
+        }
+  
+        .invoice-details .font-semibold {
+          font-weight: 600;
+        }
+  
+        /* Table */
+        .table-container {
+          margin-bottom: 1rem;
+        }
+  
+        .scrollable-table {
+          overflow-x: auto;
+        }
+  
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #cbd5e0;
+        }
+  
+        th,
+        td {
+          border: 1px solid #cbd5e0;
+          padding: 0.5rem;
+          text-align: center;
+        }
+  
+        th {
+          background-color: #edf2f7;
+          font-size: 0.75rem;
+        }
+  
+        td {
+          font-size: 0.875rem;
+        }
+  
+        /* Totals */
+        .totals {
+          border-top: 1px solid #cbd5e0;
+          border-bottom: 1px solid #cbd5e0;
+          padding: 1rem 0;
+        }
+  
+        .total-particle {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: end;
+          font-size: 0.875rem;
+        }
+  
+        .totals .text-end {
+          text-align: start;
+        }
+        .child-total {
+          display: flex;
+          width: 100%;
+          justify-content: end;
+        }
         </style>
         <title>Your Invoice</title>
       </head>
@@ -185,7 +193,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                     <img
                       src="https://res.cloudinary.com/dps9sq62u/image/upload/v1702457096/logo_tay1sg.png"
                       alt="Logo"
-                      class="h-8 md:h-12"
+                      class="logo"
                     />
                     <p class="text-muted text-xs md:text-sm mb-1">
                       ${data?.address ? data?.address : "--"}, ${
@@ -224,7 +232,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
     
                 <!-- Invoice Details -->
                 <div class="mb-5 invoice-details">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="invoice-cover">
                     <div>
                       <p
                         class="text-muted text-xs md:text-sm mb-2 text-uppercase font-semibold"
