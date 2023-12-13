@@ -191,20 +191,18 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                     <div class="text-sm md:text-base">Sub Total :</div>
                     <div class="text-sm md:text-base text-end">${
                       data?.SubTotal ? data?.SubTotal : "--"
-                    } ${data?.currency ? data?.currency : ""}</div>
-                    <div class="text-sm md:text-base">GST (${
-                      data.gst ? data?.gst : "00"
-                    } %) :</div>
+                    }</div>
+                    <div class="text-sm md:text-base">GST (1 %) :</div>
                     <div class="text-sm md:text-base text-end">${
-                      data?.totalFees ? data?.totalFees : "00"
-                    } ${data?.currency ? data?.currency : ""}</div>
+                      data.gst ? data?.gst : "00"
+                    }</div>
                     <div
                       class="border-top border-top-dashed text-base md:text-xl col-span-2 md:col-span-3"
                     >
                       <div>Total Amount :</div>
                       <div class="text-end">${
                         data?.totalFees ? data?.totalFees : "00"
-                      } ${data?.currency ? data?.currency : ""}</div>
+                      }</div>
                     </div>
                   </div>
                 </div>
