@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 
 const sendPlayerRegistrationInvoiceEmail = (email, data) => {
+  let mailRes = null;
   let transpoter = nodemailer.createTransport({
     service: "Gmail",
     port: 587,
@@ -377,12 +378,14 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
   transpoter.sendMail(mailOption, async (error, info) => {
     if (error) {
       console.log(error);
-      return false;
+      mailRes = false;
     } else {
       console.log("Email sent: " + info.response);
-      return info.response;
+      mailRes = true;
     }
   });
+
+  return mailRes;
 };
 
 module.exports = sendPlayerRegistrationInvoiceEmail;
