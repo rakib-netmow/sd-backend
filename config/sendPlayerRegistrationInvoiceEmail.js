@@ -247,7 +247,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                       </p>
                       <p class="text-xs md:text-sm mb-0">
                         $<span
-                          >$${data?.totalFees ? data?.totalFees : "00"}
+                          >${data?.totalFees ? data?.totalFees : "00"}
                           ${data?.currency ? " " + data?.currency : ""}</span
                         >
                       </p>
@@ -313,13 +313,15 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                     <div class="child-total">
                       <div class="text-sm md:text-base">Sub Total :</div>
                       <div class="text-sm md:text-base text-end">
-                        ${data?.SubTotal ? data?.SubTotal : "--"}
+                        ${data?.SubTotal ? data?.SubTotal : "--"} ${
+      data?.currency ? " " + data?.currency : ""
+    }
                       </div>
                     </div>
                     <div class="child-total">
                       <div class="text-sm md:text-base">GST (1 %) :</div>
                       <div class="text-sm md:text-base text-end">
-                        ${data.gst ? data?.gst : "00"}
+                        ${data.gst ? data?.gst : "00"} 
                       </div>
                     </div>
                     <div
@@ -327,7 +329,9 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                     >
                       <div>Total Amount :</div>
                       <div class="text-end">
-                        ${data?.totalFees ? data?.totalFees : "00"}
+                        ${data?.totalFees ? data?.totalFees : "00"} ${
+      data?.currency ? " " + data?.currency : ""
+    }
                       </div>
                     </div>
                   </div>
