@@ -162,13 +162,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
         <title>Your Invoice</title>
       </head>
       <body class="font-sans bg-gray-100">
-        <div class="container mx-auto p-4">
-          <!-- Breadcrumb -->
-          <nav class="text-gray-500 text-xs mb-4 md:text-sm">
-            <a href="#" class="text-blue-500 hover:underline">Home</a> /
-            <span class="text-gray-700">Invoices</span>
-          </nav>
-    
+        <div class="container mx-auto p-4">    
           <div class="flex justify-center">
             <div class="w-full max-w-3xl">
               <!-- Invoice Card -->
