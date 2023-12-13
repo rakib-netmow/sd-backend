@@ -183,7 +183,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
                   <div class="mb-4 md:mb-0">
                     <!-- Replace with your logo -->
                     <img
-                      src="path/to/your/logo.png"
+                      src="https://res.cloudinary.com/dps9sq62u/image/upload/v1702457096/logo_tay1sg.png"
                       alt="Logo"
                       class="h-8 md:h-12"
                     />
