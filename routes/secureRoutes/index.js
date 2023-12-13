@@ -100,6 +100,7 @@ const {
   getTotalChargeController,
   paidByCashForAllPlayerOfSingleGuardianController,
   getAllUnpaidPlayersForGuardianController,
+  sendInvoiceController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -242,6 +243,7 @@ router.get("/all-game-subscription", allGameSubscriptionController);
 // charges
 router.get("/pending-charges-list", allPendingChargesController);
 router.get("/paid-charges-list", allPaidChargesController);
+router.post("/send-invoice", sendInvoiceController);
 // settings
 // business setting
 router.post("/company-information", addBusinessSettingController);

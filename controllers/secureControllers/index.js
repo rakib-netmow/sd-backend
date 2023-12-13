@@ -1,6 +1,7 @@
 const {
   allPendingCharges,
   allPaidCharges,
+  sendInvoice,
 } = require("./chargesController/chargesController");
 const { addClass, allClass } = require("./classController/classController");
 const {
@@ -229,6 +230,7 @@ module.exports = {
   // charges
   allPendingChargesController: allPendingCharges,
   allPaidChargesController: allPaidCharges,
+  sendInvoiceController: sendInvoice,
   // settings
   // business settings
   addBusinessSettingController: addBusinessSetting,
