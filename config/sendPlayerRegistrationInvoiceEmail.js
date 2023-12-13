@@ -109,6 +109,9 @@ const sendPlayerRegistrationInvoiceEmail = async (email, data) => {
         .invoice-cover {
           display: flex;
         }
+        .invoice-cover div {
+            margin: 0 1rem;
+          }
         .invoice-details p {
           font-size: 0.875rem;
           margin-bottom: 0;
