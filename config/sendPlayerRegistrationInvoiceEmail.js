@@ -364,7 +364,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
       return false;
     } else {
       console.log("Email sent: " + info.response);
-      return true;
+      return info.response;
     }
   });
 };
