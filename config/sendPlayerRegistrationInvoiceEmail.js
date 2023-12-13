@@ -177,7 +177,7 @@ const sendPlayerRegistrationInvoiceEmail = (email, data) => {
               <div class="bg-white shadow-md rounded-md p-4 md:p-8 mb-8">
                 <!-- Header -->
                 <div
-                  class="flex flex-col md:flex-row items-center justify-between mb-4"
+                class="header-nav"
                 >
                   <!-- Logo goes here -->
                   <div class="mb-4 md:mb-0">
