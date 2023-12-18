@@ -1,5 +1,8 @@
+const isValidObjectId = require("../../../config/checkValidObjectId");
 const sendPlayerRegistrationInvoiceEmail = require("../../../config/sendPlayerRegistrationInvoiceEmail");
+const ChargeDetails = require("../../../model/invoice/chargeDetailsModel");
 const Invoice = require("../../../model/invoice/invoiceModel");
+const SubChargeDetails = require("../../../model/invoice/subChargeDetails");
 
 const allPendingCharges = async (req, res) => {
   try {
@@ -115,8 +118,58 @@ const sendInvoice = async (req, res) => {
   }
 };
 
+const getMultipleChargesDetails = async (req, res) => {
+  try {
+    const mainInvoiceID = req.params.id;
+    if (!mainInvoiceID || !isValidObjectId(mainInvoiceID)) {
+      res.status(400).json({
+        message: "Invalid invoice id!",
+      });
+    } else {
+      const allChargesDetails = await ChargeDetails.find({
+        invoice_no: mainInvoiceID,
+      });
+      if (allChargesDetails) {
+        res.status(200).json(allChargesDetails);
+      } else {
+        res.status(400).json({
+          message: "Can't find charges details!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getSingleChargesDetails = async (req, res) => {
+  try {
+    const subInvoiceID = req.params.id;
+    if (!subInvoiceID || !isValidObjectId(subInvoiceID)) {
+      res.status(400).json({
+        message: "Invalid invoice id!",
+      });
+    } else {
+      const allChargesDetails = await SubChargeDetails.find({
+        sub_invoice_no: subInvoiceID,
+      });
+      if (allChargesDetails) {
+        res.status(200).json(allChargesDetails);
+      } else {
+        res.status(400).json({
+          message: "Can't find charges details!",
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   allPendingCharges,
   allPaidCharges,
   sendInvoice,
+  getMultipleChargesDetails,
+  getSingleChargesDetails,
 };

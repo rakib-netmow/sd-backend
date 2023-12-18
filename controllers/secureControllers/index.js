@@ -2,6 +2,8 @@ const {
   allPendingCharges,
   allPaidCharges,
   sendInvoice,
+  getMultipleChargesDetails,
+  getSingleChargesDetails,
 } = require("./chargesController/chargesController");
 const { addClass, allClass } = require("./classController/classController");
 const {
@@ -231,6 +233,8 @@ module.exports = {
   allPendingChargesController: allPendingCharges,
   allPaidChargesController: allPaidCharges,
   sendInvoiceController: sendInvoice,
+  getMultipleChargesDetailsController: getMultipleChargesDetails,
+  getSingleChargesDetailsController: getSingleChargesDetails,
   // settings
   // business settings
   addBusinessSettingController: addBusinessSetting,
