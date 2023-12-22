@@ -18,6 +18,9 @@ const stripePaymentIntent = async (req, res) => {
       amount: amount,
       currency: "aud",
       payment_method_types: ["card"],
+      metadata: {
+        address,
+      },
     });
     await stripe.customers.update(customer.id, {
       email: email,
