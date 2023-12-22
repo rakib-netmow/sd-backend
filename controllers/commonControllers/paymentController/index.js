@@ -13,6 +13,9 @@ const stripePaymentIntent = async (req, res) => {
       amount: amount,
       currency: "aud",
       payment_method_types: ["card"],
+      email: "ahsun@mail.com",
+      name: "Ahsun",
+      address: "Bogra Sadar",
     });
     if (intent) {
       res.status(200).json({
