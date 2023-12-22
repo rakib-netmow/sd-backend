@@ -23,6 +23,17 @@ const updateUserAditionalInfo = async (req, res) => {
   }
 };
 
+const userInfo = async (req, res) => {
+  try {
+    const email = req.auth.id;
+    const user = await User.finOne({ email }).select(["-password"]);
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   updateUserAditionalInfo,
+  userInfo,
 };

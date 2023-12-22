@@ -4,7 +4,10 @@ const {
   createTransaction,
   myTransaction,
 } = require("./paymentController");
-const { updateUserAditionalInfo } = require("./userController/userController");
+const {
+  updateUserAditionalInfo,
+  userInfo,
+} = require("./userController/userController");
 
 module.exports = {
   updateUserAdintionInfoController: updateUserAditionalInfo,
@@ -12,4 +15,5 @@ module.exports = {
   createTransactionController: createTransaction,
   myTransactionsController: myTransaction,
   getPlayerRegistrationFeeController: getPlayerRegistrationFee,
+  userInfoController: userInfo,
 };
