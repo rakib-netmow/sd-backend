@@ -12,7 +12,6 @@ const stripePaymentIntent = async (req, res) => {
     const customer = await stripe.customers.create({
       email: email,
       name: name,
-      address: address,
     });
     const intent = await stripe.paymentIntents.create({
       customer: customer.id,
@@ -23,7 +22,6 @@ const stripePaymentIntent = async (req, res) => {
     await stripe.customers.update(customer.id, {
       email: email,
       name: name,
-      address: address,
     });
     if (intent) {
       res.status(200).json({
