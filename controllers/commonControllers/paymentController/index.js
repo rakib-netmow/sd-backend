@@ -7,17 +7,21 @@ const stripe = require("stripe")(
 
 const stripePaymentIntent = async (req, res) => {
   try {
-    const { price } = req.body;
+    const { price, name, email } = req.body;
     const amount = price * 100;
+    const customer = await stripe.customers.create({
+      email: email,
+      name: name,
+    });
     const intent = await stripe.paymentIntents.create({
+      customer: customer.id,
       amount: amount,
       currency: "aud",
       payment_method_types: ["card"],
-      metadata: {
-        email: "ahsun@mail.com",
-        name: "Ahsun",
-        address: "Bogra Sadar",
-      },
+    });
+    await stripe.customers.update(customer.id, {
+      email: email,
+      name: name,
     });
     if (intent) {
       res.status(200).json({
