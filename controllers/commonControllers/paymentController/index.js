@@ -1,5 +1,6 @@
 const Transaction = require("../../../model/transactions/transactionsModel");
 const User = require("../../../model/user/userModel");
+const Wallet = require("../../../model/wallet/walletModel");
 
 const stripe = require("stripe")(
   "sk_test_51OCaMgARQHH6709REaISge4YZ8H5QrqqnrEuTADzvS4ocBmrrfL5TQyYj9d5KFkE29f8Xzb4YmewmWCCIOqRKIyt00ZRnBGHJ2"
@@ -66,19 +67,40 @@ const createTransaction = async (req, res) => {
       });
     } else {
       if (admin && admin?.email) {
+        const system = await SystemAuthority.findOne({});
         const transaction = await Transaction.create({
-          payment_by,
-          payment_for,
-          amount,
-          transaction_id,
+          payment_for_title: "admin charges payment",
+          payment_for_id: admin?._id,
+          amount: system?.core_charge ? parseFloat(system?.core_charge) : 1,
           payment_method,
-          status: "pending",
+          status: "paid",
           admin_email: admin?.email,
         });
         if (transaction) {
-          res.status(200).json({
-            message: "Transaction successfull.",
+          // update wallet
+          const wallet = await Wallet.findOne({
+            $and: [{ admin_id: admin?._id }, { created_by: admin?.email }],
           });
+          if (wallet?._id) {
+            const updateWallet = await Wallet.findOneAndUpdate(
+              {
+                $and: [{ admin_id: admin?._id }, { created_by: admin?.email }],
+              },
+              {
+                $set: {
+                  total_charges:
+                    parseFloat(wallet?.total_charges) -
+                    (system?.core_charge ? parseFloat(system?.core_charge) : 1),
+                },
+              }
+            );
+            if (updateWallet) {
+              //
+              res.status(200).json({
+                message: "Transaction successfull.",
+              });
+            }
+          }
         } else {
           res.status(400).json({
             message: "Transaction faild!",
