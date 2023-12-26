@@ -17,7 +17,7 @@ const allPendingCharges = async (req, res) => {
 const allPaidCharges = async (req, res) => {
   try {
     const charges = await ChargeDetails.find({
-      $and: [{ bill_status: "paid" }, { created_by: req?.auth?.id }],
+      $and: [{ billing_status: "paid" }, { created_by: req?.auth?.id }],
     });
     res.status(200).json(charges);
   } catch (error) {
