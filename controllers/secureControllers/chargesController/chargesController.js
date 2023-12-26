@@ -7,7 +7,11 @@ const SubChargeDetails = require("../../../model/invoice/subChargeDetails");
 const allPendingCharges = async (req, res) => {
   try {
     const charges = await Invoice.find({
-      $and: [{ bill_status: "unpaid" }, { created_by: req?.auth?.id }],
+      $and: [
+        { bill_status: "unpaid" },
+        { created_by: req?.auth?.id },
+        { charges_details: { $exists: true, $ne: [] } },
+      ],
     });
     res.status(200).json(charges);
   } catch (error) {
