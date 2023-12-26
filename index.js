@@ -13,6 +13,7 @@ const SystemAuthority = require("./model/systemAuthority/systemAuthorityModel");
 const Invoice = require("./model/invoice/invoiceModel");
 const { ObjectId } = require("mongodb");
 const SubInvoice = require("./model/invoice/subInvoiceModel");
+const Transaction = require("./model/transactions/transactionsModel");
 
 const app = express();
 
@@ -61,8 +62,8 @@ const corsOptions = {
   },
 };
 
-app.use(cors(corsOptions));
-// app.use(cors());
+// app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 // connect with database
@@ -130,21 +131,21 @@ app.use("/api", commonRoutes);
 // app.use("/private/api", privateRoutes);
 app.use("/secure/api", secureRoutes);
 
-// app.get("/test", async (req, res) => {
-//   const { chargesDetails } = req.body;
-//   const chargesDetailsDoc = chargesDetails.map((c) => ObjectId(c));
-//   const allSubInvoices = await Invoice.findOneAndUpdate(
-//     {
-//       _id: ObjectId("656f4192059bf4f4b5c68d7c"),
-//     },
-//     {
-//       $pull: {
-//         charges_details: { chargesDetailsId: { $in: chargesDetailsDoc } },
-//       },
-//     }
-//   );
-//   res.json(allSubInvoices);
-// });
+app.get("/test", async (req, res) => {
+  const { chargesDetails } = req.body;
+  const chargesDetailsDoc = chargesDetails.map((c) => {
+    return {
+      payment_for_title: "admin charges payment",
+      payment_for_id: c,
+      amount: 1,
+      payment_method: "card",
+      status: "paid",
+      admin_email: "admin@mail.com",
+    };
+  });
+  const allSubInvoices = await Transaction.create(chargesDetailsDoc);
+  res.json(allSubInvoices);
+});
 
 // base API
 app.get("/", (req, res) => {
