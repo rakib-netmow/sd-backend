@@ -10,6 +10,9 @@ const commonRoutes = require("./routes/commonRoutes/index");
 const privateRoutes = require("./routes/privateRoutes/index");
 const secureRoutes = require("./routes/secureRoutes/index");
 const SystemAuthority = require("./model/systemAuthority/systemAuthorityModel");
+const Invoice = require("./model/invoice/invoiceModel");
+const { ObjectId } = require("mongodb");
+const SubInvoice = require("./model/invoice/subInvoiceModel");
 
 const app = express();
 
@@ -126,6 +129,22 @@ app.use("/public/api", publicRoutes);
 app.use("/api", commonRoutes);
 // app.use("/private/api", privateRoutes);
 app.use("/secure/api", secureRoutes);
+
+// app.get("/test", async (req, res) => {
+//   const { chargesDetails } = req.body;
+//   const chargesDetailsDoc = chargesDetails.map((c) => ObjectId(c));
+//   const allSubInvoices = await Invoice.findOneAndUpdate(
+//     {
+//       _id: ObjectId("656f4192059bf4f4b5c68d7c"),
+//     },
+//     {
+//       $pull: {
+//         charges_details: { chargesDetailsId: { $in: chargesDetailsDoc } },
+//       },
+//     }
+//   );
+//   res.json(allSubInvoices);
+// });
 
 // base API
 app.get("/", (req, res) => {
