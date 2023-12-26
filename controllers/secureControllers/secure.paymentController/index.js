@@ -837,6 +837,9 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                       admin_email: admin?.email,
                     });
                     if (transaction) {
+                      const currentWallet = await Wallet.findOne({
+                        admin_id: admin?._id,
+                      });
                       // update wallet
                       const updateWallet = await Wallet.findOneAndUpdate(
                         {
@@ -848,7 +851,7 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                         {
                           $set: {
                             total_charges:
-                              parseFloat(wallet?.total_charges) +
+                              parseFloat(currentWallet?.total_charges) +
                               (system?.core_charge
                                 ? parseFloat(system?.core_charge)
                                 : 1),
