@@ -62,7 +62,7 @@ const createTransaction = async (req, res) => {
       });
     } else if (
       !chargesDetails ||
-      typeof chargesDetails !== "ob 3ject" ||
+      typeof chargesDetails !== "object" ||
       chargesDetails?.length <= 0
     ) {
       res.status(400).json({
