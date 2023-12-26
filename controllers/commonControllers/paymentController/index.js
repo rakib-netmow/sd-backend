@@ -166,7 +166,7 @@ const createTransaction = async (req, res) => {
                       // remove charges details element from main invoice
                       const updateInvoice = await Invoice.findOneAndUpdate(
                         {
-                          _id: ObjectId("656f4192059bf4f4b5c68d7c"),
+                          _id: ObjectId(invoice_no),
                         },
                         {
                           $pull: {
