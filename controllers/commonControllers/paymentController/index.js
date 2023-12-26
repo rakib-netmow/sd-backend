@@ -167,29 +167,60 @@ const createTransaction = async (req, res) => {
                         _id: ObjectId(invoice_no),
                       });
                       if (invoice?._id) {
-                        // remove charges details element from main invoice
-                        const updateInvoice = await Invoice.findOneAndUpdate(
-                          {
-                            _id: invoice?._id,
-                          },
-                          {
-                            $pull: {
-                              charges_details: {
-                                chargesDetailsId: { $in: chargesDetailsDoc },
+                        if (
+                          invoice?.charges_details?.length !==
+                          chargesDetails?.length
+                        ) {
+                          // remove charges details element from main invoice
+                          const updateInvoice = await Invoice.findOneAndUpdate(
+                            {
+                              _id: invoice?._id,
+                            },
+                            {
+                              $pull: {
+                                charges_details: {
+                                  chargesDetailsId: { $in: chargesDetailsDoc },
+                                },
                               },
-                            },
-                            $set: {
-                              amount: (
-                                parseFloat(invoice?.amount) -
-                                chargesDetails?.length
-                              ).toString(),
-                            },
+                              $set: {
+                                amount: (
+                                  parseFloat(invoice?.amount) -
+                                  chargesDetails?.length
+                                ).toString(),
+                              },
+                            }
+                          );
+                          if (updateInvoice) {
+                            res.status(200).json({
+                              message: "Transaction successfull.",
+                            });
                           }
-                        );
-                        if (updateInvoice) {
-                          res.status(200).json({
-                            message: "Transaction successfull.",
-                          });
+                        } else {
+                          // remove charges details element from main invoice
+                          const updateInvoice = await Invoice.findOneAndUpdate(
+                            {
+                              _id: invoice?._id,
+                            },
+                            {
+                              $pull: {
+                                charges_details: {
+                                  chargesDetailsId: { $in: chargesDetailsDoc },
+                                },
+                              },
+                              $set: {
+                                amount: (
+                                  parseFloat(invoice?.amount) -
+                                  chargesDetails?.length
+                                ).toString(),
+                                last_payment_date: moment().format(),
+                              },
+                            }
+                          );
+                          if (updateInvoice) {
+                            res.status(200).json({
+                              message: "Transaction successfull.",
+                            });
+                          }
                         }
                       }
                     }
