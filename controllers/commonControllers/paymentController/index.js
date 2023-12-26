@@ -191,11 +191,6 @@ const createTransaction = async (req, res) => {
             message: "Transaction faild!",
           });
         }
-        if (transaction) {
-          res.status(200).json(transaction);
-        } else {
-          res.status(400).json({ message: "Something wrong" });
-        }
       } else {
         res.status(400).json({
           message: "Can't find Admin account!",
