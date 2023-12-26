@@ -127,7 +127,7 @@ const getMultipleChargesDetails = async (req, res) => {
       });
     } else {
       const allChargesDetails = await ChargeDetails.find({
-        invoice_no: mainInvoiceID,
+        $and: [{ invoice_no: mainInvoiceID }, { billing_status: "unpaid" }],
       });
       if (allChargesDetails) {
         res.status(200).json(allChargesDetails);
