@@ -163,23 +163,34 @@ const createTransaction = async (req, res) => {
                         }
                       );
                     if (updateSubChargesDetails) {
-                      // remove charges details element from main invoice
-                      const updateInvoice = await Invoice.findOneAndUpdate(
-                        {
-                          _id: ObjectId(invoice_no),
-                        },
-                        {
-                          $pull: {
-                            charges_details: {
-                              chargesDetailsId: { $in: chargesDetailsDoc },
-                            },
+                      const invoice = await Invoice.findOne({
+                        _id: ObjectId(invoice_no),
+                      });
+                      if (invoice?._id) {
+                        // remove charges details element from main invoice
+                        const updateInvoice = await Invoice.findOneAndUpdate(
+                          {
+                            _id: invoice?._id,
                           },
+                          {
+                            $pull: {
+                              charges_details: {
+                                chargesDetailsId: { $in: chargesDetailsDoc },
+                              },
+                            },
+                            $set: {
+                              amount: (
+                                parseFloat(invoice?.amount) -
+                                chargesDetails?.length
+                              ).toString(),
+                            },
+                          }
+                        );
+                        if (updateInvoice) {
+                          res.status(200).json({
+                            message: "Transaction successfull.",
+                          });
                         }
-                      );
-                      if (updateInvoice) {
-                        res.status(200).json({
-                          message: "Transaction successfull.",
-                        });
                       }
                     }
                   }
