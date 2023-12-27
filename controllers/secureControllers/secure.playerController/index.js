@@ -446,17 +446,6 @@ const addPlayer = async (req, res) => {
                       const completeInvoice = await Invoice.findOneAndUpdate(
                         { _id: invoice?._id },
                         {
-                          $push: {
-                            charges_details: {
-                              chargesDetailsId: chargesDetails?._id,
-                              subInvoiceId: subInvoice?._id,
-                              details: `Player [${
-                                newPlayer?.name
-                              }] registration fees 1 unit charge = ${
-                                system?.core_charge ? system?.core_charge : 1
-                              } USD`,
-                            },
-                          },
                           $set: {
                             billing_from: wallet?.last_payment_date,
                             billing_to: moment().format(),
@@ -1638,17 +1627,6 @@ const addPlayerForGuardian = async (req, res) => {
                       const completeInvoice = await Invoice.findOneAndUpdate(
                         { _id: existingInvoice?._id },
                         {
-                          $push: {
-                            charges_details: {
-                              chargesDetailsId: chargesDetails?._id,
-                              subInvoiceId: subInvoice?._id,
-                              details: `Player [${
-                                newPlayer?.name
-                              }] registration fees 1 unit charge = ${
-                                system?.core_charge ? system?.core_charge : 1
-                              } USD`,
-                            },
-                          },
                           $set: {
                             billing_from: wallet?.last_payment_date,
                             billing_to: moment().format(),
