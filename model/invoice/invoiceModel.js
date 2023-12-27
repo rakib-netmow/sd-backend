@@ -8,7 +8,7 @@ const invoiceSchema = new mongoose.Schema(
     billing_to: String,
     last_payment_date: String,
     bill_status: String,
-    amount: String,
+    amount: { type: String, default: "0" },
     created_by: String,
     identity_type: {
       type: String,

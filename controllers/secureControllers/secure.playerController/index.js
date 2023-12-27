@@ -184,11 +184,11 @@ const addPlayer = async (req, res) => {
                             billing_to: moment().format(),
                             // bill_status: "unpaid",
                             // last_payment_date: wallet?.last_payment_date,
-                            amount:
-                              parseFloat(existingInvoice?.amount) +
-                              (system?.core_charge
-                                ? parseFloat(system?.core_charge)
-                                : 1),
+                            // amount:
+                            //   parseFloat(existingInvoice?.amount) +
+                            //   (system?.core_charge
+                            //     ? parseFloat(system?.core_charge)
+                            //     : 1),
                           },
                         }
                       );
@@ -440,9 +440,9 @@ const addPlayer = async (req, res) => {
                             billing_to: moment().format(),
                             bill_status: "unpaid",
                             last_payment_date: wallet?.last_payment_date,
-                            amount: system?.core_charge
-                              ? system?.core_charge
-                              : 1,
+                            // amount: system?.core_charge
+                            //   ? system?.core_charge
+                            //   : 1,
                           },
                         }
                       );
@@ -740,11 +740,11 @@ const addPlayer = async (req, res) => {
                           billing_to: moment().format(),
                           bill_status: "unpaid",
                           last_payment_date: wallet?.last_payment_date,
-                          amount:
-                            parseFloat(existingInvoice?.amount) +
-                            (system?.core_charge
-                              ? parseFloat(system?.core_charge)
-                              : 1),
+                          // amount:
+                          //   parseFloat(existingInvoice?.amount) +
+                          //   (system?.core_charge
+                          //     ? parseFloat(system?.core_charge)
+                          //     : 1),
                         },
                       }
                     );
@@ -971,7 +971,7 @@ const addPlayer = async (req, res) => {
                           billing_to: moment().format(),
                           bill_status: "unpaid",
                           last_payment_date: wallet?.last_payment_date,
-                          amount: system?.core_charge ? system?.core_charge : 1,
+                          // amount: system?.core_charge ? system?.core_charge : 1,
                         },
                       }
                     );
@@ -1599,11 +1599,11 @@ const addPlayerForGuardian = async (req, res) => {
                             billing_to: moment().format(),
                             bill_status: "unpaid",
                             last_payment_date: wallet?.last_payment_date,
-                            amount:
-                              parseFloat(existingInvoice?.amount) +
-                              (system?.core_charge
-                                ? parseFloat(system?.core_charge)
-                                : 1),
+                            // amount:
+                            //   parseFloat(existingInvoice?.amount) +
+                            //   (system?.core_charge
+                            //     ? parseFloat(system?.core_charge)
+                            //     : 1),
                           },
                         }
                       );
@@ -1884,9 +1884,9 @@ const addPlayerForGuardian = async (req, res) => {
                             billing_to: moment().format(),
                             bill_status: "unpaid",
                             last_payment_date: wallet?.last_payment_date,
-                            amount: system?.core_charge
-                              ? system?.core_charge
-                              : 1,
+                            // amount: system?.core_charge
+                            //   ? system?.core_charge
+                            //   : 1,
                           },
                         }
                       );
@@ -2220,11 +2220,11 @@ const addPlayerForGuardian = async (req, res) => {
                           billing_to: moment().format(),
                           bill_status: "unpaid",
                           last_payment_date: wallet?.last_payment_date,
-                          amount:
-                            parseFloat(existingInvoice?.amount) +
-                            (system?.core_charge
-                              ? parseFloat(system?.core_charge)
-                              : 1),
+                          // amount:
+                          //   parseFloat(existingInvoice?.amount) +
+                          //   (system?.core_charge
+                          //     ? parseFloat(system?.core_charge)
+                          //     : 1),
                         },
                       }
                     );
@@ -2469,7 +2469,7 @@ const addPlayerForGuardian = async (req, res) => {
                           billing_to: moment().format(),
                           bill_status: "unpaid",
                           last_payment_date: wallet?.last_payment_date,
-                          amount: system?.core_charge ? system?.core_charge : 1,
+                          // amount: system?.core_charge ? system?.core_charge : 1,
                         },
                       }
                     );
