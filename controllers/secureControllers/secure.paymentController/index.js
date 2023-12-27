@@ -1332,6 +1332,10 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                           },
                         }
                       );
+                      console.log(
+                        "wallet updated ",
+                        currentWallet?.total_charges
+                      );
                       if (updateWallet) {
                         console.log("wallet updated");
                         // update charges details
