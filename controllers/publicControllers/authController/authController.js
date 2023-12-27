@@ -64,7 +64,7 @@ const register = async (req, res) => {
           sports_category,
           // theme,
           organisation_name,
-          subdomain,
+          subdomain: subdomain.toLowerCase(),
           email,
           phone,
           country,
@@ -79,7 +79,7 @@ const register = async (req, res) => {
           await Otp.deleteOne({ email });
 
           await Subdomain.create({
-            name: subdomain,
+            name: subdomain.toLowerCase(),
             woner: email,
           });
           await Wallet.create({
