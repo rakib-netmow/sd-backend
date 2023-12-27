@@ -1431,13 +1431,6 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                                             } USD`,
                                           },
                                         },
-                                        $set: {
-                                          amount:
-                                            parseFloat(invoice?.amount) +
-                                            (system?.core_charge
-                                              ? parseFloat(system?.core_charge)
-                                              : 1),
-                                        },
                                       }
                                     );
                                   if (updateInvoice) {
@@ -1765,6 +1758,28 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
             $set: {
               total_charges:
                 parseFloat(currentWallet?.total_charges) +
+                (system?.core_charge
+                  ? parseFloat(system?.core_charge) * players_id?.length
+                  : 1 * players_id?.length),
+            },
+          }
+        );
+        const chargesDetails = await ChargeDetails.findOne({
+          $and: [
+            { identity_type: "player registration" },
+            { created_by: admin_id },
+            { player_id: players_id[0] },
+          ],
+        });
+        const invoice = await Invoice.findOne({
+          _id: ObjectId(chargesDetails?.invoice_no),
+        });
+        const updateInvoice = await Invoice.findOneAndUpdate(
+          { _id: invoice?._id },
+          {
+            $set: {
+              amount:
+                parseFloat(invoice?.amount) +
                 (system?.core_charge
                   ? parseFloat(system?.core_charge) * players_id?.length
                   : 1 * players_id?.length),
