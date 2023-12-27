@@ -2858,34 +2858,66 @@ const assignPlayerToGuardian = async (req, res) => {
           }
         );
         if (updatePlayer) {
-          const updateGuardian = await User.findOneAndUpdate(
-            { _id: guardian?._id },
-            {
-              $inc: {
-                inactive_player: 1,
-                total_player: 1,
-              },
-            }
-          );
-          if (updateGuardian) {
-            res.status(200).json({
-              message: "Player assigned successfully!",
-            });
-          } else {
-            await User.findOneAndUpdate(
-              { _id: player?._id },
+          if (player?.payment_status && player?.payment_status === "paid") {
+            const updateGuardian = await User.findOneAndUpdate(
+              { _id: guardian?._id },
               {
-                $set: {
-                  guardian: "",
-                  guardian_name: "",
-                  guardian_email: "",
-                  guardian_phone: "",
+                $inc: {
+                  active_player: 1,
+                  total_player: 1,
                 },
               }
             );
-            res.status(400).json({
-              message: "Cant't update Guardian profile for assign player!",
-            });
+            if (updateGuardian) {
+              res.status(200).json({
+                message: "Player assigned successfully!",
+              });
+            } else {
+              await User.findOneAndUpdate(
+                { _id: player?._id },
+                {
+                  $set: {
+                    guardian: "",
+                    guardian_name: "",
+                    guardian_email: "",
+                    guardian_phone: "",
+                  },
+                }
+              );
+              res.status(400).json({
+                message: "Cant't update Guardian profile for assign player!",
+              });
+            }
+          } else {
+            const updateGuardian = await User.findOneAndUpdate(
+              { _id: guardian?._id },
+              {
+                $inc: {
+                  inactive_player: 1,
+                  total_player: 1,
+                },
+              }
+            );
+            if (updateGuardian) {
+              res.status(200).json({
+                message: "Player assigned successfully!",
+              });
+            } else {
+              await User.findOneAndUpdate(
+                { _id: player?._id },
+                {
+                  $set: {
+                    guardian: "",
+                    guardian_name: "",
+                    guardian_email: "",
+                    guardian_phone: "",
+                  },
+                }
+              );
+              res.status(400).json({
+                message: "Cant't update Guardian profile for assign player!",
+              });
+            }
           }
         } else {
           res.status(400).json({
