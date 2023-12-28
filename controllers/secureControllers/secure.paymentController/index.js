@@ -806,6 +806,13 @@ const paidByCashForPlayer = async (req, res) => {
                                         } USD`,
                                       },
                                     },
+                                    $set: {
+                                      amount:
+                                        parseFloat(invoice?.amount) +
+                                        (system?.core_charge
+                                          ? parseFloat(system?.core_charge)
+                                          : 1),
+                                    },
                                   }
                                 );
                               if (updateInvoice) {
@@ -1430,6 +1437,13 @@ const paidByCashForAllPlayerOfSingleGuardian = async (req, res) => {
                                                 : 1
                                             } USD`,
                                           },
+                                        },
+                                        $set: {
+                                          amount:
+                                            parseFloat(invoice?.amount) +
+                                            (system?.core_charge
+                                              ? parseFloat(system?.core_charge)
+                                              : 1),
                                         },
                                       }
                                     );
