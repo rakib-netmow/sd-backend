@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const isValidObjectId = require("../../../config/checkValidObjectId");
 const sendPlayerRegistrationInvoiceEmail = require("../../../config/sendPlayerRegistrationInvoiceEmail");
 const ChargeDetails = require("../../../model/invoice/chargeDetailsModel");
@@ -130,14 +131,30 @@ const getMultipleChargesDetails = async (req, res) => {
         message: "Invalid invoice id!",
       });
     } else {
-      const allChargesDetails = await ChargeDetails.find({
-        $and: [{ invoice_no: mainInvoiceID }, { billing_status: "unpaid" }],
-      });
-      if (allChargesDetails) {
-        res.status(200).json(allChargesDetails);
+      const invoice = await Invoice.findOne({ _id: ObjectId(mainInvoiceID) });
+      if (invoice?._id && invoice?.charges_details?.length > 0) {
+        const chargesDetailsIdDoc = invoice?.charges_details?.map((c) => {
+          return c?.ChargeDetails;
+        });
+        if (chargesDetailsIdDoc?.length > 0) {
+          const allChargesDetails = await ChargeDetails.find({
+            _id: { $in: chargesDetailsIdDoc },
+          });
+          if (allChargesDetails) {
+            res.status(200).json(allChargesDetails);
+          } else {
+            res.status(400).json({
+              message: "Can't find charges details!",
+            });
+          }
+        } else {
+          res.status(400).json({
+            message: "Can't find charges details id!",
+          });
+        }
       } else {
         res.status(400).json({
-          message: "Can't find charges details!",
+          message: "Can't find Invoice!",
         });
       }
     }
