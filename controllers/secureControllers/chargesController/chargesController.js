@@ -134,7 +134,7 @@ const getMultipleChargesDetails = async (req, res) => {
       const invoice = await Invoice.findOne({ _id: ObjectId(mainInvoiceID) });
       if (invoice?._id && invoice?.charges_details?.length > 0) {
         const chargesDetailsIdDoc = invoice?.charges_details?.map((c) => {
-          return c?.ChargeDetails;
+          return c?.chargesDetailsId;
         });
         if (chargesDetailsIdDoc?.length > 0) {
           const allChargesDetails = await ChargeDetails.find({

@@ -2781,6 +2781,19 @@ const assignPlayerToGuardian = async (req, res) => {
               }
             );
             if (updateGuardian) {
+              await ChargeDetails.findOneAndUpdate(
+                {
+                  $and: [
+                    { identity_type: "player registration" },
+                    { player_id: player?._id },
+                  ],
+                },
+                {
+                  $set: {
+                    guardian_id: guardian?.guardian_id,
+                  },
+                }
+              );
               res.status(200).json({
                 message: "Player assigned successfully!",
               });
@@ -2811,6 +2824,19 @@ const assignPlayerToGuardian = async (req, res) => {
               }
             );
             if (updateGuardian) {
+              await ChargeDetails.findOneAndUpdate(
+                {
+                  $and: [
+                    { identity_type: "player registration" },
+                    { player_id: player?._id },
+                  ],
+                },
+                {
+                  $set: {
+                    guardian_id: guardian?.guardian_id,
+                  },
+                }
+              );
               res.status(200).json({
                 message: "Player assigned successfully!",
               });
