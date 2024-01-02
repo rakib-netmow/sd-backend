@@ -211,11 +211,8 @@ const singlePaidChargesdetails = async (req, res) => {
         message: "Charges Details ID is missing!",
       });
     } else {
-      const paidChargesDetails = await SubChargeDetails.findOne({
-        $and: [
-          { main_charges_details: charges_details },
-          { billing_status: "paid" },
-        ],
+      const paidChargesDetails = await ChargeDetails.findOne({
+        $and: [{ _id: ObjectId(charges_details) }, { billing_status: "paid" }],
       });
       res.status(200).json(paidChargesDetails);
     }
