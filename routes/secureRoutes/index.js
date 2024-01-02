@@ -103,6 +103,8 @@ const {
   sendInvoiceController,
   getMultipleChargesDetailsController,
   getSingleChargesDetailsController,
+  singlePaidChargesDetailsController,
+  allPaidChargesDetailsController,
 } = require("../../controllers/secureControllers");
 const { verifyAdmin, verifyJWT } = require("../../middleware/authMiddleware");
 const multer = require("../../middleware/multer");
@@ -251,6 +253,14 @@ router.get(
   getMultipleChargesDetailsController
 );
 router.get("/single-charges-details/:id", getSingleChargesDetailsController);
+router.get(
+  "/single-paid-charges-details/:id",
+  singlePaidChargesDetailsController
+);
+router.get(
+  "/multiple-paid-charges-details/:id",
+  allPaidChargesDetailsController
+);
 // settings
 // business setting
 router.post("/company-information", addBusinessSettingController);

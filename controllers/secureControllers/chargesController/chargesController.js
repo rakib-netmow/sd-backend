@@ -187,10 +187,47 @@ const getSingleChargesDetails = async (req, res) => {
   }
 };
 
+const allPaidChargesdetails = async (req, res) => {
+  try {
+    const invoice_no = req.params.id;
+    if (!invoice_no) {
+      res.status(400).json({
+        message: "Invoice ID is missing!",
+      });
+    } else {
+      const paidChargesDetails = await ChargeDetails.find({
+        $and: [{ invoice_no }, { billing_status: "paid" }],
+      });
+      res.status(200).json(paidChargesDetails);
+    }
+  } catch (error) {}
+};
+
+const singlePaidChargesdetails = async (req, res) => {
+  try {
+    const charges_details = req.params.id;
+    if (!charges_details) {
+      res.status(400).json({
+        message: "Charges Details ID is missing!",
+      });
+    } else {
+      const paidChargesDetails = await SubChargeDetails.findOne({
+        $and: [
+          { main_charges_details: charges_details },
+          { billing_status: "paid" },
+        ],
+      });
+      res.status(200).json(paidChargesDetails);
+    }
+  } catch (error) {}
+};
+
 module.exports = {
   allPendingCharges,
   allPaidCharges,
   sendInvoice,
   getMultipleChargesDetails,
   getSingleChargesDetails,
+  allPaidChargesdetails,
+  singlePaidChargesdetails,
 };
