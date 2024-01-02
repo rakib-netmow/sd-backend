@@ -200,7 +200,9 @@ const allPaidChargesdetails = async (req, res) => {
       });
       res.status(200).json(paidChargesDetails);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const singlePaidChargesdetails = async (req, res) => {
@@ -216,7 +218,9 @@ const singlePaidChargesdetails = async (req, res) => {
       });
       res.status(200).json(paidChargesDetails);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = {
